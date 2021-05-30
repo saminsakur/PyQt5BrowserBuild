@@ -24,6 +24,11 @@ class mainWindow(QMainWindow):
         back_btn.triggered.connect(self.browser.back)
         navbar.addAction(back_btn)
 
+        # forward button
+        forward_butn = QAction('Forward', self)
+        forward_butn.triggered.connect(self.browser.forward)
+        navbar.addAction(forward_butn)
+
 
 app = QApplication(sys.argv)
 QApplication.setApplicationName("The Browser By Samin")
