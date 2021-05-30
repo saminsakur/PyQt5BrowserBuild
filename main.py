@@ -18,7 +18,12 @@ class mainWindow(QMainWindow):
         # nav bar
         navbar = QToolBar()
         self.addToolBar(navbar)
-
+        
+        # Refresh button
+        reload_butn = QAction('Reload', self)
+        reload_butn.triggered.connect(self.browser.reload)
+        navbar.addAction(reload_butn)
+        
         # back button
         back_btn = QAction('Back', self)
         back_btn.triggered.connect(self.browser.back)
@@ -28,6 +33,8 @@ class mainWindow(QMainWindow):
         forward_butn = QAction('Forward', self)
         forward_butn.triggered.connect(self.browser.forward)
         navbar.addAction(forward_butn)
+
+
 
 
 app = QApplication(sys.argv)
