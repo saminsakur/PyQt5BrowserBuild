@@ -15,11 +15,14 @@ class mainWindow(QMainWindow):
         self.setCentralWidget(self.browser)
         self.showMaximized()
 
+    def goToHome(self):
+        self.browser.setUrl(QUrl('https://www.google.com/'))
+
         # nav bar
         navbar = QToolBar()
         self.addToolBar(navbar)
         
-        # back button
+        #back button
         back_btn = QAction('Back', self)
         back_btn.triggered.connect(self.browser.back)
         navbar.addAction(back_btn)
@@ -39,10 +42,9 @@ class mainWindow(QMainWindow):
         home_button.triggered.connect(self.goToHome)
         navbar.addAction(home_button)
         
-
-    def goToHome(self):
-        self.browser.setUrl(QUrl('https://www.google.com/'))
-
+        # # Add search box
+        # self.url_bar = QLineEdit()
+        # navbar.addWidget(self.url_bar)
 
 
 
