@@ -19,11 +19,6 @@ class mainWindow(QMainWindow):
         navbar = QToolBar()
         self.addToolBar(navbar)
         
-        # Refresh button
-        reload_butn = QAction('Reload', self)
-        reload_butn.triggered.connect(self.browser.reload)
-        navbar.addAction(reload_butn)
-        
         # back button
         back_btn = QAction('Back', self)
         back_btn.triggered.connect(self.browser.back)
@@ -33,6 +28,20 @@ class mainWindow(QMainWindow):
         forward_butn = QAction('Forward', self)
         forward_butn.triggered.connect(self.browser.forward)
         navbar.addAction(forward_butn)
+
+        # Refresh button
+        reload_butn = QAction('Reload', self)
+        reload_butn.triggered.connect(self.browser.reload)
+        navbar.addAction(reload_butn)
+
+        # Home button
+        home_button = QAction('Home', self)
+        home_button.triggered.connect(self.goToHome)
+        navbar.addAction(home_button)
+        
+
+    def goToHome(self):
+        self.browser.setUrl(QUrl('https://www.google.com/'))
 
 
 
