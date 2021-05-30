@@ -15,6 +15,15 @@ class mainWindow(QMainWindow):
         self.setCentralWidget(self.browser)
         self.showMaximized()
 
+        # nav bar
+        navbar = QToolBar()
+        self.addToolBar(navbar)
+
+        # back button
+        back_btn = QAction('Back', self)
+        back_btn.triggered.connecr(self.browser.back)
+        navbar.addAction(back_btn)
+
 
 app = QApplication(sys.argv)
 QApplication.setApplicationName("The Browser By Samin")
