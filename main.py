@@ -40,13 +40,18 @@ class mainWindow(QMainWindow):
         home_button.triggered.connect(self.goToHome)
         navbar.addAction(home_button)
                 
-        # # Add search box
+        # Add search box
         self.url_bar = QLineEdit()
+        self.url_bar.returnPressed.connect(self.navigate_to_url)
         navbar.addWidget(self.url_bar)
         
-        
+       
     def goToHome(self):
         self.browser.setUrl(QUrl('https://www.google.com/'))
+    
+    def navigate_to_url(self):
+        self.browser.setUrl(QUrl(self.url_bar.text()))    
+ 
 
 
 
