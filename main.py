@@ -1,4 +1,5 @@
 import sys
+import re
 from PyQt5 import QtGui, QtWidgets
 from PyQt5.QtCore import QUrl
 from PyQt5.QtWidgets import *
@@ -23,25 +24,25 @@ class mainWindow(QMainWindow):
 
         #back button
         back_btn = QAction(self)
-        back_btn.setIcon(QtGui.QIcon("Images\\home.png"))
+        back_btn.setIcon(QtGui.QIcon("Images\\left-arrow.png"))
         back_btn.triggered.connect(self.browser.back)
         navbar.addAction(back_btn)
 
         # forward button
         forward_butn = QAction(self)
-        back_btn.setIcon(QtGui.QIcon("Images\\left.png"))
+        forward_butn.setIcon(QtGui.QIcon("Images\\right-arrow.png"))
         forward_butn.triggered.connect(self.browser.forward)
         navbar.addAction(forward_butn)
 
         # Refresh button
         reload_butn = QAction(self)
-        reload_butn.setIcon(QtGui.QIcon("Images\\refresh.png"))
+        reload_butn.setIcon(QtGui.QIcon("Images\\refresh2.png"))
         reload_butn.triggered.connect(self.browser.reload)
         navbar.addAction(reload_butn)
 
         # Home button
         home_button = QAction(self)
-        home_button.setIcon(QtGui.QIcon("Images\\home.png"))
+        home_button.setIcon(QtGui.QIcon("Images\\home2.png"))
         home_button.triggered.connect(self.goToHome)
         navbar.addAction(home_button)
                 
@@ -57,15 +58,20 @@ class mainWindow(QMainWindow):
         self.browser.setUrl(QUrl('https://www.google.com/'))
     
     def navigate_to_url(self):
-        self.browser.setUrl(QUrl(self.url_bar.text()))    
+        in_url = self.url_bar.text()
+        pattern = re.compile(r"www.google.com")
+
+        if pattern.search(in_url):
+            url = "http://"+in_url
+
+        else :
+            url = in_url
+
+        self.browser.setUrl(QUrl(url))
 
     def updateUrl(self, url):
         self.url_bar.setText(url.toString())
  
-
-
-
-
 
 app = QApplication(sys.argv)
 QApplication.setApplicationName("The Browser By Samin")
