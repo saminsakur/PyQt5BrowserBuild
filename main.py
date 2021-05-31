@@ -13,7 +13,7 @@ class mainWindow(QMainWindow):
     def __init__(self):
         super(mainWindow, self).__init__()
         self.browser = QWebEngineView()
-        self.browser.setUrl(QUrl("templates\\newtab.html"))
+        self.browser.setUrl(QUrl("https://www.google.com/"))
         self.setCentralWidget(self.browser)
         self.showMaximized()
 
@@ -59,7 +59,7 @@ class mainWindow(QMainWindow):
     
     def navigate_to_url(self):
         in_url = self.url_bar.text()
-        pattern = re.compile(r"www.google.com")
+        pattern = re.compile(r"www.google.com") # this will contain an regex that matches website domain 
 
         if pattern.search(in_url):
             url = "http://"+in_url
