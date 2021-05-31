@@ -6,21 +6,19 @@ from PyQt5.QtWebEngine import *
 from PyQt5.QtWebEngineWidgets import QWebEngineView
 
 
-
 class mainWindow(QMainWindow):
     def __init__(self):
         super(mainWindow, self).__init__()
         self.browser = QWebEngineView()
-        self.browser.setUrl(QUrl("https://www.google.com/"))
+        self.browser.setUrl(QUrl("https://www.google.com"))
         self.setCentralWidget(self.browser)
         self.showMaximized()
-
 
         # nav bar
         navbar = QToolBar()
         self.addToolBar(navbar)
-
-        #back button
+        
+        # back button
         back_btn = QAction('Back', self)
         back_btn.triggered.connect(self.browser.back)
         navbar.addAction(back_btn)
@@ -39,15 +37,10 @@ class mainWindow(QMainWindow):
         home_button = QAction('Home', self)
         home_button.triggered.connect(self.goToHome)
         navbar.addAction(home_button)
-                
-        # # Add search box
-        self.url_bar = QLineEdit()
-        navbar.addWidget(self.url_bar)
         
-        
+
     def goToHome(self):
         self.browser.setUrl(QUrl('https://www.google.com/'))
-
 
 
 
