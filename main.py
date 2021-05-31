@@ -1,4 +1,5 @@
 import sys
+from PyQt5 import QtWidgets
 from PyQt5.QtCore import QUrl
 from PyQt5.QtWidgets import *
 from PyQt5.QtWebChannel import *
@@ -34,6 +35,12 @@ class mainWindow(QMainWindow):
         reload_butn = QAction('Reload', self)
         reload_butn.triggered.connect(self.browser.reload)
         navbar.addAction(reload_butn)
+
+        butn1 = QtWidgets.QPushButton(self)
+        butn1.setText("click me")
+        butn1.clicked.connect(self.goToHome)
+        navbar.addWidget(butn1)
+
 
         # Home button
         home_button = QAction('Home', self)
