@@ -44,6 +44,8 @@ class mainWindow(QMainWindow):
         self.url_bar = QLineEdit()
         self.url_bar.returnPressed.connect(self.navigate_to_url)
         navbar.addWidget(self.url_bar)
+
+        self.browser.urlChanged.connect(self.updateUrl)
         
        
     def goToHome(self):
@@ -51,6 +53,9 @@ class mainWindow(QMainWindow):
     
     def navigate_to_url(self):
         self.browser.setUrl(QUrl(self.url_bar.text()))    
+
+    def updateUrl(self, url):
+        self.url_bar.setText(url.toString())
  
 
 
