@@ -1,12 +1,11 @@
 import sys
-import re
-from PyQt5 import QtGui, QtWidgets
+from PyQt5 import QtGui
 from PyQt5.QtCore import QUrl
 from PyQt5.QtWidgets import *
 from PyQt5.QtWebChannel import *
 from PyQt5.QtWebEngine import *
 from PyQt5.QtWebEngineWidgets import QWebEngineView
-
+domains = (".com", ".net", ".org", ".io", "in", "me", "app", "gg", "cc", "bd", "com.bd")
 
 
 class mainWindow(QMainWindow):
@@ -59,10 +58,9 @@ class mainWindow(QMainWindow):
     
     def navigate_to_url(self):
         in_url = self.url_bar.text()
-        pattern = re.compile(r"www.google.com") # this will contain an regex that matches website domain 
-
-        if pattern.search(in_url):
-            url = "http://"+in_url
+        url = ""
+        if in_url.endswith(domains) and "http://" not in url:
+            url += "http://"+in_url
 
         else :
             url = in_url
@@ -75,5 +73,6 @@ class mainWindow(QMainWindow):
 
 app = QApplication(sys.argv)
 QApplication.setApplicationName("The Browser By Samin")
+QApplication.setWindowIcon(QtGui.QIcon("Images\\home.png"))
 window = mainWindow()
 app.exec_()
