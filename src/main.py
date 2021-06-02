@@ -22,7 +22,8 @@ class mainWindow(QMainWindow):
         self.addToolBar(navbar)
 
         #back button
-        back_btn = QAction(self)
+        back_btn = QAction(self,"Back")
+        back_btn.setStatusTip("back to the previous page")
         back_btn.setIcon(QtGui.QIcon("Images\\left-arrow.png"))
         back_btn.triggered.connect(self.browser.back)
         navbar.addAction(back_btn)
@@ -73,6 +74,6 @@ class mainWindow(QMainWindow):
 
 app = QApplication(sys.argv)
 QApplication.setApplicationName("The Browser By Samin")
-QApplication.setWindowIcon(QtGui.QIcon("Images\\home.png"))
+QApplication.setWindowIcon(QtGui.QIcon("Images\\browser.png"))
 window = mainWindow()
 app.exec_()
