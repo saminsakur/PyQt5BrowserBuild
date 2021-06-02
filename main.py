@@ -22,7 +22,7 @@ class mainWindow(QMainWindow):
         self.addToolBar(navbar)
 
         #back button
-        back_btn = QAction(self,"Back")
+        back_btn = QAction(self)
         back_btn.setStatusTip("back to the previous page")
         back_btn.setIcon(QtGui.QIcon("Images\\left-arrow.png"))
         back_btn.triggered.connect(self.browser.back)
@@ -53,18 +53,29 @@ class mainWindow(QMainWindow):
 
         self.browser.urlChanged.connect(self.updateUrl)
         
-       
+    # funcion to navigate to home whaen home icon is pressed   
     def goToHome(self):
         self.browser.setUrl(QUrl('https://www.google.com/'))
-    
+
+    # function to search google from the search box
+    def searchGoogle(text):
+        if len(text) <= 0:
+            return "https://www.google.com/search?q="+text.join("+")
+
+    """
+    function to navigate to url, if the url ends with the domains from the domains tuple,
+    then "http://" will be added after what the user have written if not, then it will call
+    the searchGoogle() function to search google directly from the search box
+    """
+
     def navigate_to_url(self):
         in_url = self.url_bar.text()
         url = ""
-        if in_url.endswith(domains) and "http://" not in url:
-            url += "http://"+in_url
+        if in_url.endswith(domains) and not any([url.startswith("http://"), url.startswith("https://")]):
+            url = "http://"+in_url
 
         else :
-            url = in_url
+            url = self.searchGoogle(in_url)
 
         self.browser.setUrl(QUrl(url))
 
