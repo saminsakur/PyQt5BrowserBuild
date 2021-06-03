@@ -1,3 +1,4 @@
+import os
 import sys
 from PyQt5 import QtGui
 from PyQt5.QtCore import QUrl
@@ -5,14 +6,31 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtWebChannel import *
 from PyQt5.QtWebEngine import *
 from PyQt5.QtWebEngineWidgets import QWebEngineView
-domains = (".com", ".net", ".org", ".io", "in", "me", "app", "gg", "cc", "bd", "com.bd")
+from PyQt5.sip import *
+
+
+domains = (
+    ".com", ".net", ".org", ".io", "in", "me", "app", "gg", "cc", "bd", "com.bd"
+)
 
 
 class mainWindow(QMainWindow):
     def __init__(self):
         super(mainWindow, self).__init__()
         self.browser = QWebEngineView()
-        self.browser.setUrl(QUrl("https://www.google.com/"))
+        # what to display on startup
+        file_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "index.html")) # determine the absolute path of index.html
+        local_url = QUrl.fromLocalFile(file_path) # load the local file
+        self.browser.load(local_url)
+
+        # create tabs
+        self.tabs = QTableWidget()
+        self.tabs.setDocumentMode(True)
+        self.tabs.tabBarDoubleClicked.connect( self.tab_open_doubleclick )
+        self.tabs.currentChanged.connect(self.tab_changed)
+        self.tabs.setTabsClosable(True)
+        self.tabs.tabCloseRequested.connect(self.close_current_tab)
+        self.setCentralWidget(self.tabs)
         self.setCentralWidget(self.browser)
         self.showMaximized()
 
@@ -36,7 +54,7 @@ class mainWindow(QMainWindow):
 
         # Refresh button
         reload_butn = QAction(self)
-        reload_butn.setIcon(QtGui.QIcon("Images\\refresh2.png"))
+        reload_butn.setIcon(QtGui.QIcon("Images\\refresh.png"))
         reload_butn.triggered.connect(self.browser.reload)
         navbar.addAction(reload_butn)
 
@@ -48,6 +66,12 @@ class mainWindow(QMainWindow):
                 
         # Add search box
         self.url_bar = QLineEdit()
+        self.url_bar.setStyleSheet(u"\n"
+    "border: 1px solid gray;/*Set the thickness and color of the border*/\n"
+    " border-radius: 10px;/*Set the size of the rounded corners*/\n"
+    " padding: 0 8px;/*If there is no content, the cursor moves back by 0.8 pixels*/\n"
+    "selection-background-color: darkgray;\n"
+    "")
         self.url_bar.returnPressed.connect(self.navigate_to_url)
         navbar.addWidget(self.url_bar)
 
@@ -73,19 +97,23 @@ class mainWindow(QMainWindow):
         url = ""
         # if the text in the search box endswith one of the domain in the domains tuple, then "http://" will be added
         # if the text is pre "http://" or "https://" added, then not
-        if any([in_url.endswith(domains), in_url.endswith("/")]) and not any([in_url.startswith("http://"), in_url.startswith("https://")]):
+        if any([in_url.endswith(domains), in_url.endswith("/")]) and not any([in_url.startswith("http://"), in_url.startswith("https://"), in_url.startswith("file:///")]):
             url = "http://"+in_url
         
+        # To open files
+        elif in_url.startswith("file:///"):
+            file_path = os.path.abspath(os.path.join(os.path.dirname(__file__), in_url))
+            local_url = QUrl.fromLocalFile(file_path)
+            self.browser.load(local_url)
+
+        # this will search google
+        elif not in_url.endswith("/"):
+            url = self.searchGoogle(in_url)
+
         # else browser will go to anything the user has been written
         else:
             url = in_url
         
-        # this will search google
-        # elif in_url not :
-        #     url = self.searchGoogle(in_url)
-        # url = 
-        # print(url)
-        # print(in_url)
 
         self.browser.setUrl(QUrl(url))
 
