@@ -58,9 +58,9 @@ class mainWindow(QMainWindow):
         self.browser.setUrl(QUrl('https://www.google.com/'))
 
     # function to search google from the search box
-    def searchGoogle(text):
-        if len(text) <= 0:
-            return "https://www.google.com/search?q="+text.join("+")
+    def searchGoogle(self, text):
+        if not len(text) <= 0:
+            return "https://www.google.com/search?q="+"+".join(text.split())
 
     """
     function to navigate to url, if the url ends with the domains from the domains tuple,
@@ -71,11 +71,21 @@ class mainWindow(QMainWindow):
     def navigate_to_url(self):
         in_url = self.url_bar.text()
         url = ""
-        if in_url.endswith(domains) and not any([url.startswith("http://"), url.startswith("https://")]):
+        # if the text in the search box endswith one of the domain in the domains tuple, then "http://" will be added
+        # if the text is pre "http://" or "https://" added, then not
+        if any([in_url.endswith(domains), in_url.endswith("/")]) and not any([in_url.startswith("http://"), in_url.startswith("https://")]):
             url = "http://"+in_url
-
-        else :
-            url = self.searchGoogle(in_url)
+        
+        # else browser will go to anything the user has been written
+        else:
+            url = in_url
+        
+        # this will search google
+        # elif in_url not :
+        #     url = self.searchGoogle(in_url)
+        # url = 
+        # print(url)
+        # print(in_url)
 
         self.browser.setUrl(QUrl(url))
 
