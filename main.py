@@ -137,7 +137,7 @@ class mainWindow(QMainWindow):
             return
 
         title = self.tabs.currentWidget().page().title()
-        self.setWindowTitle("%s The browser by Samin" % title)
+        self.setWindowTitle("%s Simple Web Browser" % title)
 
     # To lose current tab
     def close_current_tab(self, i):
@@ -214,7 +214,7 @@ class mainWindow(QMainWindow):
  
 
 app = QApplication(sys.argv)
-QApplication.setApplicationName("The Browser By Samin")
+QApplication.setApplicationName("Simple Web Browser")
 QApplication.setWindowIcon(QIcon(os.path.join("Images", "browser.png")))
 window = mainWindow()
 app.exec_()
