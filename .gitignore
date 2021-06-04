@@ -1,2 +1,6 @@
 *.spec
-browser
+.vscode
+.idea
+__pycache__
+venv
+winvenv
