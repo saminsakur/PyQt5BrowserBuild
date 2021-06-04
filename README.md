@@ -5,6 +5,7 @@ Tested on:
 Python version: Python 3.9.5 (64 bit)
 PyQt5 version: 5.15.4
 
+Install PyQt5: `python -m pip install PyQt5 `
 Some features :
 <ul><li>Doubleclick on tab bar to open a new tab</li>
 <li>search Google directly from the urlbar</li>
