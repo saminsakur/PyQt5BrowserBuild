@@ -55,7 +55,7 @@ class mainWindow(QMainWindow):
         # Refresh button
         reload_butn = QAction("Reload", self)
         reload_butn.setStatusTip("Reload current page")
-        reload_butn.setIcon(QtGui.QIcon(os.path.join("Images", "refresh1.png")))
+        reload_butn.setIcon(QtGui.QIcon(os.path.join("Images", "refresh2.png")))
         reload_butn.triggered.connect(self.reload_tab)
         navbar.addAction(reload_butn)
 
@@ -83,10 +83,13 @@ class mainWindow(QMainWindow):
         stop_btn.setStatusTip("Stop loading current page")
         stop_btn.triggered.connect(self.stop_loading_tab)
         navbar.addAction(stop_btn)
+        
+        tab_close_button = QAction("Close tab", self)
+        tab_close_button.triggered.connect(lambda: self.close_current_tab(self.tabs.currentIndex))
+        navbar.addAction(tab_close_button)
+        
 
-        # self.browser.urlChanged.connect(self.updateUrl)
-
-        # on stsrtup
+        # on startup
         self.add_new_tab(QUrl("https://www.google.com/"), "Homepage")
         self.show()
         
@@ -135,6 +138,10 @@ class mainWindow(QMainWindow):
 
         title = self.tabs.currentWidget().page().title()
         self.setWindowTitle("%s The browser by Samin" % title)
+
+    # To lose current tab
+    def close_current_tab(self, i):
+        self.tabs.removeTab(i)
 
     # function to add new tab
     def add_new_tab(self, qurl=None, label="Blank"):
