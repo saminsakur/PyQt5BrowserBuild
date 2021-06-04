@@ -19,12 +19,6 @@ domains = (
 class mainWindow(QMainWindow):
     def __init__(self, *args, **kwargs):
         super(mainWindow, self).__init__()
-        # self.browser = QWebEngineView()
-
-        # # what to display on startup
-        # file_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "index.html")) # determine the absolute path of index.html
-        # local_url = QUrl.fromLocalFile(file_path) # load the local file
-        # self.browser.load(local_url)
 
         # create tabs
         self.tabs = QTabWidget()
@@ -41,6 +35,7 @@ class mainWindow(QMainWindow):
 
         # nav bar
         navbar = QToolBar()
+        navbar.setMovable(False)
         self.addToolBar(navbar)
 
         # back button
@@ -60,7 +55,7 @@ class mainWindow(QMainWindow):
         # Refresh button
         reload_butn = QAction("Reload", self)
         reload_butn.setStatusTip("Reload current page")
-        reload_butn.setIcon(QtGui.QIcon(os.path.join("Images", "refresh.png")))
+        reload_butn.setIcon(QtGui.QIcon(os.path.join("Images", "refresh1.png")))
         reload_butn.triggered.connect(self.reload_tab)
         navbar.addAction(reload_butn)
 
@@ -118,7 +113,7 @@ class mainWindow(QMainWindow):
     # doubleclick on empty space for new tab
     def tab_open_doubleclick(self, i):
         if i == -1: # No tab under the click
-            self.add_new_tab()
+            self.add_new_tab(QUrl("http://www.google.com/"), label="New tab")
     
     # to update the tab
     def tab_changed(self, i):
@@ -165,7 +160,7 @@ class mainWindow(QMainWindow):
         
         if q.scheme() == 'https':
             # secure padlock icon
-            self.httpsicon.setPixmap(QPixmap(os.path.join("Images", "verified.png")))
+            self.httpsicon.setPixmap(QPixmap(os.path.join("Images", "security.png")))
         
         else:
             # Set insecure padlock
@@ -213,6 +208,6 @@ class mainWindow(QMainWindow):
 
 app = QApplication(sys.argv)
 QApplication.setApplicationName("The Browser By Samin")
-QApplication.setWindowIcon(QtGui.QIcon("Images\\browser.png"))
+QApplication.setWindowIcon(QIcon(os.path.join("Images", "browser.png")))
 window = mainWindow()
 app.exec_()
