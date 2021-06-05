@@ -9,7 +9,8 @@ Install Required files:
 ```
 python -m pip install PyQt5
 python -m pip install PyQtWebEngine
-```<br>
+```
+<br>
 Some features :
 <ul>
   <li>Doubleclick on tab bar to open a new tab</li>
