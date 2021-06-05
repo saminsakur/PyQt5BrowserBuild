@@ -5,7 +5,11 @@ Tested on:
 Python version: Python 3.9.5 (64 bit)<br>
 PyQt5 version: 5.15.4
 
-Install PyQt5: `python -m pip install PyQt5 `<br>
+Install Required files:
+```
+python -m pip install PyQt5
+python -m pip install PyQtWebEngine
+```<br>
 Some features :
 <ul>
   <li>Doubleclick on tab bar to open a new tab</li>
