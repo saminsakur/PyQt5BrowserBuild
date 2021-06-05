@@ -2,7 +2,7 @@
 chroium based browser with python pyqt5 library
 
 Tested on:
-Python version: Python 3.9.5 (64 bit)
+Python version: Python 3.9.5 (64 bit)<br>
 PyQt5 version: 5.15.4
 
 Install PyQt5: `python -m pip install PyQt5 `<br>
