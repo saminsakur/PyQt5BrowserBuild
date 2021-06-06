@@ -13,6 +13,5 @@ Some features :
   <li>Work with multiple tabs</li>
   <li>Navigate forward and backward</li>
 </ul>
-
 ***Some extra styles and features will be added soon that I'm working on***
 <h4>Note:</h4> It's so buggy
