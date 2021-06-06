@@ -85,8 +85,9 @@ class mainWindow(QMainWindow):
         navbar.addAction(stop_btn)
         
         tab_close_button = QAction("Close tab", self)
-        tab_close_button.triggered.connect(lambda: self.close_current_tab(self.tabs.currentIndex))
+        tab_close_button.triggered.connect(self.close_current_tab)
         navbar.addAction(tab_close_button)
+
         
 
         # on startup
@@ -139,8 +140,8 @@ class mainWindow(QMainWindow):
         title = self.tabs.currentWidget().page().title()
         self.setWindowTitle("%s Simple Web Browser" % title)
 
-    # To lose current tab
-    def close_current_tab(self, i):
+    # To close current tab
+    def close_tab(self, i):
         self.tabs.removeTab(i)
 
     # function to add new tab
