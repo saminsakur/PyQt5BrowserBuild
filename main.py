@@ -71,28 +71,28 @@ class mainWindow(QMainWindow):
         self.addToolBar(navbar)
 
         # back button
-        back_btn = QAction("Back", self)
+        back_btn = QPushButton(self)
         back_btn.setIcon(QtGui.QIcon(os.path.join("Images", "left-arrow.png")))
-        back_btn.triggered.connect(self.navigate_back_tab)
-        navbar.addAction(back_btn)
+        back_btn.clicked.connect(self.navigate_back_tab)
+        navbar.addWidget(back_btn)
 
         # forward button
-        forward_butn = QAction("Forward", self)
+        forward_butn = QPushButton("Forward", self)
         forward_butn.setIcon(QtGui.QIcon(os.path.join("Images", "right-arrow.png")))
-        forward_butn.triggered.connect(self.forward_tab)
-        navbar.addAction(forward_butn)
+        forward_butn.clicked.connect(self.forward_tab)
+        navbar.addWidget(forward_butn)
 
         # Refresh button
-        reload_butn = QAction("Reload", self)
+        reload_butn = QPushButton("Reload", self)
         reload_butn.setIcon(QtGui.QIcon(os.path.join("Images", "refresh.png")))
-        reload_butn.triggered.connect(self.reload_tab)
-        navbar.addAction(reload_butn)
+        reload_butn.clicked.connect(self.reload_tab)
+        navbar.addWidget(reload_butn)
 
         # Home button
-        home_button = QAction("Home", self)
+        home_button = QPushButton("Home", self)
         home_button.setIcon(QtGui.QIcon(os.path.join("Images", "home.png")))
-        home_button.triggered.connect(self.goToHome)
-        navbar.addAction(home_button)
+        home_button.clicked.connect(self.goToHome)
+        navbar.addWidget(home_button)
         
         navbar.addSeparator()
 
@@ -117,9 +117,9 @@ class mainWindow(QMainWindow):
         navbar.addWidget(self.url_bar)
         
         # Stop button
-        stop_btn = QAction(QIcon(os.path.join('Images', 'cross.png')), "Stop Loading current page", self)
-        stop_btn.triggered.connect(self.stop_loading_tab)
-        navbar.addAction(stop_btn)
+        stop_btn = QPushButton(QIcon(os.path.join('Images', 'cross.png')), "Stop Loading current page", self)
+        stop_btn.clicked.connect(self.stop_loading_tab)
+        navbar.addWidget(stop_btn)
         
         # tab_close_button = QPushButton("Close tab", self)
         # tab_close_button.setStyleSheet('''color:red;''')
@@ -127,10 +127,11 @@ class mainWindow(QMainWindow):
         # self.tabs.addAction(tab_close_button)
         navbar.addSeparator()
 
-        ContextMenuButton = QAction("More", self)
+        ContextMenuButton = QPushButton(self)
         ContextMenuButton.setIcon(QIcon(os.path.join("Images", "more.png")))
-        ContextMenuButton.triggered.connect(self.about)
-        navbar.addAction(ContextMenuButton)
+        ContextMenuButton.clicked.connect(self.about)
+        ContextMenuButton.setObjectName("ContextMenuTriggerButn")
+        navbar.addWidget(ContextMenuButton)
 
         
 
@@ -268,5 +269,19 @@ class mainWindow(QMainWindow):
 app = QApplication(sys.argv)
 QApplication.setApplicationName("Simple Web Browser")
 QApplication.setWindowIcon(QIcon(os.path.join("Images", "browser.png")))
+app.setStyleSheet("""
+QPushButton#ContextMenuTriggerButn{
+    border:1px solid transparent;
+    padding:10px;
+    border-radius:16px;
+    width:10px;
+    height:10px;
+    background-color:none;
+}
+
+QPushButton#ContextMenuTriggerButn:hover{
+    background-color:#ccc;
+}
+""")
 window = mainWindow()
 app.exec_()
