@@ -19,4 +19,5 @@ Some features :
   <li>Navigate forward and backward</li>
 </ul>
 
+
 The icons of my project are made from <a href="http://www.flaticon.com/">Flaticon</a>
