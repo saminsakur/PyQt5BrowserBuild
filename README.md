@@ -18,3 +18,5 @@ Some features :
   <li>Work with multiple tabs</li>
   <li>Navigate forward and backward</li>
 </ul>
+
+The icons of my project are made from <a href="http://www.flaticon.com/">Flaticon</a>
