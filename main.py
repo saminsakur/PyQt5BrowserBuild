@@ -74,28 +74,24 @@ class mainWindow(QMainWindow):
         back_btn = QAction("Back", self)
         back_btn.setIcon(QtGui.QIcon(os.path.join("Images", "left-arrow.png")))
         back_btn.triggered.connect(self.navigate_back_tab)
-        back_btn.setStyleSheet("""padding-right:5px;padding-left:5px;""")
         navbar.addAction(back_btn)
 
         # forward button
         forward_butn = QAction("Forward", self)
         forward_butn.setIcon(QtGui.QIcon(os.path.join("Images", "right-arrow.png")))
         forward_butn.triggered.connect(self.forward_tab)
-        forward_butn.setStyleSheet("""padding-right:5px;padding-left:5px;""")
         navbar.addAction(forward_butn)
 
         # Refresh button
         reload_butn = QAction("Reload", self)
         reload_butn.setIcon(QtGui.QIcon(os.path.join("Images", "refresh.png")))
         reload_butn.triggered.connect(self.reload_tab)
-        reload_butn.setStyleSheet("""padding-right:5px;padding-left:5px;""")
         navbar.addAction(reload_butn)
 
         # Home button
         home_button = QAction("Home", self)
         home_button.setIcon(QtGui.QIcon(os.path.join("Images", "home.png")))
         home_button.triggered.connect(self.goToHome)
-        home_button.setStyleSheet("""padding-right:5px;padding-left:5px;""")
         navbar.addAction(home_button)
         
         navbar.addSeparator()
@@ -131,10 +127,10 @@ class mainWindow(QMainWindow):
         # self.tabs.addAction(tab_close_button)
         navbar.addSeparator()
 
-        aboutAction = QAction("About", self)
-        aboutAction.setIcon(QIcon(os.path.join("Images", "info.png")))
-        aboutAction.triggered.connect(self.about)
-        navbar.addAction(aboutAction)
+        ContextMenuButton = QAction("More", self)
+        ContextMenuButton.setIcon(QIcon(os.path.join("Images", "more.png")))
+        ContextMenuButton.triggered.connect(self.about)
+        navbar.addAction(ContextMenuButton)
 
         
 
