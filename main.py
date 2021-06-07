@@ -16,6 +16,35 @@ domains = (
 )
 
 
+class AboutDialog(QDialog):
+    def __init__(self, parent=None, *args, **kwargs):
+        super(AboutDialog, self).__init__(*args, **kwargs)
+
+        butn = QDialogButtonBox.Ok
+
+        self.buttonBox = QDialogButtonBox(butn)
+        self.buttonBox.accepted.connect(self.accept)
+        self.buttonBox.rejected.connect(self.reject)
+        self. buttonBox.setWhatsThis("Close The dialog")
+        layout = QVBoxLayout()
+
+        title = QLabel("Simple Browser")
+        title.setWhatsThis("Simple Browser by Samin Sakur - https://github.com/saminsakur/PyQt5BrowserBuild")
+        font = title.font()
+        font.setFamily("Segoe UI")
+        font.setPointSize(20)
+        title.setFont(font)
+        self.setWindowTitle("")
+
+        layout.addWidget(title)
+        layout.addWidget(QLabel("About:\nhttps://github.com/saminsakur/PyQt5BrowserBuild"))
+        layout.addWidget(QLabel("Made by Samin Sakur - https://github.com/saminsakur"))
+        layout.addWidget(self.buttonBox)
+        
+        self.setLayout(layout)
+        
+
+
 class mainWindow(QMainWindow):
     def __init__(self, *args, **kwargs):
         super(mainWindow, self).__init__()
@@ -55,7 +84,7 @@ class mainWindow(QMainWindow):
         # Refresh button
         reload_butn = QAction("Reload", self)
         reload_butn.setStatusTip("Reload current page")
-        reload_butn.setIcon(QtGui.QIcon(os.path.join("Images", "refresh2.png")))
+        reload_butn.setIcon(QtGui.QIcon(os.path.join("Images", "refresh.png")))
         reload_butn.triggered.connect(self.reload_tab)
         navbar.addAction(reload_butn)
 
@@ -76,6 +105,12 @@ class mainWindow(QMainWindow):
         # Add search box
         self.url_bar = QLineEdit()
         self.url_bar.returnPressed.connect(self.navigate_to_url)
+        self.url_bar.setStyleSheet("""
+            padding-top:5px;
+            padding-bottom:5px;
+            border: 2px solid white;
+            border-radius:6px;
+        """)
         navbar.addWidget(self.url_bar)
         
         # Stop button
@@ -84,9 +119,17 @@ class mainWindow(QMainWindow):
         stop_btn.triggered.connect(self.stop_loading_tab)
         navbar.addAction(stop_btn)
         
-        tab_close_button = QAction("Close tab", self)
-        tab_close_button.triggered.connect(self.close_current_tab)
-        navbar.addAction(tab_close_button)
+        # tab_close_button = QPushButton("Close tab", self)
+        # tab_close_button.setStyleSheet('''color:red;''')
+        # tab_close_button.pressed.connect(self.close_current_tab)
+        # self.tabs.addAction(tab_close_button)
+        navbar.addSeparator()
+
+        aboutAction = QAction("About", self)
+        aboutAction.setIcon(QIcon(os.path.join("Images", "info.png")))
+        aboutAction.setStatusTip("Show Info")
+        aboutAction.triggered.connect(self.about)
+        navbar.addAction(aboutAction)
 
         
 
@@ -130,6 +173,8 @@ class mainWindow(QMainWindow):
         if self.tabs.count() < 2 :
             return
 
+        elif self.tabs.count() == 0:
+            sys.exit()
 
         self.tabs.removeTab(i)
     
@@ -161,6 +206,10 @@ class mainWindow(QMainWindow):
         browser.loadFinished.connect(lambda _, i=i, browser=browser:
                                      self.tabs.setTabText(i, browser.page().title()))
     
+    def about(self):
+        dialouge = AboutDialog()
+        dialouge.exec_()
+
     def update_urlbar(self, q, browser=None):
         if browser != self.tabs.currentWidget():
             # if signal is not from the current tab, then ignore
@@ -172,8 +221,7 @@ class mainWindow(QMainWindow):
         
         else:
             # Set insecure padlock
-            self.httpsicon.setPixmap(QPixmap(os.path.join("Images", "warning.png")))
-
+            self.httpsicon.setPixmap(QPixmap(os.path.join("Images", "warning1.png")))
         self.url_bar.setText(q.toString())
         self.url_bar.setCursorPosition(0)
 
@@ -191,28 +239,30 @@ class mainWindow(QMainWindow):
         in_url = self.url_bar.text()
         url = ""
         # if the text in the search box endswith one of the domain in the domains tuple, then "http://" will be added
-        # if the text is pre "http://" or "https://" added, then not
-        if any([in_url.endswith(domains), in_url.endswith("/")]) and not any([in_url.startswith("http://"), in_url.startswith("https://"), in_url.startswith("file:///")]):
-            url = "http://"+in_url
-        
+        # if the text is pre "http://" or "https://" added, then not               
         # To open files
-        elif in_url.startswith("file:///"):
+        
+        if QUrl(in_url).scheme() == "file":
             file_path = os.path.abspath(os.path.join(os.path.dirname(__file__), in_url))
             local_url = QUrl.fromLocalFile(file_path)
-            self.browser.load(local_url)
+            self.tabs.currentWidget().load(local_url)
+            
+
+        elif any([in_url.endswith(domains), in_url.endswith("/")]) and not any([in_url.startswith("http://"), in_url.startswith("https://"), in_url.startswith("file:///")]):
+            url = "http://"+in_url
 
         # this will search google
         elif not in_url.endswith("/"):
             url = self.searchGoogle(in_url)
-
+                
         # else browser will go to anything the user has been written
         else:
             url = in_url
-        
 
+        
         self.tabs.currentWidget().setUrl(QUrl(url))
 
- 
+
 
 app = QApplication(sys.argv)
 QApplication.setApplicationName("Simple Web Browser")

@@ -6,3 +6,4 @@ venv
 winvenv
 *.exe
 target
+browser-screenshot.png
