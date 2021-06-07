@@ -74,24 +74,28 @@ class mainWindow(QMainWindow):
         back_btn = QAction("Back", self)
         back_btn.setIcon(QtGui.QIcon(os.path.join("Images", "left-arrow.png")))
         back_btn.triggered.connect(self.navigate_back_tab)
+        back_btn.setStyleSheet("""padding-right:5px;padding-left:5px;""")
         navbar.addAction(back_btn)
 
         # forward button
         forward_butn = QAction("Forward", self)
         forward_butn.setIcon(QtGui.QIcon(os.path.join("Images", "right-arrow.png")))
         forward_butn.triggered.connect(self.forward_tab)
+        forward_butn.setStyleSheet("""padding-right:5px;padding-left:5px;""")
         navbar.addAction(forward_butn)
 
         # Refresh button
         reload_butn = QAction("Reload", self)
         reload_butn.setIcon(QtGui.QIcon(os.path.join("Images", "refresh.png")))
         reload_butn.triggered.connect(self.reload_tab)
+        reload_butn.setStyleSheet("""padding-right:5px;padding-left:5px;""")
         navbar.addAction(reload_butn)
 
         # Home button
         home_button = QAction("Home", self)
         home_button.setIcon(QtGui.QIcon(os.path.join("Images", "home.png")))
         home_button.triggered.connect(self.goToHome)
+        home_button.setStyleSheet("""padding-right:5px;padding-left:5px;""")
         navbar.addAction(home_button)
         
         navbar.addSeparator()
@@ -99,16 +103,20 @@ class mainWindow(QMainWindow):
         # Shows ssl security icon
         self.httpsicon = QLabel()
         self.httpsicon.setPixmap(QPixmap(os.path.join('Images', 'lock-icon.png')))
+        self.httpsicon.setStyleSheet("""padding-right:5px;padding-left:5px;""")
         navbar.addWidget(self.httpsicon)
 
         # Add search box
         self.url_bar = QLineEdit()
         self.url_bar.returnPressed.connect(self.navigate_to_url)
         self.url_bar.setStyleSheet("""
-            padding-top:5px;
-            padding-bottom:5px;
-            border: 2px solid #bdbdbd;
+            font-family: Arial;
+            padding-top:4px;
+            padding-left:8px;
+            padding-bottom:4px;
+            border:2px solid #bdbdbd;
             border-radius:6px;
+            font-size:10pt;
         """)
         navbar.addWidget(self.url_bar)
         
