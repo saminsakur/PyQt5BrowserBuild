@@ -20,7 +20,6 @@ Some features :
 </ul>
 
 ***Some extra styles and features will be added soon that I'm working on***
-<h4>Note:</h4> It's so buggy
 
 
 The icons of my project are made from <a href="http://www.flaticon.com/">Flaticon</a>
