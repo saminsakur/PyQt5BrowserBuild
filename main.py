@@ -34,7 +34,7 @@ class AboutDialog(QDialog):
         font.setFamily("Segoe UI")
         font.setPointSize(20)
         title.setFont(font)
-        self.setWindowTitle("")
+        self.setWindowTitle("Simple web browser")
 
         layout.addWidget(title)
         layout.addWidget(QLabel("About:\nhttps://github.com/saminsakur/PyQt5BrowserBuild"))
@@ -56,6 +56,9 @@ class mainWindow(QMainWindow):
         self.tabs.currentChanged.connect(self.tab_changed)
         self.tabs.setTabsClosable(True)
         self.tabs.tabCloseRequested.connect(self.close_current_tab)
+        self.tabs.setStyleSheet("""
+            background-color:#cfcfcf;
+        """)
         self.setCentralWidget(self.tabs)
 
         # self.setCentralWidget(self.browser)
@@ -69,21 +72,18 @@ class mainWindow(QMainWindow):
 
         # back button
         back_btn = QAction("Back", self)
-        back_btn.setStatusTip("Back to the previous page")
         back_btn.setIcon(QtGui.QIcon(os.path.join("Images", "left-arrow.png")))
         back_btn.triggered.connect(self.navigate_back_tab)
         navbar.addAction(back_btn)
 
         # forward button
         forward_butn = QAction("Forward", self)
-        forward_butn.setStatusTip("Forward to next page")
         forward_butn.setIcon(QtGui.QIcon(os.path.join("Images", "right-arrow.png")))
         forward_butn.triggered.connect(self.forward_tab)
         navbar.addAction(forward_butn)
 
         # Refresh button
         reload_butn = QAction("Reload", self)
-        reload_butn.setStatusTip("Reload current page")
         reload_butn.setIcon(QtGui.QIcon(os.path.join("Images", "refresh.png")))
         reload_butn.triggered.connect(self.reload_tab)
         navbar.addAction(reload_butn)
@@ -91,7 +91,6 @@ class mainWindow(QMainWindow):
         # Home button
         home_button = QAction("Home", self)
         home_button.setIcon(QtGui.QIcon(os.path.join("Images", "home.png")))
-        home_button.setStatusTip("Go home")
         home_button.triggered.connect(self.goToHome)
         navbar.addAction(home_button)
         
@@ -108,14 +107,13 @@ class mainWindow(QMainWindow):
         self.url_bar.setStyleSheet("""
             padding-top:5px;
             padding-bottom:5px;
-            border: 2px solid white;
+            border: 2px solid #bdbdbd;
             border-radius:6px;
         """)
         navbar.addWidget(self.url_bar)
         
         # Stop button
-        stop_btn = QAction(QIcon(os.path.join('Images', 'cross.png')), "Stop", self)
-        stop_btn.setStatusTip("Stop loading current page")
+        stop_btn = QAction(QIcon(os.path.join('Images', 'cross.png')), "Stop Loading current page", self)
         stop_btn.triggered.connect(self.stop_loading_tab)
         navbar.addAction(stop_btn)
         
@@ -127,7 +125,6 @@ class mainWindow(QMainWindow):
 
         aboutAction = QAction("About", self)
         aboutAction.setIcon(QIcon(os.path.join("Images", "info.png")))
-        aboutAction.setStatusTip("Show Info")
         aboutAction.triggered.connect(self.about)
         navbar.addAction(aboutAction)
 
