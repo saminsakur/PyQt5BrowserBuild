@@ -5,11 +5,18 @@ Tested on:
 Python version: Python 3.9.5 (64 bit)<br>
 PyQt5 version: 5.15.4
 
-Install Required files:
+<h3>Activate Virtual Environment:</h3>
+<br>
+On windows:
 ```
-python -m pip install PyQt5
-python -m pip install PyQtWebEngine
+env\Scripts\activate
 ```
+<br>
+On a mac/linux:
+```
+source env/Scripts/activate
+```
+
 <br>
 Some features :
 <ul>
@@ -19,7 +26,6 @@ Some features :
   <li>Navigate forward and backward</li>
 </ul>
 
-***Some extra styles and features will be added soon that I'm working on***
 
 
 The icons of my project are made from <a href="http://www.flaticon.com/">Flaticon</a>
