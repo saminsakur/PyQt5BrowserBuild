@@ -80,7 +80,7 @@ class mainWindow(QMainWindow):
         border:1px solid transparent;
         border-radius:10px;
         """)
-        self.tabs.tabBarDoubleClicked.connect( self.tab_open_doubleclick )
+        self.tabs.tabBarDoubleClicked.connect(self.tab_open_doubleclick)
         self.tabs.currentChanged.connect(self.tab_changed)
         self.tabs.setTabsClosable(True)
         self.tabs.tabCloseRequested.connect(self.close_current_tab)
@@ -175,7 +175,7 @@ class mainWindow(QMainWindow):
 
         ContextMenuButton = QPushButton(self)
         ContextMenuButton.setObjectName("ContextMenuButton")
-        ContextMenuButton.setIcon(QIcon(os.path.join("Images", "more.png")))
+        ContextMenuButton.setIcon(QIcon(os.path.join("Images", "info.png")))
         ContextMenuButton.clicked.connect(self.about)
         ContextMenuButton.setObjectName("ContextMenuTriggerButn")
         navbar.addWidget(ContextMenuButton)
@@ -254,10 +254,11 @@ class mainWindow(QMainWindow):
         self.tabs.setCurrentIndex(i)
 
         # update url when it's from the correct tab
+       # update url when it's from the correct tab
         self.browser.urlChanged.connect(lambda qurl, browser=self.browser:
                                    self.update_urlbar(qurl, browser))
         self.browser.loadFinished.connect(lambda _, i=i, browser=self.browser:
-                                    self.tabs.setTabText(i, browser.page().title()))
+                                     self.tabs.setTabText(i, browser.page().title()))
         # if self.browser.loadProgress == True:
         #     self.reload_butn.setIcon(os.path.join("Images", "info.png"))
 
@@ -297,6 +298,7 @@ class mainWindow(QMainWindow):
         # if the text in the search box endswith one of the domain in the domains tuple, then "http://" will be added
         # if the text is pre "http://" or "https://" added, then not               
         # To open files
+        # [0-9A-Za-z]+\.+[A-Za-z0-9]{2}
         
         if QUrl(in_url).scheme() == "file":
             file_path = os.path.abspath(os.path.join(os.path.dirname(__file__), in_url))
