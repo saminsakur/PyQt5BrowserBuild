@@ -70,9 +70,6 @@ class mainWindow(QMainWindow):
     def __init__(self, *args, **kwargs):
         super(mainWindow, self).__init__()
         
-        # webview
-        self.browser = QWebEngineView()
-
         # create tabs
         self.tabs = QTabWidget()
         self.tabs.setTabIcon(0, QIcon(os.path.join("Images", "info.png")))
@@ -151,7 +148,7 @@ class mainWindow(QMainWindow):
         self.httpsicon.setPixmap(QPixmap(os.path.join('Images', 'lock-icon.png')))
         navbar.addWidget(self.httpsicon)
 
-        # Add search box
+        # Add Address bar
         self.url_bar = QLineEdit()
         self.url_bar.returnPressed.connect(self.navigate_to_url)
         self.url_bar.setStyleSheet("""
@@ -164,6 +161,8 @@ class mainWindow(QMainWindow):
             font-size:10pt;
             background-color:#fff;
         """)
+
+        self.url_bar.mousePressEvent(QMouseEvent(self.select_all_text))
         navbar.addWidget(self.url_bar)
         
 
@@ -218,7 +217,7 @@ class mainWindow(QMainWindow):
     
     # to update the tab
     def tab_changed(self, i):
-        qurl = self.browser.url()
+        qurl = self.tabs.currentWidget().url()
         self.update_urlbar(qurl, self.tabs.currentWidget())
         self.update_title(self.tabs.currentWidget())
 
@@ -236,7 +235,7 @@ class mainWindow(QMainWindow):
         if browser != self.tabs.currentWidget():
             return
 
-        title = self.browser.page().title()
+        title = self.tabs.currentWidget().page().title()
         self.setWindowTitle("{} Simple Web Browser".format(title))
 
     # To close current tab
@@ -248,21 +247,23 @@ class mainWindow(QMainWindow):
         if qurl is None:
             qurl = QUrl(' ')
         
-        
-        self.browser.setUrl(qurl)
-        i = self.tabs.addTab(self.browser, label)
+        browser = QWebEngineView()
+        browser.setUrl(qurl)
+        i = self.tabs.addTab(browser, label)
 
         self.tabs.setCurrentIndex(i)
 
         # update url when it's from the correct tab
-       # update url when it's from the correct tab
-        self.browser.urlChanged.connect(lambda qurl, browser=self.browser:
+        # update url when it's from the correct tab
+        browser.urlChanged.connect(lambda qurl, browser=browser:
                                    self.update_urlbar(qurl, browser))
-        self.browser.loadFinished.connect(lambda _, i=i, browser=self.browser:
+        browser.loadFinished.connect(lambda _, i=i, browser=browser:
                                      self.tabs.setTabText(i, browser.page().title()))
         # if self.browser.loadProgress == True:
         #     self.reload_butn.setIcon(os.path.join("Images", "info.png"))
 
+    def select_all_text(self):
+        self.url_bar.selectAll()
 
     def about(self):
         dialouge = AboutDialog()
@@ -330,7 +331,13 @@ app.setStyleSheet("""
 QToolBar{
     background-color:#f7f7f7;
 }
-
+QTabBar::tab {
+    background-color: #555;
+    color: #fff;
+    padding: 6px;
+    border-top-left-radius: 6px;
+    border-top-right-radius: 6px;
+        }'''
 QLabel#SSLIcon{
     border:1px solid transparent;
     padding-left:10px;
