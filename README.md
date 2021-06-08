@@ -8,11 +8,14 @@ PyQt5 version: 5.15.4
 <h3>Activate Virtual Environment:</h3>
 <br>
 On windows:
+
 ```
 env\Scripts\activate
 ```
+
 <br>
 On a mac/linux:
+
 ```
 source env/Scripts/activate
 ```
