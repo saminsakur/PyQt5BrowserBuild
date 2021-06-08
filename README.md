@@ -20,7 +20,7 @@ On a mac/linux:
 source env/Scripts/activate
 ```
 
-<h3>Navigate to the directory<i>Note: If you download the zip and extract with a different name, then your directory may be different</i></h3>
+<h3>Navigate to the directory</h3><br><i>Note: If you download the zip and extract with a different name, then your directory may be different</i>
 
 ```
 cd PyQt5BrowserBuild-master
