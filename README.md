@@ -26,7 +26,6 @@ source env/Scripts/activate
 cd PyQt5BrowserBuild-master
 ```
 
-<br>
 <h3>Run python file</h3>
 
 ```
