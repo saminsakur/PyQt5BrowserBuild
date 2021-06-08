@@ -1,5 +1,5 @@
 # PyQt5 Qwebenjineview web browser
-## chroium based browser with python pyqt5 library
+*chroium based browser with python pyqt5 library*
 
 Tested on:
 Python version: Python 3.9.5 (64 bit)<br>
