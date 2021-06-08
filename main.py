@@ -68,9 +68,13 @@ class AboutDialog(QDialog):
 class mainWindow(QMainWindow):
     def __init__(self, *args, **kwargs):
         super(mainWindow, self).__init__()
+        
+        # webview
+        self.browser = QWebEngineView()
 
         # create tabs
         self.tabs = QTabWidget()
+        self.tabs.setTabIcon(0, QIcon(os.path.join("Images", "info.png")))
         self.tabs.setDocumentMode(True)
         self.tabs.tabBarDoubleClicked.connect( self.tab_open_doubleclick )
         self.tabs.currentChanged.connect(self.tab_changed)
@@ -105,15 +109,33 @@ class mainWindow(QMainWindow):
         navbar.addWidget(forward_butn)
 
         # Refresh button
-        reload_butn = QPushButton(self)
-        reload_butn.setObjectName("reload_butn")
-        reload_butn.setIcon(QtGui.QIcon(os.path.join("Images", "refresh.png")))
-        reload_butn.clicked.connect(self.reload_tab)
-        navbar.addWidget(reload_butn)
+        self.reload_butn = QPushButton(self)
+        self.reload_butn.setObjectName("reload_butn")
+        self.reload_butn.setIcon(QtGui.QIcon(os.path.join("Images", "refresh.png")))
+        self.reload_butn.clicked.connect(self.reload_tab)
+        
+        # Stop button
+        stop_btn = QPushButton(self)
+        stop_btn.setObjectName("stop_butn")
+        stop_btn.setIcon(QIcon(os.path.join('Images', 'cross.png')))
+        stop_btn.clicked.connect(self.stop_loading_tab)
+
+        # if browser's loding is in progress, then add stop button
+        if self.browser.loadProgress == True:
+            navbar.addWidget(stop_btn)
+            stop_btn.hide()
+
+        # else, add reload button to the toolbar
+        else:
+            navbar.addWidget(self.reload_butn)
+            stop_btn.hide()
+            
+
 
         # Home button
         home_button = QPushButton(self)
         home_button.setObjectName("home_button")
+        home_button.setToolTip("Back to home")
         home_button.setIcon(QtGui.QIcon(os.path.join("Images", "home.png")))
         home_button.clicked.connect(self.goToHome)
         navbar.addWidget(home_button)
@@ -123,16 +145,7 @@ class mainWindow(QMainWindow):
         # Shows ssl security icon
         self.httpsicon = QLabel()
         self.httpsicon.setObjectName("SSLIcon")
-        # self.httpsicon.setStyleSheet("""    
-        # background-color:yellow;
-        # border:1px solid transparent;
-        # border-radius:6px;
-        # width:10px;
-        # height:10px;
-        # background-color:none;
-        # padding-right:5px;
-        # padding-left:5px;
-        # """)
+        self.httpsicon.setToolTip(str(self.site_status))
         self.httpsicon.setPixmap(QPixmap(os.path.join('Images', 'lock-icon.png')))
         navbar.addWidget(self.httpsicon)
 
@@ -151,12 +164,7 @@ class mainWindow(QMainWindow):
         """)
         navbar.addWidget(self.url_bar)
         
-        # Stop button
-        stop_btn = QPushButton(self)
-        stop_btn.setObjectName("stop_butn")
-        stop_btn.setIcon(QIcon(os.path.join('Images', 'cross.png')))
-        stop_btn.clicked.connect(self.stop_loading_tab)
-        navbar.addWidget(stop_btn)
+
         
         # tab_close_button = QPushButton("Close tab", self)
         # tab_close_button.setStyleSheet('''color:red;''')
@@ -197,6 +205,10 @@ class mainWindow(QMainWindow):
     def stop_loading_tab(self):
         self.tabs.currentWidget().stop()
 
+    def site_status(self):
+        # if self.tabs.currentWidget 
+        return "The site is cool!"
+
     # doubleclick on empty space for new tab
     def tab_open_doubleclick(self, i):
         if i == -1: # No tab under the click
@@ -204,7 +216,7 @@ class mainWindow(QMainWindow):
     
     # to update the tab
     def tab_changed(self, i):
-        qurl = self.tabs.currentWidget().url()
+        qurl = self.browser.url()
         self.update_urlbar(qurl, self.tabs.currentWidget())
         self.update_title(self.tabs.currentWidget())
 
@@ -222,30 +234,33 @@ class mainWindow(QMainWindow):
         if browser != self.tabs.currentWidget():
             return
 
-        title = self.tabs.currentWidget().page().title()
+        title = self.browser.page().title()
         self.setWindowTitle("{} Simple Web Browser".format(title))
 
     # To close current tab
     def close_tab(self, i):
         self.tabs.removeTab(i)
-
+    
     # function to add new tab
     def add_new_tab(self, qurl=None, label="Blank"):
         if qurl is None:
             qurl = QUrl(' ')
         
-        browser = QWebEngineView()
-        browser.setUrl(qurl)
-        i = self.tabs.addTab(browser, label)
+        
+        self.browser.setUrl(qurl)
+        i = self.tabs.addTab(self.browser, label)
 
         self.tabs.setCurrentIndex(i)
 
         # update url when it's from the correct tab
-        browser.urlChanged.connect(lambda qurl, browser=browser:
+        self.browser.urlChanged.connect(lambda qurl, browser=self.browser:
                                    self.update_urlbar(qurl, browser))
-        browser.loadFinished.connect(lambda _, i=i, browser=browser:
+        self.browser.loadFinished.connect(lambda _, i=i, browser=self.browser:
                                      self.tabs.setTabText(i, browser.page().title()))
-    
+        # if self.browser.loadProgress == True:
+        #     self.reload_butn.setIcon(os.path.join("Images", "info.png"))
+
+
     def about(self):
         dialouge = AboutDialog()
         dialouge.exec_()
@@ -404,7 +419,8 @@ QPushButton#home_button:hover{
 
 QPushButton#ContextMenuTriggerButn:hover{
     background-color:#ccc;
-}
-""")#e6e6e6
+}          
+""")
+#e6e6e6 background color
 window = mainWindow()
 app.exec_()
