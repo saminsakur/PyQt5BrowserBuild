@@ -1,14 +1,15 @@
 import os
 import sys
+from typing import Text
 from PyQt5 import *
 from PyQt5 import QtGui
+from PyQt5 import QtCore
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
 from PyQt5.QtWebChannel import *
 from PyQt5.QtWebEngine import *
 from PyQt5.QtWebEngineWidgets import QWebEngineView
-from PyQt5.sip import *
 
 
 domains = (
@@ -75,8 +76,26 @@ class mainWindow(QMainWindow):
         self.tabs.setTabIcon(0, QIcon(os.path.join("Images", "info.png")))
         self.tabs.setDocumentMode(True)
         self.tabs.setStyleSheet("""
-        border:1px solid transparent;
-        border-radius:10px;
+            QTabBar{
+                background-color:#666664;
+            }
+            QTabBar::tab {
+                background-color: #a3a3a3;
+                color: #fff;
+                padding: 6px;
+                border-top-left-radius: 6px;
+                border-top-right-radius: 6px;
+                padding-right:60px;
+            }
+
+            QTabBar::tab:focus{
+                border-color:blue;
+                background-color:#e3e3e3;
+            }
+            
+            QTabBar::tab:hover{
+                background-color:#848889;
+            }
         """)
         self.tabs.tabBarDoubleClicked.connect(self.tab_open_doubleclick)
         self.tabs.currentChanged.connect(self.tab_changed)
@@ -89,23 +108,23 @@ class mainWindow(QMainWindow):
 
 
         # nav bar
-        navbar = QToolBar()
-        navbar.setMovable(False)
-        self.addToolBar(navbar)
+        self.navbar = QToolBar()
+        self.navbar.setMovable(False)
+        self.addToolBar(self.navbar)
 
         # back button
         back_btn = QPushButton(self)
         back_btn.setObjectName("back_btn")
         back_btn.setIcon(QtGui.QIcon(os.path.join("Images", "left-arrow.png")))
         back_btn.clicked.connect(self.navigate_back_tab)
-        navbar.addWidget(back_btn)
+        self.navbar.addWidget(back_btn)
 
         # forward button
         forward_butn = QPushButton(self)       
         forward_butn.setObjectName("forward_butn")
         forward_butn.setIcon(QtGui.QIcon(os.path.join("Images", "right-arrow.png")))
         forward_butn.clicked.connect(self.forward_tab)
-        navbar.addWidget(forward_butn)
+        self.navbar.addWidget(forward_butn)
 
         # Refresh button
         self.reload_butn = QPushButton(self)
@@ -114,56 +133,71 @@ class mainWindow(QMainWindow):
         self.reload_butn.clicked.connect(self.reload_tab)
         
         # Stop button
-        stop_btn = QPushButton(self)
-        stop_btn.setObjectName("stop_butn")
-        stop_btn.setIcon(QIcon(os.path.join('Images', 'cross.png')))
-        stop_btn.clicked.connect(self.stop_loading_tab)
-
-        # if browser's loding is in progress, then add stop button
-        if self.browser.loadProgress == True:
-            navbar.addWidget(stop_btn)
-            stop_btn.hide()
-
-        # else, add reload button to the toolbar
-        else:
-            navbar.addWidget(self.reload_butn)
-            stop_btn.hide()
-            
+        self.stop_btn = QPushButton(self)
+        self.stop_btn.setObjectName("stop_butn")
+        self.stop_btn.setIcon(QIcon(os.path.join('Images', 'cross.png')))
+        self.stop_btn.clicked.connect(self.stop_loading_tab)
 
 
         # Home button
-        home_button = QPushButton(self)
-        home_button.setObjectName("home_button")
-        home_button.setToolTip("Back to home")
-        home_button.setIcon(QtGui.QIcon(os.path.join("Images", "home.png")))
-        home_button.clicked.connect(self.goToHome)
-        navbar.addWidget(home_button)
+        self.home_button = QPushButton(self)
+        self.home_button.setObjectName("home_button")
+        self.home_button.setToolTip("Back to home")
+        self.home_button.setIcon(QtGui.QIcon(os.path.join("Images", "home.png")))
+        self.home_button.clicked.connect(self.goToHome)
+        self.navbar.addWidget(self.home_button)
         
-        navbar.addSeparator()
-
-        # Shows ssl security icon
-        self.httpsicon = QLabel()
-        self.httpsicon.setObjectName("SSLIcon")
-        self.httpsicon.setToolTip(str(self.site_status))
-        self.httpsicon.setPixmap(QPixmap(os.path.join('Images', 'lock-icon.png')))
-        navbar.addWidget(self.httpsicon)
-
+        # self.set_reload_icon()
+        self.navbar.addSeparator()
+        
         # Add Address bar
         self.url_bar = QLineEdit()
         self.url_bar.returnPressed.connect(self.navigate_to_url)
         self.url_bar.setStyleSheet("""
-            font-family: Segoe UI;
-            padding-top:4px;
-            padding-left:8px;
-            padding-bottom:4px;
-            border:2px solid #bdbdbd;
-            border-radius:6px;
-            font-size:10pt;
-            background-color:#fff;
+            QLineEdit{
+                font-family: Segoe UI;
+                padding-top:4px;
+                padding-left:8px;
+                padding-bottom:4px;
+                border:2px solid #dddddd;
+                border-radius:6px;
+                font-size:10pt;
+                background-color:#fff;
+            }
+
+            QLineEdit:focus{
+                border-color:#87CEEB
+            }
+
+            QLineEdit:hover{
+                border-color:#e6e6e6
+            }
         """)
 
-        self.url_bar.mousePressEvent(QMouseEvent(self.select_all_text))
-        navbar.addWidget(self.url_bar)
+        def blah():
+            status = QUrl(self.url_bar.text()).scheme()
+            if status == "https":
+                return "Connection to this site is secured\nThis site has a valid certificate, issued by a trusted authority.\n\nThis means information (such as passwords or credit cards) will be securely sent to this site and cannot be intercepted.\n\nAlways be sure you're on the intended site before entering any information"
+            
+            elif status == "":
+                return "This site can be secured"
+            
+            elif status == "http":
+                return "This site is not secure!"
+
+                
+
+        # Shows ssl security icon
+        self.httpsicon = QLabel()
+        self.httpsicon.setObjectName("SSLIcon")
+        self.httpsicon.setToolTip(blah())
+        self.httpsicon.setPixmap(QPixmap(os.path.join('Images', 'lock-icon.png')))
+        self.navbar.addWidget(self.httpsicon)
+
+        self.navbar.addWidget(self.url_bar)
+
+        # self.url_bar.mousePressEvent.connect(self.select_all_text)
+        # self.navbar.addWidget(self.url_bar)
         
 
         
@@ -171,21 +205,34 @@ class mainWindow(QMainWindow):
         # tab_close_button.setStyleSheet('''color:red;''')
         # tab_close_button.pressed.connect(self.close_current_tab)
         # self.tabs.addAction(tab_close_button)
-        navbar.addSeparator()
+        self.navbar.addSeparator()
 
         ContextMenuButton = QPushButton(self)
         ContextMenuButton.setObjectName("ContextMenuButton")
         ContextMenuButton.setIcon(QIcon(os.path.join("Images", "info.png")))
         ContextMenuButton.clicked.connect(self.about)
         ContextMenuButton.setObjectName("ContextMenuTriggerButn")
-        navbar.addWidget(ContextMenuButton)
-
+        self.navbar.addWidget(ContextMenuButton)
         
+        if self.tabs.currentWidget() != None :
+            self.tabs.currentWidget().loadProgress.connect(self.loadProgressHandler)
+            self.tabs.currentWidget().loadFinished.connect(self.loadFinishedHandler)
+
+        else:
+            print(self.tabs.currentWidget())
 
         # on startup
         self.add_new_tab(QUrl("https://www.google.com/"), "Homepage")
         self.show()
-        
+    
+    @QtCore.pyqtSlot(int)
+    def loadProgressHandler(self, prog):
+        self.navbar.addWidget(self.stop_btn)
+
+    @QtCore.pyqtSlot()
+    def loadFinishedHandler(self):
+        self.navbar.addWidget(self.reload_butn)
+
     # funcion to navigate to home whaen home icon is pressed   
     def goToHome(self):
         self.tabs.currentWidget().setUrl(QUrl("http://www.google.com/"))
@@ -204,11 +251,7 @@ class mainWindow(QMainWindow):
 
     # stop load current tab
     def stop_loading_tab(self):
-        self.tabs.currentWidget().stop()
-
-    def site_status(self):
-        # if self.tabs.currentWidget 
-        return "The site is cool!"
+        self.tabs.currentWidget().stop()    
 
     # doubleclick on empty space for new tab
     def tab_open_doubleclick(self, i):
@@ -247,9 +290,11 @@ class mainWindow(QMainWindow):
         if qurl is None:
             qurl = QUrl(' ')
         
+        global browser
         browser = QWebEngineView()
         browser.setUrl(qurl)
         i = self.tabs.addTab(browser, label)
+
 
         self.tabs.setCurrentIndex(i)
 
@@ -322,6 +367,11 @@ class mainWindow(QMainWindow):
         
         self.tabs.currentWidget().setUrl(QUrl(url))
 
+    # def set_reload_icon(self):
+    #     x = self.tabs.currentWidget().loadProgress.connect(self.change_reload_butn)
+        
+            
+
 
 
 app = QApplication(sys.argv)
@@ -329,15 +379,9 @@ QApplication.setApplicationName("Simple Web Browser")
 QApplication.setWindowIcon(QIcon(os.path.join("Images", "browser.png")))
 app.setStyleSheet("""
 QToolBar{
-    background-color:#f7f7f7;
+    background-color:#eee;
 }
-QTabBar::tab {
-    background-color: #555;
-    color: #fff;
-    padding: 6px;
-    border-top-left-radius: 6px;
-    border-top-right-radius: 6px;
-        }'''
+
 QLabel#SSLIcon{
     border:1px solid transparent;
     padding-left:10px;
