@@ -12,7 +12,27 @@ from PyQt5.sip import *
 
 
 domains = (
-    "com", "net", "org", "io", "in", "me", "app", "gg", "cc", "bd", "com.bd", "google", "in", "us", "uk", "gov", "int", "edu", "edu.bd", "apple"
+    "com",
+    "net", 
+    "org", 
+    "io", 
+    "in", 
+    "me", 
+    "app", 
+    "gg", 
+    "cc", 
+    "bd", 
+    "com.bd", 
+    "google", 
+    "in", 
+    "us", 
+    "uk", 
+    "gov", 
+    "int", 
+    "edu", 
+    "edu.bd", 
+    "apple"
+    "localhost"
 )
 
 
@@ -56,9 +76,9 @@ class mainWindow(QMainWindow):
         self.tabs.currentChanged.connect(self.tab_changed)
         self.tabs.setTabsClosable(True)
         self.tabs.tabCloseRequested.connect(self.close_current_tab)
-        self.tabs.setStyleSheet("""
-            background-color:#cfcfcf;
-        """)
+        # self.tabs.setStyleSheet("""
+        #     background-color:#fff;
+        # """)
         self.setCentralWidget(self.tabs)
 
         # self.setCentralWidget(self.browser)
@@ -72,24 +92,28 @@ class mainWindow(QMainWindow):
 
         # back button
         back_btn = QPushButton(self)
+        back_btn.setObjectName("back_btn")
         back_btn.setIcon(QtGui.QIcon(os.path.join("Images", "left-arrow.png")))
         back_btn.clicked.connect(self.navigate_back_tab)
         navbar.addWidget(back_btn)
 
         # forward button
-        forward_butn = QPushButton("Forward", self)
+        forward_butn = QPushButton(self)       
+        forward_butn.setObjectName("forward_butn")
         forward_butn.setIcon(QtGui.QIcon(os.path.join("Images", "right-arrow.png")))
         forward_butn.clicked.connect(self.forward_tab)
         navbar.addWidget(forward_butn)
 
         # Refresh button
-        reload_butn = QPushButton("Reload", self)
+        reload_butn = QPushButton(self)
+        reload_butn.setObjectName("reload_butn")
         reload_butn.setIcon(QtGui.QIcon(os.path.join("Images", "refresh.png")))
         reload_butn.clicked.connect(self.reload_tab)
         navbar.addWidget(reload_butn)
 
         # Home button
-        home_button = QPushButton("Home", self)
+        home_button = QPushButton(self)
+        home_button.setObjectName("home_button")
         home_button.setIcon(QtGui.QIcon(os.path.join("Images", "home.png")))
         home_button.clicked.connect(self.goToHome)
         navbar.addWidget(home_button)
@@ -98,26 +122,39 @@ class mainWindow(QMainWindow):
 
         # Shows ssl security icon
         self.httpsicon = QLabel()
+        self.httpsicon.setObjectName("SSLIcon")
+        # self.httpsicon.setStyleSheet("""    
+        # background-color:yellow;
+        # border:1px solid transparent;
+        # border-radius:6px;
+        # width:10px;
+        # height:10px;
+        # background-color:none;
+        # padding-right:5px;
+        # padding-left:5px;
+        # """)
         self.httpsicon.setPixmap(QPixmap(os.path.join('Images', 'lock-icon.png')))
-        self.httpsicon.setStyleSheet("""padding-right:5px;padding-left:5px;""")
         navbar.addWidget(self.httpsicon)
 
         # Add search box
         self.url_bar = QLineEdit()
         self.url_bar.returnPressed.connect(self.navigate_to_url)
         self.url_bar.setStyleSheet("""
-            font-family: Arial;
+            font-family: Segoe UI;
             padding-top:4px;
             padding-left:8px;
             padding-bottom:4px;
             border:2px solid #bdbdbd;
             border-radius:6px;
             font-size:10pt;
+            background-color:#fff;
         """)
         navbar.addWidget(self.url_bar)
         
         # Stop button
-        stop_btn = QPushButton(QIcon(os.path.join('Images', 'cross.png')), "Stop Loading current page", self)
+        stop_btn = QPushButton(self)
+        stop_btn.setObjectName("stop_butn")
+        stop_btn.setIcon(QIcon(os.path.join('Images', 'cross.png')))
         stop_btn.clicked.connect(self.stop_loading_tab)
         navbar.addWidget(stop_btn)
         
@@ -128,6 +165,7 @@ class mainWindow(QMainWindow):
         navbar.addSeparator()
 
         ContextMenuButton = QPushButton(self)
+        ContextMenuButton.setObjectName("ContextMenuButton")
         ContextMenuButton.setIcon(QIcon(os.path.join("Images", "more.png")))
         ContextMenuButton.clicked.connect(self.about)
         ContextMenuButton.setObjectName("ContextMenuTriggerButn")
@@ -185,7 +223,7 @@ class mainWindow(QMainWindow):
             return
 
         title = self.tabs.currentWidget().page().title()
-        self.setWindowTitle("%s Simple Web Browser" % title)
+        self.setWindowTitle("{} Simple Web Browser".format(title))
 
     # To close current tab
     def close_tab(self, i):
@@ -270,6 +308,23 @@ app = QApplication(sys.argv)
 QApplication.setApplicationName("Simple Web Browser")
 QApplication.setWindowIcon(QIcon(os.path.join("Images", "browser.png")))
 app.setStyleSheet("""
+QToolBar{
+    background-color:#f7f7f7;
+}
+
+QLabel#SSLIcon{
+    border:1px solid transparent;
+    padding-left:10px;
+    padding-right:10px;
+    border-radius:6px;
+    width:5px;
+    height:5px;
+}
+
+QLabel#SSLIcon:hover{
+    background-color:#e6e6e6;
+}
+
 QPushButton#ContextMenuTriggerButn{
     border:1px solid transparent;
     padding:10px;
@@ -279,9 +334,77 @@ QPushButton#ContextMenuTriggerButn{
     background-color:none;
 }
 
+QPushButton#back_btn{
+    border:1px solid transparent;
+    padding:10px;
+    border-radius:7px;
+    width:10px;
+    height:10px;
+    background-color:none;
+}
+
+QPushButton#forward_butn{
+    border:1px solid transparent;
+    padding:10px;
+    border-radius:7px;
+    width:10px;
+    height:10px;
+    background-color:none;   
+}
+
+QPushButton#reload_butn{
+    border:1px solid transparent;
+    padding:10px;
+    border-radius:7px;
+    width:10px;
+    height:10px;
+    background-color:none;    
+}
+
+QPushButton#home_button{
+    border:1px solid transparent;
+    padding:10px;
+    border-radius:7px;
+    width:10px;
+    height:10px;
+    background-color:none;    
+}
+
+QPushButton#stop_butn{
+    border:1px solid transparent;
+    padding:10px;
+    border-radius:7px;
+    width:30px;
+    height:10px;
+    background-color:none;    
+}
+
+/*
+ * after hover
+*/
+QPushButton#stop_butn:hover{
+    background-color:#e6e6e6;
+}
+
+QPushButton#back_btn:hover{
+    background-color:#e6e6e6
+}
+
+QPushButton#forward_butn:hover{
+    background-color:#e6e6e6
+}
+
+QPushButton#reload_butn:hover{
+    background-color:#e6e6e6
+}
+
+QPushButton#home_button:hover{
+    background-color:#e6e6e6
+}
+
 QPushButton#ContextMenuTriggerButn:hover{
     background-color:#ccc;
 }
-""")
+""")#e6e6e6
 window = mainWindow()
 app.exec_()
