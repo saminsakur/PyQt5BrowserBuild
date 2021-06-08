@@ -76,13 +76,14 @@ class mainWindow(QMainWindow):
         self.tabs = QTabWidget()
         self.tabs.setTabIcon(0, QIcon(os.path.join("Images", "info.png")))
         self.tabs.setDocumentMode(True)
+        self.tabs.setStyleSheet("""
+        border:1px solid transparent;
+        border-radius:10px;
+        """)
         self.tabs.tabBarDoubleClicked.connect( self.tab_open_doubleclick )
         self.tabs.currentChanged.connect(self.tab_changed)
         self.tabs.setTabsClosable(True)
         self.tabs.tabCloseRequested.connect(self.close_current_tab)
-        # self.tabs.setStyleSheet("""
-        #     background-color:#fff;
-        # """)
         self.setCentralWidget(self.tabs)
 
         # self.setCentralWidget(self.browser)
@@ -256,7 +257,7 @@ class mainWindow(QMainWindow):
         self.browser.urlChanged.connect(lambda qurl, browser=self.browser:
                                    self.update_urlbar(qurl, browser))
         self.browser.loadFinished.connect(lambda _, i=i, browser=self.browser:
-                                     self.tabs.setTabText(i, browser.page().title()))
+                                    self.tabs.setTabText(i, browser.page().title()))
         # if self.browser.loadProgress == True:
         #     self.reload_butn.setIcon(os.path.join("Images", "info.png"))
 
