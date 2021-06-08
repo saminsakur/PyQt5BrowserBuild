@@ -21,14 +21,18 @@ source env/Scripts/activate
 ```
 
 <h3>Navigate to the directory<i>Note: If you download the zip and extract with a different name, then your directory may be different</i></h3>
+
 ```
 cd PyQt5BrowserBuild-master
 ```
+
 <br>
 <h3>Run python file</h3>
+
 ```
 python main.py
 ```
+
 <br>
 Some features :
 <ul>

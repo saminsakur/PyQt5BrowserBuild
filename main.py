@@ -174,7 +174,7 @@ class mainWindow(QMainWindow):
             }
         """)
 
-        def blah():
+        def status():
             status = QUrl(self.url_bar.text()).scheme()
             if status == "https":
                 return "Connection to this site is secured\nThis site has a valid certificate, issued by a trusted authority.\n\nThis means information (such as passwords or credit cards) will be securely sent to this site and cannot be intercepted.\n\nAlways be sure you're on the intended site before entering any information"
@@ -190,7 +190,7 @@ class mainWindow(QMainWindow):
         # Shows ssl security icon
         self.httpsicon = QLabel()
         self.httpsicon.setObjectName("SSLIcon")
-        self.httpsicon.setToolTip(blah())
+        self.httpsicon.setToolTip(status())
         self.httpsicon.setPixmap(QPixmap(os.path.join('Images', 'lock-icon.png')))
         self.navbar.addWidget(self.httpsicon)
 
@@ -294,7 +294,6 @@ class mainWindow(QMainWindow):
         browser = QWebEngineView()
         browser.setUrl(qurl)
         i = self.tabs.addTab(browser, label)
-
 
         self.tabs.setCurrentIndex(i)
 
