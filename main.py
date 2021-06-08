@@ -13,6 +13,7 @@ from PyQt5.sip import *
 
 domains = (
     "com",
+    "co",
     "net", 
     "org", 
     "io", 
@@ -310,7 +311,7 @@ class mainWindow(QMainWindow):
             url = "http://"+in_url
 
         # this will search google
-        elif not in_url.endswith("/"):
+        elif not in_url.endswith(domains) or not in_url.startswith(("http:", "https:")) or in_url.endswith('/'):
             url = self.searchGoogle(in_url)
                 
         # else browser will go to anything the user has been written
