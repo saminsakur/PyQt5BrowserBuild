@@ -131,13 +131,19 @@ class mainWindow(QMainWindow):
         self.reload_butn.setObjectName("reload_butn")
         self.reload_butn.setIcon(QtGui.QIcon(os.path.join("Images", "refresh.png")))
         self.reload_butn.clicked.connect(self.reload_tab)
+
+        self.reload_butn.setHidden(0)
         
         # Stop button
         self.stop_btn = QPushButton(self)
         self.stop_btn.setObjectName("stop_butn")
         self.stop_btn.setIcon(QIcon(os.path.join('Images', 'cross.png')))
         self.stop_btn.clicked.connect(self.stop_loading_tab)
-
+        self.stop_btn.setHidden(True)
+        
+        
+        self.navbar.addWidget(self.reload_butn)
+        
 
         # Home button
         self.home_button = QPushButton(self)
@@ -228,10 +234,12 @@ class mainWindow(QMainWindow):
     @QtCore.pyqtSlot(int)
     def loadProgressHandler(self, prog):
         self.navbar.addWidget(self.stop_btn)
+        print("loading")
 
     @QtCore.pyqtSlot()
     def loadFinishedHandler(self):
         self.navbar.addWidget(self.reload_butn)
+        print("Load Finished")
 
     # funcion to navigate to home whaen home icon is pressed   
     def goToHome(self):
@@ -352,11 +360,11 @@ class mainWindow(QMainWindow):
             self.tabs.currentWidget().load(local_url)
             
 
-        elif any([in_url.endswith(domains), in_url.endswith("/")]) and not any([in_url.startswith("http://"), in_url.startswith("https://"), in_url.startswith("file:///")]):
+        elif any([in_url.endswith(domains), in_url.endswith("/")]) and not any(i in in_url  for i in ("http://","https://","file:///")):
             url = "http://"+in_url
 
         # this will search google
-        elif not in_url.endswith(domains) or not in_url.startswith(("http:", "https:")) or in_url.endswith('/'):
+        elif not any(i in in_url for i in domains) or not any(i in in_url  for i in("http:", "https:", "/")):
             url = self.searchGoogle(in_url)
                 
         # else browser will go to anything the user has been written
