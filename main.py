@@ -1,14 +1,10 @@
 import os
 import sys
-from typing import Text
-from PyQt5 import *
 from PyQt5 import QtGui
 from PyQt5 import QtCore
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
-from PyQt5.QtWebChannel import *
-from PyQt5.QtWebEngine import *
 from PyQt5.QtWebEngineWidgets import QWebEngineView
 
 
@@ -71,10 +67,13 @@ class mainWindow(QMainWindow):
     def __init__(self, *args, **kwargs):
         super(mainWindow, self).__init__()
         
+        # define webview
+        self.browser = QWebEngineView()
         # create tabs
         self.tabs = QTabWidget()
-        self.tabs.setTabIcon(0, QIcon(os.path.join("Images", "info.png")))
+        self.tabs.setCurrentWidget(self.browser)
         self.tabs.setDocumentMode(True)
+        self.tabs.setMovable(True)
         self.tabs.setStyleSheet("""
             QTabBar{
                 background-color:#666664;
@@ -101,9 +100,10 @@ class mainWindow(QMainWindow):
         self.tabs.currentChanged.connect(self.tab_changed)
         self.tabs.setTabsClosable(True)
         self.tabs.tabCloseRequested.connect(self.close_current_tab)
+        self.browser.loadProgress.connect(self.loadProgressHandler)
+        self.browser.loadFinished.connect(self.loadFinishedHandler)
         self.setCentralWidget(self.tabs)
 
-        # self.setCentralWidget(self.browser)
         self.showMaximized()
 
 
@@ -115,6 +115,7 @@ class mainWindow(QMainWindow):
         # back button
         back_btn = QPushButton(self)
         back_btn.setObjectName("back_btn")
+        back_btn.setToolTip("Back to previous page")
         back_btn.setIcon(QtGui.QIcon(os.path.join("Images", "left-arrow.png")))
         back_btn.clicked.connect(self.navigate_back_tab)
         self.navbar.addWidget(back_btn)
@@ -122,6 +123,7 @@ class mainWindow(QMainWindow):
         # forward button
         forward_butn = QPushButton(self)       
         forward_butn.setObjectName("forward_butn")
+        forward_butn.setToolTip("Go forward")
         forward_butn.setIcon(QtGui.QIcon(os.path.join("Images", "right-arrow.png")))
         forward_butn.clicked.connect(self.forward_tab)
         self.navbar.addWidget(forward_butn)
@@ -129,31 +131,39 @@ class mainWindow(QMainWindow):
         # Refresh button
         self.reload_butn = QPushButton(self)
         self.reload_butn.setObjectName("reload_butn")
+        self.setToolTip("Reload current page")
         self.reload_butn.setIcon(QtGui.QIcon(os.path.join("Images", "refresh.png")))
         self.reload_butn.clicked.connect(self.reload_tab)
 
-        self.reload_butn.setHidden(0)
+        # Set reload button visible
+        self.reload_butn.setHidden(False)
         
         # Stop button
         self.stop_btn = QPushButton(self)
         self.stop_btn.setObjectName("stop_butn")
         self.stop_btn.setIcon(QIcon(os.path.join('Images', 'cross.png')))
         self.stop_btn.clicked.connect(self.stop_loading_tab)
-        self.stop_btn.setHidden(True)
-        
-        
-        self.navbar.addWidget(self.reload_butn)
-        
 
+        # Set stop_butn hidden initially
+        self.stop_btn.setHidden(True)
+
+        # Add Refresh and Stop button
+        self.navbar.addWidget(self.stop_btn)
+        self.navbar.addWidget(self.reload_butn)
+
+        
         # Home button
         self.home_button = QPushButton(self)
         self.home_button.setObjectName("home_button")
         self.home_button.setToolTip("Back to home")
         self.home_button.setIcon(QtGui.QIcon(os.path.join("Images", "home.png")))
+        # self.home_button.clicked.connect(self.goToHome)
         self.home_button.clicked.connect(self.goToHome)
         self.navbar.addWidget(self.home_button)
         
-        # self.set_reload_icon()
+
+        
+        # self.set_reload_icon(self.tabs.currentWidget())
         self.navbar.addSeparator()
         
         # Add Address bar
@@ -180,30 +190,18 @@ class mainWindow(QMainWindow):
             }
         """)
 
-        def status():
-            status = QUrl(self.url_bar.text()).scheme()
-            if status == "https":
-                return "Connection to this site is secured\nThis site has a valid certificate, issued by a trusted authority.\n\nThis means information (such as passwords or credit cards) will be securely sent to this site and cannot be intercepted.\n\nAlways be sure you're on the intended site before entering any information"
-            
-            elif status == "":
-                return "This site can be secured"
-            
-            elif status == "http":
-                return "This site is not secure!"
 
-                
 
         # Shows ssl security icon
         self.httpsicon = QLabel()
         self.httpsicon.setObjectName("SSLIcon")
-        self.httpsicon.setToolTip(status())
         self.httpsicon.setPixmap(QPixmap(os.path.join('Images', 'lock-icon.png')))
         self.navbar.addWidget(self.httpsicon)
-
+        
+        # Add address bar to the nav bar
         self.navbar.addWidget(self.url_bar)
 
         # self.url_bar.mousePressEvent.connect(self.select_all_text)
-        # self.navbar.addWidget(self.url_bar)
         
 
         
@@ -219,47 +217,45 @@ class mainWindow(QMainWindow):
         ContextMenuButton.clicked.connect(self.about)
         ContextMenuButton.setObjectName("ContextMenuTriggerButn")
         self.navbar.addWidget(ContextMenuButton)
-        
-        if self.tabs.currentWidget() != None :
-            self.tabs.currentWidget().loadProgress.connect(self.loadProgressHandler)
-            self.tabs.currentWidget().loadFinished.connect(self.loadFinishedHandler)
 
-        else:
-            print(self.tabs.currentWidget())
+        test = QAction("Test", self)
+        test.triggered.connect(self.blah)
+        self.navbar.addAction(test)
 
         # on startup
         self.add_new_tab(QUrl("https://www.google.com/"), "Homepage")
         self.show()
     
+    def blah(self):
+            self.add_new_tab(QUrl("https://www.gmail.com"), "Samin Sakur")
     @QtCore.pyqtSlot(int)
     def loadProgressHandler(self, prog):
-        self.navbar.addWidget(self.stop_btn)
-        print("loading")
+        self.stop_btn.setHidden(False)  # When any page is loading, then stop_butn will visible
+        self.reload_butn.setHidden(True)    # When any page is loading, then reload_butn will hidde  
 
     @QtCore.pyqtSlot()
     def loadFinishedHandler(self):
-        self.navbar.addWidget(self.reload_butn)
-        print("Load Finished")
+        self.reload_butn.setHidden(False)    # When loading is finished, then reload_butn will be visible again for the user
+        self.stop_btn.setHidden(True)   # When load finished, stop button will be hidden
 
-    # funcion to navigate to home whaen home icon is pressed   
+    # funcion to navigate to home when home icon is pressed   
     def goToHome(self):
-        self.tabs.currentWidget().setUrl(QUrl("http://www.google.com/"))
-
+        self.browser.setUrl(QUrl("http://www.google.com/"))
     # navigate backward tab
     def navigate_back_tab(self):
-        self.tabs.currentWidget().back()
+        self.browser.back()
 
     # go forward tab
     def forward_tab(self):
-        self.tabs.currentWidget().forward()
+        self.browser.forward()
 
     # reload tab
     def reload_tab(self):
-        self.tabs.currentWidget().reload()
+        self.browser.reload()
 
     # stop load current tab
     def stop_loading_tab(self):
-        self.tabs.currentWidget().stop()    
+        self.browser.stop()
 
     # doubleclick on empty space for new tab
     def tab_open_doubleclick(self, i):
@@ -268,9 +264,9 @@ class mainWindow(QMainWindow):
     
     # to update the tab
     def tab_changed(self, i):
-        qurl = self.tabs.currentWidget().url()
-        self.update_urlbar(qurl, self.tabs.currentWidget())
-        self.update_title(self.tabs.currentWidget())
+        qurl = self.browser.url()
+        self.update_urlbar(qurl, self.browser)
+        self.update_title(self.browser)
 
     # to close current tab
     def close_current_tab(self, i):
@@ -283,10 +279,10 @@ class mainWindow(QMainWindow):
         self.tabs.removeTab(i)
     
     def update_title(self, browser):
-        if browser != self.tabs.currentWidget():
+        if browser != self.browser:
             return
 
-        title = self.tabs.currentWidget().page().title()
+        title = self.browser.page().title()
         self.setWindowTitle("{} Simple Web Browser".format(title))
 
     # To close current tab
@@ -295,24 +291,23 @@ class mainWindow(QMainWindow):
     
     # function to add new tab
     def add_new_tab(self, qurl=None, label="Blank"):
+
         if qurl is None:
-            qurl = QUrl(' ')
-        
-        global browser
-        browser = QWebEngineView()
-        browser.setUrl(qurl)
-        i = self.tabs.addTab(browser, label)
+            qurl = QUrl('')
+
+        self.browser.setUrl(qurl)
+        i = self.tabs.addTab(self.browser, label)
 
         self.tabs.setCurrentIndex(i)
 
-        # update url when it's from the correct tab
-        # update url when it's from the correct tab
-        browser.urlChanged.connect(lambda qurl, browser=browser:
+        # More difficult! We only want to update the url when it's from the
+        # correct tab
+        self.browser.urlChanged.connect(lambda qurl, browser=self.browser:
                                    self.update_urlbar(qurl, browser))
-        browser.loadFinished.connect(lambda _, i=i, browser=browser:
+
+        self.browser.loadFinished.connect(lambda _, i=i, browser=self.browser:
                                      self.tabs.setTabText(i, browser.page().title()))
-        # if self.browser.loadProgress == True:
-        #     self.reload_butn.setIcon(os.path.join("Images", "info.png"))
+
 
     def select_all_text(self):
         self.url_bar.selectAll()
@@ -322,17 +317,20 @@ class mainWindow(QMainWindow):
         dialouge.exec_()
 
     def update_urlbar(self, q, browser=None):
-        if browser != self.tabs.currentWidget():
+        if browser != self.browser:    # if error, the change
             # if signal is not from the current tab, then ignore
             return
         
         if q.scheme() == 'https':
             # secure padlock icon
             self.httpsicon.setPixmap(QPixmap(os.path.join("Images", "security.png")))
+            self.httpsicon.setToolTip("Connection to this is is secure\n\nThis site have a valid certificate")
         
         else:
             # Set insecure padlock
             self.httpsicon.setPixmap(QPixmap(os.path.join("Images", "warning1.png")))
+            self.httpsicon.setToolTip("Connection to this site may not be secured")
+
         self.url_bar.setText(q.toString())
         self.url_bar.setCursorPosition(0)
 
@@ -357,7 +355,7 @@ class mainWindow(QMainWindow):
         if QUrl(in_url).scheme() == "file":
             file_path = os.path.abspath(os.path.join(os.path.dirname(__file__), in_url))
             local_url = QUrl.fromLocalFile(file_path)
-            self.tabs.currentWidget().load(local_url)
+            self.browser.load(local_url)
             
 
         elif any([in_url.endswith(domains), in_url.endswith("/")]) and not any(i in in_url  for i in ("http://","https://","file:///")):
@@ -372,11 +370,8 @@ class mainWindow(QMainWindow):
             url = in_url
 
         
-        self.tabs.currentWidget().setUrl(QUrl(url))
+        self.browser.setUrl(QUrl(url))
 
-    # def set_reload_icon(self):
-    #     x = self.tabs.currentWidget().loadProgress.connect(self.change_reload_butn)
-        
             
 
 
