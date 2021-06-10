@@ -1,4 +1,5 @@
 import os
+import re
 import sys
 from PyQt5 import QtGui
 from PyQt5 import QtCore
@@ -66,7 +67,7 @@ class AboutDialog(QDialog):
 class mainWindow(QMainWindow):
     def __init__(self, *args, **kwargs):
         super(mainWindow, self).__init__()
-        
+
         # create tabs
         self.tabs = QTabWidget()
         self.tabs.setDocumentMode(True)
@@ -324,7 +325,8 @@ class mainWindow(QMainWindow):
             self.httpsicon.setPixmap(QPixmap(os.path.join("Images", "security.png")))
             self.httpsicon.setToolTip("Connection to this is is secure\n\nThis site have a valid certificate")
         
-        
+        elif q.scheme() == "file:":
+            self.httpsicon.setPixmap(QPixmap(os.path.join("Images", "file-protocol.png")))
         else:
             # Set insecure padlock
             self.httpsicon.setPixmap(QPixmap(os.path.join("Images", "warning1.png")))
@@ -347,9 +349,8 @@ class mainWindow(QMainWindow):
     def navigate_to_url(self):
         in_url = self.url_bar.text()
         url = ""
-        # if the text in the search box endswith one of the domain in the domains tuple, then "http://" will be added
-        # if the text is pre "http://" or "https://" added, then not               
-        # To open files
+        """ if the text in the search box endswith one of the domain in the domains tuple, then "http://" will be added
+         if the text is pre "http://" or "https://" added, then not"""               
         # [0-9A-Za-z]+\.+[A-Za-z0-9]{2}
 
         if self.tabs.currentWidget is None: # To avoid exception
@@ -383,6 +384,8 @@ def main():
     app = QApplication(sys.argv)
     QApplication.setApplicationName("Simple Web Browser")
     QApplication.setWindowIcon(QIcon(os.path.join("Images", "browser.png")))
+
+    # App styles
     app.setStyleSheet("""
     QToolBar{
         background-color:#eee;
@@ -454,6 +457,10 @@ def main():
         height:10px;
         background-color:none;    
     }
+   /*
+    * after focus
+    */ 
+    
 
     /*
     * after hover
@@ -483,10 +490,19 @@ def main():
         background-color:#ccc;
     }          
     """)
+
     #e6e6e6 background color
     window = mainWindow()
     app.exec_()
 
 
+
 if __name__ == "__main__":
     main()
+
+
+
+
+
+
+
