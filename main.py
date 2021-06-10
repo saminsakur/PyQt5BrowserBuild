@@ -69,8 +69,9 @@ class mainWindow(QMainWindow):
         
         # create tabs
         self.tabs = QTabWidget()
-        self.tabs.setTabIcon(0, QIcon(os.path.join("Images", "info.png")))
         self.tabs.setDocumentMode(True)
+
+        # Add some styles to the tabs
         self.tabs.setStyleSheet("""
             QTabBar{
                 background-color:#666664;
@@ -93,16 +94,18 @@ class mainWindow(QMainWindow):
                 background-color:#848889;
             }
         """)
+
+        # Add new tab when tab tab is doubleclicked
         self.tabs.tabBarDoubleClicked.connect(self.tab_open_doubleclick)
+
+        # To connect to a function when currrent tab has been changed
         self.tabs.currentChanged.connect(self.tab_changed)
+
+        # Set the tabs closable
         self.tabs.setTabsClosable(True)
+
+        # Function to handle tab closing
         self.tabs.tabCloseRequested.connect(self.close_current_tab)
-        
-
-        self.setCentralWidget(self.tabs)
-
-        # self.setCentralWidget(self.browser)
-        self.showMaximized()
 
 
         # nav bar
@@ -130,27 +133,21 @@ class mainWindow(QMainWindow):
         self.reload_butn = QPushButton(self)
         self.reload_butn.setObjectName("reload_butn")
         self.reload_butn.setToolTip("Reload current page")
+        self.reload_butn.resize(QSize(50, 20))
         self.reload_butn.setIcon(QtGui.QIcon(os.path.join("Images", "refresh.png")))
         self.reload_butn.clicked.connect(self.reload_tab)
 
-        # Set reload button visible
-        # self.reload_butn.show()
-    
-        # Stop button
         self.stop_btn = QPushButton(self)
         self.stop_btn.setObjectName("stop_butn")
         self.stop_btn.setToolTip("Stop loading current page")
         self.stop_btn.setIcon(QIcon(os.path.join('Images', 'cross.png')))
         self.stop_btn.clicked.connect(self.stop_loading_tab)
 
-        # Set stop_butn hidden initially
-        self.stop_btn.hide()
-        
-        # Add Refresh and Stop button
-        self.navbar.addWidget(self.stop_btn)
-        self.navbar.addWidget(self.reload_butn)
-        
-        
+        # Added stop button 
+        self.stop_action = self.navbar.addWidget(self.stop_btn)
+
+        # Added reload button
+        self.reload_action = self.navbar.addWidget(self.reload_butn)
 
         # Home button
         self.home_button = QPushButton(self)
@@ -159,12 +156,12 @@ class mainWindow(QMainWindow):
         self.home_button.setIcon(QtGui.QIcon(os.path.join("Images", "home.png")))
         self.home_button.clicked.connect(self.goToHome)
         self.navbar.addWidget(self.home_button)
-        
-        self.navbar.addSeparator()
+
         
         # Add Address bar
         self.url_bar = QLineEdit()
         self.url_bar.returnPressed.connect(self.navigate_to_url)
+        self.url_bar.setToolTip(self.url_bar.text())
         self.url_bar.setStyleSheet("""
             QLineEdit{
                 font-family: Segoe UI;
@@ -185,7 +182,12 @@ class mainWindow(QMainWindow):
                 border-color:#e6e6e6
             }
         """)
-      
+
+        # Set stop action to be invisible
+        self.stop_action.setVisible(False)
+
+        # Add a separator
+        self.navbar.addSeparator()
 
         # Shows ssl security icon
         self.httpsicon = QLabel()
@@ -193,8 +195,11 @@ class mainWindow(QMainWindow):
         self.httpsicon.setPixmap(QPixmap(os.path.join('Images', 'lock-icon.png')))
         self.navbar.addWidget(self.httpsicon)
 
+        # Add Address Bar to the navbar
         self.navbar.addWidget(self.url_bar)
-        self.navbar.addSeparator()
+
+        # Add a separator
+        # self.navbar.addSeparator()
 
         ContextMenuButton = QPushButton(self)
         ContextMenuButton.setObjectName("ContextMenuButton")
@@ -202,23 +207,31 @@ class mainWindow(QMainWindow):
         ContextMenuButton.clicked.connect(self.about)
         ContextMenuButton.setObjectName("ContextMenuTriggerButn")
         self.navbar.addWidget(ContextMenuButton)
-
-        # on startup
+        
+        # Stuffs to see at starup
         self.add_new_tab(QUrl("https://www.google.com/"), "Homepage")
-        self.show()
+
+        # what to display on the window
+        self.setCentralWidget(self.tabs)
+
+        # Stuffs to set the window
+        self.showMaximized()
     
+    """Instead of managing 2 slots associated with the progress and completion of loading,
+        only one of them should be used since, for example, the associated slot is also 
+        called when it is loaded at 100% so it could be hidden since it can be invoked together with finished."""
     @QtCore.pyqtSlot(int)
     def loadProgressHandler(self, prog):
         if self.tabs.currentWidget() is not self.sender():
             return
 
-        self.stop_btn.show()  # When any page is loading, then stop_butn will visible
-        self.reload_butn.hide()    # When any page is loading, then reload_butn will hidde  
+        loading = prog < 100
 
-    @QtCore.pyqtSlot()
-    def loadFinishedHandler(self):
-        self.reload_butn.show()    # When loading is finished, then reload_butn will be visible again for the user
-        self.stop_btn.hide()   # When load finished, stop button will be hidden
+        self.stop_action.setVisible(loading)
+        self.reload_action.setVisible(not loading)
+        pass
+
+
 
     # funcion to navigate to home whaen home icon is pressed   
     def goToHome(self):
@@ -238,6 +251,9 @@ class mainWindow(QMainWindow):
 
     # stop load current tab
     def stop_loading_tab(self):
+        if self.tabs.currentWidget() is None:
+            return
+
         self.tabs.currentWidget().stop()    
 
     # doubleclick on empty space for new tab
@@ -255,9 +271,6 @@ class mainWindow(QMainWindow):
     def close_current_tab(self, i):
         if self.tabs.count() < 2 :
             return
-
-        elif self.tabs.count() == 0:
-            sys.exit()
 
         self.tabs.removeTab(i)
     
@@ -277,10 +290,9 @@ class mainWindow(QMainWindow):
         if qurl is None:
             qurl = QUrl('https://www.google.com/')
         
-        browser = QWebEngineView()
+        browser = QWebEngineView()  # Define the main webview to browser the internet
 
         browser.loadProgress.connect(self.loadProgressHandler)
-        browser.loadFinished.connect(self.loadFinishedHandler)
 
         i = self.tabs.addTab(browser, label)
         self.tabs.setCurrentIndex(i)
@@ -339,7 +351,11 @@ class mainWindow(QMainWindow):
         # if the text is pre "http://" or "https://" added, then not               
         # To open files
         # [0-9A-Za-z]+\.+[A-Za-z0-9]{2}
-        
+
+        if self.tabs.currentWidget is None: # To avoid exception
+            # If QTabWidget's currentwidet is none, the ignore
+            return
+
         if QUrl(in_url).scheme() == "file":
             file_path = os.path.abspath(os.path.join(os.path.dirname(__file__), in_url))
             local_url = QUrl.fromLocalFile(file_path)
@@ -358,115 +374,119 @@ class mainWindow(QMainWindow):
             url = in_url
 
         
-        self.tabs.currentWidget().setUrl(QUrl(url))
-
-  
-            
+        self.tabs.currentWidget().load(QUrl.fromUserInput(url))
 
 
 
-app = QApplication(sys.argv)
-QApplication.setApplicationName("Simple Web Browser")
-QApplication.setWindowIcon(QIcon(os.path.join("Images", "browser.png")))
-app.setStyleSheet("""
-QToolBar{
-    background-color:#eee;
-}
 
-QLabel#SSLIcon{
-    border:1px solid transparent;
-    padding-left:10px;
-    padding-right:10px;
-    border-radius:6px;
-    width:5px;
-    height:5px;
-}
+def main():
+    app = QApplication(sys.argv)
+    QApplication.setApplicationName("Simple Web Browser")
+    QApplication.setWindowIcon(QIcon(os.path.join("Images", "browser.png")))
+    app.setStyleSheet("""
+    QToolBar{
+        background-color:#eee;
+    }
 
-QLabel#SSLIcon:hover{
-    background-color:#e6e6e6;
-}
+    QLabel#SSLIcon{
+        border:1px solid transparent;
+        padding-left:10px;
+        padding-right:10px;
+        border-radius:6px;
+        width:5px;
+        height:5px;
+    }
 
-QPushButton#ContextMenuTriggerButn{
-    border:1px solid transparent;
-    padding:10px;
-    border-radius:16px;
-    width:10px;
-    height:10px;
-    background-color:none;
-}
+    QLabel#SSLIcon:hover{
+        background-color:#e6e6e6;
+    }
 
-QPushButton#back_btn{
-    border:1px solid transparent;
-    padding:10px;
-    border-radius:7px;
-    width:10px;
-    height:10px;
-    background-color:none;
-}
+    QPushButton#ContextMenuTriggerButn{
+        border:1px solid transparent;
+        padding:10px;
+        border-radius:16px;
+        width:10px;
+        height:10px;
+        background-color:none;
+    }
 
-QPushButton#forward_butn{
-    border:1px solid transparent;
-    padding:10px;
-    border-radius:7px;
-    width:10px;
-    height:10px;
-    background-color:none;   
-}
+    QPushButton#back_btn{
+        border:1px solid transparent;
+        padding:10px;
+        border-radius:7px;
+        width:10px;
+        height:10px;
+        background-color:none;
+    }
 
-QPushButton#reload_butn{
-    border:1px solid transparent;
-    padding:10px;
-    border-radius:7px;
-    width:10px;
-    height:10px;
-    background-color:none;    
-}
+    QPushButton#forward_butn{
+        border:1px solid transparent;
+        padding:10px;
+        border-radius:7px;
+        width:10px;
+        height:10px;
+        background-color:none;   
+    }
 
-QPushButton#home_button{
-    border:1px solid transparent;
-    padding:10px;
-    border-radius:7px;
-    width:10px;
-    height:10px;
-    background-color:none;    
-}
+    QPushButton#reload_butn{
+        border:1px solid transparent;
+        padding:10px;
+        border-radius:7px;
+        width:10px;
+        height:10px;
+        background-color:none;    
+    }
 
-QPushButton#stop_butn{
-    border:1px solid transparent;
-    padding:10px;
-    border-radius:7px;
-    width:30px;
-    height:10px;
-    background-color:none;    
-}
+    QPushButton#home_button{
+        border:1px solid transparent;
+        padding:10px;
+        border-radius:7px;
+        width:10px;
+        height:10px;
+        background-color:none;    
+    }
 
-/*
- * after hover
-*/
-QPushButton#stop_butn:hover{
-    background-color:#e6e6e6;
-}
+    QPushButton#stop_butn{
+        border:1px solid transparent;
+        padding:10px;
+        border-radius:7px;
+        width:30px;
+        height:10px;
+        background-color:none;    
+    }
 
-QPushButton#back_btn:hover{
-    background-color:#e6e6e6
-}
+    /*
+    * after hover
+    */
 
-QPushButton#forward_butn:hover{
-    background-color:#e6e6e6
-}
+    QPushButton#stop_butn:hover{
+        background-color:#e6e6e6;
+    }
 
-QPushButton#reload_butn:hover{
-    background-color:#e6e6e6
-}
+    QPushButton#back_btn:hover{
+        background-color:#e6e6e6
+    }
 
-QPushButton#home_button:hover{
-    background-color:#e6e6e6
-}
+    QPushButton#forward_butn:hover{
+        background-color:#e6e6e6
+    }
 
-QPushButton#ContextMenuTriggerButn:hover{
-    background-color:#ccc;
-}          
-""")
-#e6e6e6 background color
-window = mainWindow()
-app.exec_()
+    QPushButton#reload_butn:hover{
+        background-color:#e6e6e6
+    }
+
+    QPushButton#home_button:hover{
+        background-color:#e6e6e6
+    }
+
+    QPushButton#ContextMenuTriggerButn:hover{
+        background-color:#ccc;
+    }          
+    """)
+    #e6e6e6 background color
+    window = mainWindow()
+    app.exec_()
+
+
+if __name__ == "__main__":
+    main()
