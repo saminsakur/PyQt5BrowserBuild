@@ -75,10 +75,11 @@ class mainWindow(QMainWindow):
         # Add some styles to the tabs
         self.tabs.setStyleSheet("""
             QTabBar{
-                background-color:#666664;
+                background-color:#417294;
             }
+
             QTabBar::tab {
-                background-color: #a3a3a3;
+                background-color: none;
                 color: #fff;
                 padding: 6px;
                 border-top-left-radius: 6px;
@@ -86,16 +87,28 @@ class mainWindow(QMainWindow):
                 padding-right:60px;
             }
 
-            QTabBar::tab:focus{
-                border-color:blue;
-                background-color:#e3e3e3;
+            QTabBar::tab:!selected{
+                background-color: transparent;
             }
             
-            QTabBar::tab:hover{
-                background-color:#848889;
+
+            QTabBar::tab:selected, QTabBar::tab:hover {
+                background-color:#005a87;
+            }
+
+            QTabBar::close-button {
+                image: url(Images/closetabbutton.png);
+                subcontrol-position: right;
+            }
+
+            QTabBar::close-button:hover{
+                background-color:#a3a3a3;
+            }
+
+            QTabWidget::tab-bar {
+                left: 5px;
             }
         """)
-
         # Add new tab when tab tab is doubleclicked
         self.tabs.tabBarDoubleClicked.connect(self.tab_open_doubleclick)
 
@@ -161,26 +174,31 @@ class mainWindow(QMainWindow):
         
         # Add Address bar
         self.url_bar = QLineEdit()
+        self.url_bar.setFrame(False)
         self.url_bar.returnPressed.connect(self.navigate_to_url)
         self.url_bar.setToolTip(self.url_bar.text())
+
+        # Set the placeholder text
+        self.url_bar.setPlaceholderText("Search or enter web address")
+        self.url_bar.setFocus()
         self.url_bar.setStyleSheet("""
             QLineEdit{
                 font-family: Segoe UI;
                 padding-top:4px;
                 padding-left:8px;
                 padding-bottom:4px;
-                border:2px solid #dddddd;
+                border:2px solid transparent;
                 border-radius:6px;
                 font-size:10pt;
-                background-color:#fff;
+                background-color: #ffffff;
             }
 
             QLineEdit:focus{
-                border-color:#87CEEB
+                border-color:#00aee3;
             }
 
             QLineEdit:hover{
-                border-color:#e6e6e6
+                border-color:#d6d6d6
             }
         """)
 
@@ -194,19 +212,111 @@ class mainWindow(QMainWindow):
         self.httpsicon = QLabel()
         self.httpsicon.setObjectName("SSLIcon")
         self.httpsicon.setPixmap(QPixmap(os.path.join('Images', 'lock-icon.png')))
+
+        # Add http icon to the navbar bar
         self.navbar.addWidget(self.httpsicon)
 
         # Add Address Bar to the navbar
         self.navbar.addWidget(self.url_bar)
 
-        # Add a separator
-        # self.navbar.addSeparator()
-
+        # The conetext menu
+        context_menu = QMenu(self)
+        
+        # Button for the three dot context menu button
         ContextMenuButton = QPushButton(self)
         ContextMenuButton.setObjectName("ContextMenuButton")
-        ContextMenuButton.setIcon(QIcon(os.path.join("Images", "info.png")))
-        ContextMenuButton.clicked.connect(self.about)
+
+        # Give the three dot image to the Qpush button
+        ContextMenuButton.setIcon(QIcon(os.path.join("Images", "more.png")))    # Add icon
         ContextMenuButton.setObjectName("ContextMenuTriggerButn")
+        ContextMenuButton.setToolTip("More")
+
+        # Add the context menu to the three dot context menu button
+        ContextMenuButton.setMenu(context_menu)
+
+        """Actions of the three dot context menu"""
+
+        # Add new tab
+        newTabAction = QAction("New tab", self)
+        newTabAction.setIcon(QtGui.QIcon(os.path.join("Images", "newtab.png")))
+        newTabAction.triggered.connect(lambda: self.add_new_tab(QUrl("https://www.google.com/"), "Homepage"))
+        newTabAction.setToolTip("Add a new tab")
+        context_menu.addAction(newTabAction)
+
+        # Close tab action
+        CloseTabAction = QAction("Close tab", self)
+        CloseTabAction.setIcon(QIcon(os.path.join("Images", "closetab.png")))
+        CloseTabAction.triggered.connect(lambda: self.close_current_tab(self.tabs.currentIndex()))
+        context_menu.addAction(CloseTabAction)
+
+        # A separator
+        context_menu.addSeparator()
+
+        # Feature to navigate to bing
+        GoToBingAction = QAction("Bing", self)
+        GoToBingAction.setIcon(QIcon(os.path.join("Images", "globe.png")))
+        GoToBingAction.triggered.connect(self.GoToBing)
+        context_menu.addAction(GoToBingAction)
+
+        # Feature to navigate to DuckDuckGo
+        GoToDuckDuckGo = QAction(QIcon(os.path.join("Images", "globe.png")), "DuckDuckgo", self)
+        GoToDuckDuckGo.triggered.connect(self.NavigateDuckDuckGo)
+        context_menu.addAction(GoToDuckDuckGo)
+
+        # Another separator
+        context_menu.addSeparator()
+
+        # Feature to copy site url
+        CopySiteAddress = QAction(QtGui.QIcon(os.path.join("Images", "url.png")), "Copy site url", self)
+        CopySiteAddress.triggered.connect(self.CopySiteLink)
+        context_menu.addAction(CopySiteAddress)
+
+        # Fetaure to go to copied site url
+        PasteAndGo = QAction(QtGui.QIcon(os.path.join("Images", "paste.png")), "Paste and go", self)
+        PasteAndGo.triggered.connect(self.PasteUrlAndGo)
+        context_menu.addAction(PasteAndGo)
+
+        # Open page
+        OpenPgAction = QAction("Open", self)
+        OpenPgAction.setIcon(QtGui.QIcon(os.path.join("Images", "openclickhtml.png")))
+        context_menu.addAction(OpenPgAction)
+
+        # Save page as
+        SavePageAs = QAction("Save page as", self)
+        SavePageAs.setIcon(QtGui.QIcon(os.path.join("Images", "save-disk.png")))
+        context_menu.addAction(SavePageAs)
+
+        # Print this page action
+        PrintThisPageAction = QAction("Print this page", self)
+        PrintThisPageAction.setIcon(QtGui.QIcon(os.path.join("Images", "printer.png")))
+        context_menu.addAction(PrintThisPageAction)
+
+        # The help submenu
+        HelpMenu = QMenu("Help", self)
+        HelpMenu.setIcon(QIcon(os.path.join("Images", "question.png")))
+
+        # About action
+        AboutAction = QAction("About this browser", self)
+        AboutAction.setIcon(QIcon(os.path.join("Images", "info.png")))
+        AboutAction.triggered.connect(self.about)
+        HelpMenu.addAction(AboutAction)
+
+        context_menu.addMenu(HelpMenu)
+
+        # Add a separator
+        context_menu.addSeparator()
+
+
+
+        # Close browser
+        CloseBrowser = QAction("Close browser", self)
+        CloseBrowser.triggered.connect(lambda: sys.exit())
+        context_menu.addAction(CloseBrowser)
+
+
+        # Set menu for the button
+        # ContextMenuButton.add
+        # Add the context menu to the navbar
         self.navbar.addWidget(ContextMenuButton)
         
         # Stuffs to see at starup
@@ -237,6 +347,20 @@ class mainWindow(QMainWindow):
     # funcion to navigate to home whaen home icon is pressed   
     def goToHome(self):
         self.tabs.currentWidget().setUrl(QUrl("http://www.google.com/"))
+
+    # Function to navigate to bing by pressing go to bing on the three dot menu
+    def GoToBing(self):
+        self.add_new_tab(QUrl("https://www.bing.com/"), "Bing")
+
+    # Function to navigate DuckDuckGo
+    def NavigateDuckDuckGo(self):
+        self.add_new_tab(QtCore.QUrl("https://www.duckduckgo.com/"), "DuckDuckGo")
+
+    def CopySiteLink(self):
+        print(QGuiApplication.clipboard())
+
+    def PasteUrlAndGo(self):
+        print(self.tabs.currentWidget().clipboard())
 
     # navigate backward tab
     def navigate_back_tab(self):
@@ -382,113 +506,198 @@ class mainWindow(QMainWindow):
 
 def main():
     app = QApplication(sys.argv)
+
+    # Set the window name
     QApplication.setApplicationName("Simple Web Browser")
+
+    # Set the window icon
     QApplication.setWindowIcon(QIcon(os.path.join("Images", "browser.png")))
 
     # App styles
     app.setStyleSheet("""
-    QToolBar{
-        background-color:#eee;
+    QPushButton#ContextMenuTriggerButn::menu-indicator{ /* Hide context menu button dropdown icon */
+        image: none;
     }
 
-    QLabel#SSLIcon{
-        border:1px solid transparent;
+    QToolBar {
+        background-color: #edf2fb;
+    }
+
+    /*
+     The three dot menu 
+    */
+
+    QMenu {
+        background-color: #fafaf6;
+        border: 1px solid transparent;
+        padding:10px;
         padding-left:10px;
         padding-right:10px;
-        border-radius:6px;
-        width:5px;
-        height:5px;
     }
 
-    QLabel#SSLIcon:hover{
-        background-color:#e6e6e6;
+    QMenu::item {
+        background-color: transparent;
+        padding-left:70px;
+        padding-right:70px;
+        padding-top:6px;
+        padding-bottom:6px;
+        font-family: fantasy;
+        font-size:9pt;
+        height:25px;
+        width:80px;
     }
 
-    QPushButton#ContextMenuTriggerButn{
-        border:1px solid transparent;
-        padding:10px;
-        border-radius:16px;
-        width:10px;
-        height:10px;
-        background-color:none;
+    QMenu::separator {
+        height: 2px;
+        background: #111;
+        margin-left: 0%;
+        margin-right: 0%;
     }
-
-    QPushButton#back_btn{
-        border:1px solid transparent;
-        padding:10px;
-        border-radius:7px;
-        width:10px;
-        height:10px;
-        background-color:none;
+    QMenu::item:selected{
+        background-color: #f2f2f2;
     }
-
-    QPushButton#forward_butn{
-        border:1px solid transparent;
-        padding:10px;
-        border-radius:7px;
-        width:10px;
-        height:10px;
-        background-color:none;   
-    }
-
-    QPushButton#reload_butn{
-        border:1px solid transparent;
-        padding:10px;
-        border-radius:7px;
-        width:10px;
-        height:10px;
-        background-color:none;    
-    }
-
-    QPushButton#home_button{
-        border:1px solid transparent;
-        padding:10px;
-        border-radius:7px;
-        width:10px;
-        height:10px;
-        background-color:none;    
-    }
-
-    QPushButton#stop_butn{
-        border:1px solid transparent;
-        padding:10px;
-        border-radius:7px;
-        width:30px;
-        height:10px;
-        background-color:none;    
-    }
-   /*
-    * after focus
-    */ 
     
+    /*
+     Styling of toolip
+    */
+
+    QToolTip{
+        background-color:#131c21;
+        font-size: 10pt;
+        opacity:200;
+        color: #f1f1f1;
+        border-radius:10px;
+        padding:5px;
+        border-width:2px;
+        border-style:solid;
+        border-radius:20px;
+        border: 2px solid transparent;
+    }
+
+    QLabel#SSLIcon {    /* ssl icon */
+        border: 1px solid transparent;
+        padding-left: 10px;
+        padding-right: 10px;
+        border-radius: 6px;
+        width: 5px;
+        height: 5px;
+    }
+
+    QLabel#SSLIcon:hover {  /* ssl icon on hover */
+        background-color: #d1d8eb;
+    }
+
+    QPushButton#ContextMenuTriggerButn {    /* Context menu button */
+        border: 1px solid transparent;
+        padding: 10px;
+        border-radius: 16px;
+        width: 10px;
+        height: 10px;
+        background-color: none;
+    }
+
+    QPushButton#back_btn {
+        border: 1px solid transparent;
+        padding: 10px;
+        border-radius: 7px;
+        width: 10px;
+        height: 10px;
+        background-color: none;
+    }
+
+    QPushButton#forward_butn {
+        border: 1px solid transparent;
+        padding: 10px;
+        border-radius: 7px;
+        width: 10px;
+        height: 10px;
+        background-color: none;
+    }
+
+    QPushButton#reload_butn {
+        border: 1px solid transparent;
+        padding: 10px;
+        border-radius: 7px;
+        width: 10px;
+        height: 10px;
+        background-color: none;
+    }
+
+    QPushButton#home_button {
+        border: 1px solid transparent;
+        padding: 10px;
+        border-radius: 7px;
+        width: 10px;
+        height: 10px;
+        background-color: none;
+    }
+
+    QPushButton#stop_butn {
+        border: 1px solid transparent;
+        padding: 10px;
+        border-radius: 7px;
+        width: 10px;
+        height: 10px;
+        background-color: none;
+    }
+
 
     /*
     * after hover
     */
 
-    QPushButton#stop_butn:hover{
-        background-color:#e6e6e6;
+    QPushButton#stop_butn:hover {
+        background-color: #d1d8eb;
     }
 
-    QPushButton#back_btn:hover{
-        background-color:#e6e6e6
+    QPushButton#back_btn:hover {
+        background-color: #d1d8eb;
     }
 
-    QPushButton#forward_butn:hover{
-        background-color:#e6e6e6
+    QPushButton#forward_butn:hover {
+        background-color: #d1d8eb;
     }
 
-    QPushButton#reload_butn:hover{
-        background-color:#e6e6e6
+    QPushButton#reload_butn:hover {
+        background-color: #d1d8eb;
     }
 
-    QPushButton#home_button:hover{
-        background-color:#e6e6e6
+    QPushButton#home_button:hover {
+        background-color: #d1d8eb;
     }
 
-    QPushButton#ContextMenuTriggerButn:hover{
-        background-color:#ccc;
-    }          
+    QPushButton#ContextMenuTriggerButn:hover {
+        background-color: #d1d8eb;
+    }
+
+    /*
+    * after pressed
+    */
+
+    QPushButton#stop_butn:pressed {
+        background-color: #ccd1db;
+    }
+
+    QPushButton#back_btn:pressed {
+        background-color: #ccd1db;
+    }
+
+    QPushButton#forward_butn:pressed {
+        background-color: #ccd1db;
+    }
+
+    QPushButton#reload_butn:pressed {
+        background-color: #ccd1db;
+    }
+
+    QPushButton#home_button:pressed {
+        background-color: #ccd1db;
+    }
+
+    QPushButton#ContextMenuTriggerButn:pressed {
+        background-color: #ccd1db;
+    }
+
     """)
 
     #e6e6e6 background color

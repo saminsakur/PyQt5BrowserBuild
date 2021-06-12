@@ -4,3 +4,6 @@
 workspace.xml
 __pycache__
 env
+*.swp
+*.un~
+main.py~
