@@ -357,10 +357,12 @@ class mainWindow(QMainWindow):
         self.add_new_tab(QtCore.QUrl("https://www.duckduckgo.com/"), "DuckDuckGo")
 
     def CopySiteLink(self):
-        print(QGuiApplication.clipboard())
+        # print(QGuiApplication.clipboard())
+        pass
 
     def PasteUrlAndGo(self):
-        print(self.tabs.currentWidget().clipboard())
+        # print(self.tabs.currentWidget().clipboard())
+        pass
 
     # navigate backward tab
     def navigate_back_tab(self):
