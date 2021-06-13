@@ -7,3 +7,4 @@ env
 *.swp
 *.un~
 main.py~
+browser-screenshot.png

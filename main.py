@@ -289,6 +289,9 @@ class mainWindow(QMainWindow):
         PasteAndGo.triggered.connect(self.PasteUrlAndGo)
         context_menu.addAction(PasteAndGo)
 
+        # A separator
+        context_menu.addSeparator()
+
         # Open page
         OpenPgAction = QAction("Open", self)
         OpenPgAction.setIcon(QtGui.QIcon(os.path.join("Images", "openclickhtml.png")))
@@ -551,10 +554,15 @@ def main():
         background-color: #edf4f7;
     }
     
-    Qmenu{
-        background-color:fdfdfd;
 
+    /* Style all contextmenus*/
+
+    Qmenu{
+        background-color:fff;
     }
+
+
+    /* Style right arrow of QMenu */
 
     QMenu::right-arrow{
         image :url(Images/right-arrow-context-menu.png);
@@ -562,18 +570,18 @@ def main():
         width:12px;
     }
 
-    QMenu::item{  /* Styling all contextmenus */
-        padding: 2px 170px 2px 20px;
-        border: 1px solid transparent;
+    QMenu::item{    /* Styling all contextmenus */
+        background-color: transparent;
         font-size: 10pt;
-    }
-
-    QMenu::item::icon{
-        image:none;
+        padding-left: 10px;
+        padding-right: 100px;
+        padding-top:5px;
+        padding-bottom: 5px;
+        width: 120px;
     }
 
     QMenu::item:selected{
-        background-color: #aaa;
+        background-color: #dedeff;
     }
 
     /*
@@ -585,23 +593,20 @@ def main():
         border: 1px solid transparent;        
         font-family: Times, sans-serif;
         border-radius: 6px;
-        box-shadow: 10px;
     }
 
     QMenu#ContextMenu::item {
         background-color: transparent;
         font-size: 10pt;
-        padding-left: 30px;
-        padding-right: 30px;
-        padding-top:1px;
-        padding-bottom: 1px;
-        height:40px;
-        width:200px;
+        padding-left: 40px;
+        padding-right: 100px;
+        padding-top:8px;
+        padding-bottom: 8px;
+        width: 130px;
     }
 
     QMenu#ContextMenu::icon{
-        padding-right:20px;
-        padding-left:10px;
+        padding-left:40px;
     }
 
     QMenu#ContextMenu::separator {
@@ -643,10 +648,6 @@ def main():
         border-radius: 6px;
         width: 5px;
         height: 5px;
-    }
-
-    QLabel#SSLIcon:hover {  /* ssl icon on hover */
-        background-color: #d1d8eb;
     }
 
 
