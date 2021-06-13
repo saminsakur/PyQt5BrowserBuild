@@ -74,7 +74,8 @@ class mainWindow(QMainWindow):
 
         # Add some styles to the tabs
         self.tabs.setStyleSheet("""
-            QTabBar{
+            
+             QTabBar{
                 background-color:#417294;
             }
 
@@ -92,23 +93,30 @@ class mainWindow(QMainWindow):
             }
             
 
-            QTabBar::tab:selected, QTabBar::tab:hover {
-                background-color:#005a87;
+            QTabBar::tab:selected, QTabBar::tab:hover {     /* not selected tabs */
+                background-color: #4e88b1;
             }
 
-            QTabBar::close-button {
+            QTabBar::close-button {    /* style the tab close button */
                 image: url(Images/closetabbutton.png);
                 subcontrol-position: right;
+                border: 1px solid transparent;
+                border-radius:3px;
             }
 
-            QTabBar::close-button:hover{
-                background-color:#a3a3a3;
+            QTabBar::close-button:hover{    /* close button hover */
+                background-color: #3f84a6;
             }
 
             QTabWidget::tab-bar {
-                left: 5px;
+                left: 5px; /* move to the right by 5px */
+            }
+
+            QTabBar::tab:selected{  /* selected tabs */
+                background-color: #005a87;
             }
         """)
+
         # Add new tab when tab tab is doubleclicked
         self.tabs.tabBarDoubleClicked.connect(self.tab_open_doubleclick)
 
@@ -191,15 +199,17 @@ class mainWindow(QMainWindow):
                 border-radius:6px;
                 font-size:10pt;
                 background-color: #ffffff;
+                selection-background-color: #66c2ff;
             }
 
             QLineEdit:focus{
-                border-color:#00aee3;
+                border-color:#3696ff;
             }
 
             QLineEdit:hover{
                 border-color:#d6d6d6
             }
+            
         """)
 
         # Set stop action to be invisible
@@ -221,6 +231,9 @@ class mainWindow(QMainWindow):
 
         # The conetext menu
         context_menu = QMenu(self)
+
+        # Set the object's name
+        context_menu.setObjectName("ContextMenu")
         
         # Button for the three dot context menu button
         ContextMenuButton = QPushButton(self)
@@ -522,43 +535,53 @@ def main():
     }
 
     QToolBar {
-        background-color: #edf2fb;
+        background-color: #edf4f7;
+    }
+
+    QMenu{  /* Styling all contextmenus */
+
     }
 
     /*
      The three dot menu 
     */
 
-    QMenu {
-        background-color: #fafaf6;
-        border: 1px solid transparent;
-        padding:10px;
-        padding-left:10px;
-        padding-right:10px;
+    QMenu#ContextMenu {
+        background-color: #fdfdfd;
+        border: 1px solid transparent;        
+        font-family: Arial, sans-serif;
+        border-radius: 6px;
+        box-shadow: 10px;
     }
 
-    QMenu::item {
+    QMenu#ContextMenu::item {
         background-color: transparent;
-        padding-left:70px;
-        padding-right:70px;
-        padding-top:6px;
-        padding-bottom:6px;
-        font-family: fantasy;
-        font-size:9pt;
-        height:25px;
-        width:80px;
+        font-size: 10pt;
+        padding-left: 30px;
+        padding-right: 30px;
+        padding-top:1px;
+        padding-bottom: 1px;
+        height:40px;
+        width:200px;
     }
 
-    QMenu::separator {
-        height: 2px;
+    QMenu#ContextMenu::icon{
+        padding-right:20px;
+        padding-left:10px;
+    }
+
+    QMenu#ContextMenu::separator {
+        height: 1px;
         background: #111;
         margin-left: 0%;
         margin-right: 0%;
     }
-    QMenu::item:selected{
+
+    QMenu#ContextMenu::item:selected{
         background-color: #f2f2f2;
     }
     
+
     /*
      Styling of toolip
     */
@@ -575,6 +598,9 @@ def main():
         border-radius:20px;
         border: 2px solid transparent;
     }
+    
+
+    /* SSLinfo label */
 
     QLabel#SSLIcon {    /* ssl icon */
         border: 1px solid transparent;
@@ -588,6 +614,9 @@ def main():
     QLabel#SSLIcon:hover {  /* ssl icon on hover */
         background-color: #d1d8eb;
     }
+
+
+    /* Button styling */
 
     QPushButton#ContextMenuTriggerButn {    /* Context menu button */
         border: 1px solid transparent;
@@ -649,27 +678,27 @@ def main():
     */
 
     QPushButton#stop_butn:hover {
-        background-color: #d1d8eb;
+        background-color: #dce9ef;
     }
 
     QPushButton#back_btn:hover {
-        background-color: #d1d8eb;
+        background-color: #dce9ef;
     }
 
     QPushButton#forward_butn:hover {
-        background-color: #d1d8eb;
+        background-color: #dce9ef;
     }
 
     QPushButton#reload_butn:hover {
-        background-color: #d1d8eb;
+        background-color: #dce9ef;
     }
 
     QPushButton#home_button:hover {
-        background-color: #d1d8eb;
+        background-color: #dce9ef;
     }
 
     QPushButton#ContextMenuTriggerButn:hover {
-        background-color: #d1d8eb;
+        background-color: #dce9ef;
     }
 
     /*
@@ -677,27 +706,27 @@ def main():
     */
 
     QPushButton#stop_butn:pressed {
-        background-color: #ccd1db;
+        background-color: #cadfe7;
     }
 
     QPushButton#back_btn:pressed {
-        background-color: #ccd1db;
+        background-color: #cadfe7;
     }
 
     QPushButton#forward_butn:pressed {
-        background-color: #ccd1db;
+        background-color: #cadfe7;
     }
 
     QPushButton#reload_butn:pressed {
-        background-color: #ccd1db;
+        background-color: #cadfe7;
     }
 
     QPushButton#home_button:pressed {
-        background-color: #ccd1db;
+        background-color: #cadfe7;
     }
 
     QPushButton#ContextMenuTriggerButn:pressed {
-        background-color: #ccd1db;
+        background-color: #cadfe7;
     }
 
     """)
