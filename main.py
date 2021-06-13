@@ -1,5 +1,5 @@
 import os
-import re
+import pyperclip as pc
 import sys
 from PyQt5 import QtGui
 from PyQt5 import QtCore
@@ -392,12 +392,10 @@ class mainWindow(QMainWindow):
         self.add_new_tab(QtCore.QUrl("https://www.duckduckgo.com/"), "DuckDuckGo")
 
     def CopySiteLink(self):
-        # print(QGuiApplication.clipboard())
-        pass
+        pc.copy(self.tabs.currentWidget().url().toString())
 
     def PasteUrlAndGo(self):
-        # print(self.tabs.currentWidget().clipboard())
-        pass
+        self.add_new_tab(QUrl(pc.paste()), self.tabs.currentWidget().title())
     
     # Visit gihub action
     # Remove this if you don't need it
@@ -446,7 +444,12 @@ class mainWindow(QMainWindow):
             return
 
         title = self.tabs.currentWidget().page().title()
-        self.setWindowTitle("{} Simple Web Browser".format(title))
+
+        if 0 > len(title):
+            self.setWindowTitle("{} - Simple Web Browser".format(title))
+
+        else:
+            self.setWindowTitle("Simple Web Browser")
 
     # To close current tab
     def close_tab(self, i):
