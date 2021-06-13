@@ -7,13 +7,14 @@ Tested on:
 Python version: Python 3.9.5 (64 bit)<br>
 PyQt5 version: 5.15.4
 
-<h3>Navigate to the directory:</h3><br><i>Note: If you download the zip and extract with a different name, then your directory may be different</i>
+<h3>Install dependencies</h3>
+<i>On the cloned directory:</i>
 
 ```
-cd PyQt5BrowserBuild-master
+pip install -r requirements.txt
 ```
 
-<h3>Run python file:</h3>
+<h3>Run python file</h3>
 
 ```
 python main.py
@@ -22,13 +23,11 @@ python main.py
 <br>
 Some features :
 <ul>
-  <li>Doubleclick on tab bar to open a new tab</li>
   <li>Search Google right from the address bar</li>
+  <li>Work with multiple tabs. Doubleclick on tab bar to open a new</li>
+  <li>Copy site url and paste it anywhere by clicking in the three dot menu</li>
+  <li>Feature for paste and go which will navigate to that website that is saved in your clipboard</li>
   <li>Click on the three dot menu for more</li>
-  <li>Work with multiple tabs</li>
-  <li>Navigate forward and backward</li>
 </ul>
 <br>
 
-
-The icons of my project are made from <a href="http://www.flaticon.com/">Flaticon</a>

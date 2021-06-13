@@ -188,6 +188,7 @@ class mainWindow(QMainWindow):
 
         # Set the placeholder text
         self.url_bar.setPlaceholderText("Search or enter web address")
+
         self.url_bar.setFocus()
         self.url_bar.setStyleSheet("""
             QLineEdit{
@@ -260,6 +261,7 @@ class mainWindow(QMainWindow):
         CloseTabAction = QAction("Close tab", self)
         CloseTabAction.setIcon(QIcon(os.path.join("Images", "closetab.png")))
         CloseTabAction.triggered.connect(lambda: self.close_current_tab(self.tabs.currentIndex()))
+        CloseTabAction.setToolTip("Close current tab")
         context_menu.addAction(CloseTabAction)
 
         # A separator
@@ -269,11 +271,13 @@ class mainWindow(QMainWindow):
         GoToBingAction = QAction("Bing", self)
         GoToBingAction.setIcon(QIcon(os.path.join("Images", "globe.png")))
         GoToBingAction.triggered.connect(self.GoToBing)
+        GoToBingAction.setToolTip("https://www.bing.com/")
         context_menu.addAction(GoToBingAction)
 
         # Feature to navigate to DuckDuckGo
         GoToDuckDuckGo = QAction(QIcon(os.path.join("Images", "globe.png")), "DuckDuckgo", self)
         GoToDuckDuckGo.triggered.connect(self.NavigateDuckDuckGo)
+        GoToDuckDuckGo.setToolTip("https://www.duckduckgo.com/")
         context_menu.addAction(GoToDuckDuckGo)
 
         # Another separator
@@ -282,11 +286,13 @@ class mainWindow(QMainWindow):
         # Feature to copy site url
         CopySiteAddress = QAction(QtGui.QIcon(os.path.join("Images", "url.png")), "Copy site url", self)
         CopySiteAddress.triggered.connect(self.CopySiteLink)
+        CopySiteAddress.setToolTip("Copy current site address")
         context_menu.addAction(CopySiteAddress)
 
         # Fetaure to go to copied site url
         PasteAndGo = QAction(QtGui.QIcon(os.path.join("Images", "paste.png")), "Paste and go", self)
         PasteAndGo.triggered.connect(self.PasteUrlAndGo)
+        PasteAndGo.setToolTip("Go to the an url copied to your clipboard")
         context_menu.addAction(PasteAndGo)
 
         # A separator
@@ -295,32 +301,50 @@ class mainWindow(QMainWindow):
         # Open page
         OpenPgAction = QAction("Open", self)
         OpenPgAction.setIcon(QtGui.QIcon(os.path.join("Images", "openclickhtml.png")))
+        OpenPgAction.setToolTip("Open a file in this browser")
         context_menu.addAction(OpenPgAction)
 
         # Save page as
         SavePageAs = QAction("Save page as", self)
         SavePageAs.setIcon(QtGui.QIcon(os.path.join("Images", "save-disk.png")))
+        SavePageAs.setToolTip("Save current page to this device")
         context_menu.addAction(SavePageAs)
 
         # Print this page action
         PrintThisPageAction = QAction("Print this page", self)
         PrintThisPageAction.setIcon(QtGui.QIcon(os.path.join("Images", "printer.png")))
+        PrintThisPageAction.setToolTip("Print current page")
         context_menu.addAction(PrintThisPageAction)
 
         # The help submenu
         HelpMenu = QMenu("Help", self)
+        HelpMenu.setObjectName("HelpMenu")
         HelpMenu.setStyleSheet(
         """
-        QMenu::item{
+        background-color: #fff;
+        background-color: #fdfdfd;
+        border: 1px solid transparent;        
+        font-family: Times, sans-serif;
+        border-radius: 6px;
+
+        QMenu#HelpMenu::item{
             background-color: transparent;
             font-size: 10pt;
-            padding-left: 30px;
-            padding-right: 30px;
-            padding-top:1px;
-            padding-bottom: 1px;
-            height:40px;
-            width:200px;
+            padding-left: 40px;
+            padding-right: 100px;
+            padding-top:10px;
+            padding-bottom: 10px;
+            width: 130px;
         }
+
+        QMenu#HelpMenu::item:selected{
+            background-color: #f2f2f2;
+        }
+
+        QMenu#HelpMenu::icon{
+            padding-left:40px;
+        }
+
         """)
 
         HelpMenu.setIcon(QIcon(os.path.join("Images", "question.png")))
@@ -400,7 +424,7 @@ class mainWindow(QMainWindow):
     # Visit gihub action
     # Remove this if you don't need it
     def visitGithub(self):
-        self.add_new_tab("https://github.com/saminsakur/PyQt5BrowserBuild", "Github")
+        self.add_new_tab(QUrl("https://github.com/saminsakur/PyQt5BrowserBuild"), "Github")
 
     # navigate backward tab
     def navigate_back_tab(self):
