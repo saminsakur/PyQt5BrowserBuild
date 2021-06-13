@@ -1,7 +1,7 @@
 # PyQt5 Qwebenjineview web browser
 **chroium based browser with python pyqt5 library**
 
-<!--img src="./browser-screenshot.png" alt="Screenshot"/-->
+<img src="./browser-screenshot.png" alt="Screenshot"/>
 
 Tested on:
 Python version: Python 3.9.5 (64 bit)<br>
