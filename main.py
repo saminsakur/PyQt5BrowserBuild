@@ -322,6 +322,7 @@ class mainWindow(QMainWindow):
             width:200px;
         }
         """)
+
         HelpMenu.setIcon(QIcon(os.path.join("Images", "question.png")))
 
         # About action
@@ -329,6 +330,11 @@ class mainWindow(QMainWindow):
         AboutAction.setIcon(QIcon(os.path.join("Images", "info.png")))
         AboutAction.triggered.connect(self.about)
         HelpMenu.addAction(AboutAction)
+
+        # Visit action
+        VisitGithubAction = QAction("Visit Github", self)
+        VisitGithubAction.triggered.connect(self.visitGithub)
+        HelpMenu.addAction(VisitGithubAction)
 
         context_menu.addMenu(HelpMenu)
 
@@ -392,6 +398,11 @@ class mainWindow(QMainWindow):
     def PasteUrlAndGo(self):
         # print(self.tabs.currentWidget().clipboard())
         pass
+    
+    # Visit gihub action
+    # Remove this if you don't need it
+    def visitGithub(self):
+        self.add_new_tab("https://github.com/saminsakur/PyQt5BrowserBuild", "Github")
 
     # navigate backward tab
     def navigate_back_tab(self):
