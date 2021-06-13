@@ -306,6 +306,19 @@ class mainWindow(QMainWindow):
 
         # The help submenu
         HelpMenu = QMenu("Help", self)
+        HelpMenu.setStyleSheet(
+        """
+        QMenu::item{
+            background-color: transparent;
+            font-size: 10pt;
+            padding-left: 30px;
+            padding-right: 30px;
+            padding-top:1px;
+            padding-bottom: 1px;
+            height:40px;
+            width:200px;
+        }
+        """)
         HelpMenu.setIcon(QIcon(os.path.join("Images", "question.png")))
 
         # About action
@@ -537,9 +550,30 @@ def main():
     QToolBar {
         background-color: #edf4f7;
     }
+    
+    Qmenu{
+        background-color:fdfdfd;
 
-    QMenu{  /* Styling all contextmenus */
+    }
 
+    QMenu::right-arrow{
+        image :url(Images/right-arrow-context-menu.png);
+        height:12px;
+        width:12px;
+    }
+
+    QMenu::item{  /* Styling all contextmenus */
+        padding: 2px 170px 2px 20px;
+        border: 1px solid transparent;
+        font-size: 10pt;
+    }
+
+    QMenu::item::icon{
+        image:none;
+    }
+
+    QMenu::item:selected{
+        background-color: #aaa;
     }
 
     /*
@@ -549,7 +583,7 @@ def main():
     QMenu#ContextMenu {
         background-color: #fdfdfd;
         border: 1px solid transparent;        
-        font-family: Arial, sans-serif;
+        font-family: Times, sans-serif;
         border-radius: 6px;
         box-shadow: 10px;
     }
