@@ -25,7 +25,8 @@ Some features :
 <ul>
   <li>Work with multiple tabs. Doubleclick on tab bar to open a new</li>
   <li>Search Google right from the address bar</li>  
-  <li>Open a local file onto this browser</li>
+  <li>Open a local file into this browser</li>
+  <li>Save any page as HTML or complete webpage</li>
   <li>Copy site url and paste it anywhere by clicking in the option of three dot menu</li>
   <li>Paste and go, which will navigate to that website that is saved in your clipboard</li>
   <li>Click on the three dot menu for more</li>
