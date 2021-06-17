@@ -6,7 +6,7 @@ from PyQt5 import QtCore
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
-from PyQt5.QtWebEngineWidgets import QWebEnginePage, QWebEngineView
+from PyQt5.QtWebEngineWidgets import *
 from PyQt5.QtPrintSupport import *
 
 
@@ -41,12 +41,11 @@ class fileErrorDialog(QMessageBox):
     def __init__(self, *args, **kwargs):
         super(fileErrorDialog, self).__init__(*args, **kwargs)
 
-        self.setText("Wrong file inputed, Please Enter a correct file and try again.")
+        self.setText("Wrong file entered, Enter a correct file and try again.")
         self.setIcon(QMessageBox.Critical)
 
         self.setWindowTitle("Please enter a correct file")
         self.show()
-
 
 
 
@@ -59,6 +58,70 @@ class errorMsg(QMessageBox):
 
         self.setWindowTitle("Error!")
         self.show()
+
+
+
+
+class PrintHandler(QObject):
+    def __init__(self, parent = None):
+        super().__init__(parent)
+        self.m_page = None
+        self.m_inPrintPreview = False
+
+    def setPage(self, page):
+        assert not self.m_page
+        self.m_page = page
+        self.m_page.printRequested.connect(self.printPreview)
+
+    @pyqtSlot()
+    def print(self):
+        printer = QPrinter(QPrinter.HighResolution)
+        dialog = QPrintDialog(printer, self.m_page.view())
+        if dialog.exec_() != QDialog.Accepted:
+            return
+        self.printDocument(printer)
+
+    @pyqtSlot()
+    def printPreview(self):
+        if not self.m_page:
+            return
+        if self.m_inPrintPreview:
+            return
+        self.m_inPrintPreview = True
+        printer = QPrinter()
+        preview = QPrintPreviewDialog(printer, self.m_page.view())
+        preview.paintRequested.connect(self.printDocument)
+        preview.exec()
+        self.m_inPrintPreview = False
+
+    @pyqtSlot(QPrinter)
+    def printDocument(self, printer):
+        loop = QEventLoop()
+        result = False
+
+        def printPreview(success):
+            nonlocal result
+            result = success
+            loop.quit()
+        progressbar = QProgressDialog(self.m_page.view())
+        progressbar.findChild(QProgressBar).setTextVisible(False)
+        progressbar.setLabelText("Wait please...")
+        progressbar.setRange(0, 0)
+        progressbar.show()
+        progressbar.canceled.connect(loop.quit)
+        self.m_page.print(printer, printPreview)
+        loop.exec_()
+        progressbar.close()
+        if not result:
+            painter = QPainter()
+            if painter.begin(printer):
+                font = painter.font()
+                font.setPixelSize(20)
+                painter.setFont(font)
+                painter.drawText(QPointF(10, 25), "Could not generate print preview.")
+                painter.end()
+
+
 
 
 class mainWindow(QMainWindow):
@@ -128,7 +191,7 @@ class mainWindow(QMainWindow):
 
         # open new tab when Ctrl+T pressed
         AddNewTabKeyShortcut = QShortcut("Ctrl+T", self)
-        AddNewTabKeyShortcut.activated.connect(self.add_new_tab)
+        AddNewTabKeyShortcut.activated.connect(lambda: self.add_new_tab(QtCore.QUrl("https://www.google.com/"), "New tab"))
 
         # Close current tab on Ctrl+W
         CloseCurrentTabKeyShortcut = QShortcut("Ctrl+W", self)
@@ -338,6 +401,7 @@ class mainWindow(QMainWindow):
         SavePageAs.triggered.connect(self.save_page)
         context_menu.addAction(SavePageAs)
 
+
         # Print this page action
         PrintThisPageAction = QAction("Print this page", self)
         PrintThisPageAction.setIcon(QtGui.QIcon(os.path.join("Images", "printer.png")))
@@ -347,10 +411,15 @@ class mainWindow(QMainWindow):
         context_menu.addAction(PrintThisPageAction)
 
         # Print with preview
-        PrintPageWithPreview = QAction(QtGui.QIcon(os.path.join("Images", "printerprev.png")), "Print current page with preview", self)
+        PrintPageWithPreview = QAction(QtGui.QIcon(os.path.join("Images", "printerprev.png")), "Print with preview", self)
         PrintPageWithPreview.triggered.connect(self.PrintWithPreview)
         PrintPageWithPreview.setShortcut("Ctrl+Shift+P")
         context_menu.addAction(PrintPageWithPreview)
+
+        # Save page as PDF
+        SavePageAsPDF = QAction(QtGui.QIcon(os.path.join("Images", "adobepdf.png")), "Save as PDF", self)
+        SavePageAsPDF.triggered.connect(self.save_as_pdf)
+        context_menu.addAction(SavePageAsPDF)
 
         # The help submenu
         HelpMenu = QMenu("Help", self)
@@ -417,11 +486,17 @@ class mainWindow(QMainWindow):
         # Stuffs to see at starup
         self.add_new_tab(QUrl("https://www.google.com/"), "Homepage")
 
+        # Set the addressbar focus
+        self.navbar.setFocus()
+
         # what to display on the window
         self.setCentralWidget(self.tabs)
 
         # Stuffs to set the window
         self.showMaximized()
+
+        # Set minimum size
+        self.setMinimumWidth(400)
     
 
 
@@ -439,13 +514,12 @@ class mainWindow(QMainWindow):
 
         self.stop_action.setVisible(loading)
         self.reload_action.setVisible(not loading)
-        pass
 
 
 
     # funcion to navigate to home when home icon is pressed   
     def goToHome(self):
-        self.tabs.currentWidget().setUrl(QUrl("http://www.google.com/"))
+        self.tabs.currentWidget().setUrl(QUrl("https://www.google.com/"))
 
 
     # Function to navigate to bing by pressing go to bing on the three dot menu
@@ -470,7 +544,6 @@ class mainWindow(QMainWindow):
     
 
 
-    # Visit gihub action
     # Remove this if you don't need it
     def visitGithub(self):
         self.add_new_tab(QUrl("https://github.com/saminsakur/PyQt5BrowserBuild"), "Github")
@@ -504,47 +577,66 @@ class mainWindow(QMainWindow):
     """
     # Function to open a local file
     def open_local_file(self):
-        filename, _ = QFileDialog.getOpenFileName(self, "Open file", "", "Hypertext Markup Language (*.htm, *.html);;""All files (*.*)")
-        
-        try:
-            if filename:
-                with open(filename, "r") as f:
+        filename, _ = QFileDialog.getOpenFileName(
+            parent=self,
+            caption="Open file", 
+            directory="",
+            filter="Hypertext Markup Language (*.htm *.html *.mhtml);;All files (*.*)"
+            )
+        if len(filename) > 0:
+            try:
+                with open(filename, "r", encoding="utf8") as f:
                     opened_file = f.read()
+                    self.tabs.currentWidget().setHtml(opened_file)
+                    
+            except:
+                dlg = fileErrorDialog()
+                dlg.exec_()
 
+        self.url_bar.setText(filename)
 
-                self.tabs.currentWidget().setHtml(opened_file)
-                self.url_bar.setText(filename)
-
-        except:
-            dlg = fileErrorDialog()
-            dlg.exec_()
 
 
     # Function to save current site to user's local storage 
     def save_page(self):
-        filename, _ = QFileDialog.getSaveFileName(self, "Save Page As", "", "Hypertext Markup Language (*.htm *html);;""All files (*.*)")
-
+        filepath, filter = QFileDialog.getSaveFileName(
+            parent=self,
+            caption="Save Page As", 
+            directory="", 
+            filter="Hypertext Markup Language (*.htm *.html);;Webpage, complete (*.htm *.html);;All files (*.*)"
+        )
         try:
-            if filename:
-                html = self.tabs.currentWidget().page().toPlainText()
-                with open(filename, 'w') as f:
-                    f.write(html.encode('utf8'))
-        
+            if filter == "Hypertext Markup Language (*.htm *.html)":
+                self.tabs.currentWidget().page().save(filepath, format=QWebEngineDownloadItem.MimeHtmlSaveFormat)
+                
+            elif filter == "Webpage, Complete (*.htm *.html)":
+                self.tabs.currentWidget().page().save(filepath, format=QWebEngineDownloadItem.CompleteHtmlSaveFormat)
+
         except:
-            self.showErrorDlg()
+             self.showErrorDlg()
 
+    # Print handler
     def print_this_page(self):
-        printer = QPrinter(QPrinter.HighResolution)
-        print_dialog = QPrintDialog(printer, self)
-        # print_dialouge.paintRequested.connect(self.tabs.currentWidget().print_)
+        handler_print = PrintHandler()
+        handler_print.setPage(self.tabs.currentWidget().page())
 
-        if print_dialog.exec_() == QPrintDialog.accepted:
-            self.tabs.currentWidget().page.print_(printer)
     
 
     # Print page with preview
     def PrintWithPreview(self):
         pass
+
+
+    # Save as pdf
+    def save_as_pdf(self):
+        filename, filter = QFileDialog.getSaveFileName(
+            parent=self,
+            caption="Save as",
+            filter="PDF File (*.pdf);;All files (*.*)"
+        )
+         
+        self.tabs.currentWidget().page().printToPdf(filename)
+
 
 
     # doubleclick on empty space for new tab
@@ -594,7 +686,16 @@ class mainWindow(QMainWindow):
         
         browser = QWebEngineView()  # Define the main webview to browser the internet
 
+        # Full screen enble
+        browser.settings().setAttribute(QWebEngineSettings.FullScreenSupportEnabled, True)
+        browser.page().fullScreenRequested.connect(lambda request: request.accept())
+
         browser.loadProgress.connect(self.loadProgressHandler)
+
+        browser.page().WebAction(QWebEnginePage.OpenLinkInNewTab)
+
+        browser.settings().setAttribute(QWebEngineSettings.ScreenCaptureEnabled, True)
+        # browser.setPage(customQWebEnginePage)
 
         i = self.tabs.addTab(browser, label)
         self.tabs.setCurrentIndex(i)
@@ -633,8 +734,15 @@ class mainWindow(QMainWindow):
             self.httpsicon.setPixmap(QPixmap(os.path.join("Images", "security.png")))
             self.httpsicon.setToolTip("Connection to this is is secure\n\nThis site have a valid certificate")
         
-        elif q.scheme() == "file:":
+        elif q.scheme() == "file":
             self.httpsicon.setPixmap(QPixmap(os.path.join("Images", "file-protocol.png")))
+            self.httpsicon.setToolTip("You are viewing a local or shared file")
+        
+        elif q.scheme() == "data":
+            self.httpsicon.setPixmap(QPixmap(os.path.join("Images", "file-protocol.png")))
+            self.httpsicon.setToolTip("You are viewing a local or shared file")
+
+        
         else:
             # Set insecure padlock
             self.httpsicon.setPixmap(QPixmap(os.path.join("Images", "warning1.png")))
@@ -784,7 +892,7 @@ def main():
         background-color: transparent;
         font-size: 10pt;
         padding-left: 40px;
-        padding-right: 100px;
+        /*padding-right: 100px;*/
         padding-top:8px;
         padding-bottom: 8px;
         width: 130px;
@@ -954,8 +1062,12 @@ def main():
 
     #e6e6e6 background color
     window = mainWindow()
-    app.exec_()
+    window.show()
+    try:
+        sys.exit(app.exec_())
 
+    except SystemExit:
+        print("Closing browser...")        
 
 
 if __name__ == "__main__":
