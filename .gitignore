@@ -4,7 +4,10 @@
 workspace.xml
 __pycache__
 env
+venv
 *.swp
 *.un~
 main.py~
 browser-screenshot.png
+build
+dist

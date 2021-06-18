@@ -1,3 +1,14 @@
+"""
+Simple Web Browser
+
+Chromium based tabbed browser built with PyQt5 QWebEnjineView
+Forward, Backward, Reload, Stop loading, Print page with and without preview, Save page, Save page as pdf,
+Add new tab, close tab, Open page etc
+by Samin Sakur
+
+Learn more - https://github.com/saminsakur/PyQt5BrowserBuild/
+"""
+
 import os
 import pyperclip as pc
 import sys
@@ -123,7 +134,6 @@ class PrintHandler(QObject):
                 painter.setFont(font)
                 painter.drawText(QPointF(10, 25), "We could not generate print preview.")
                 painter.end()
-
 
 
 

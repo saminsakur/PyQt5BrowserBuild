@@ -1,5 +1,5 @@
 # PyQt5 Qwebenjineview web browser
-**chroium based browser with python pyqt5 library**
+**Chromium based tabbed browser built with Python PyQt5 module**
 
 <img src="./browser-screenshot.png" alt="Screenshot"/>
 
