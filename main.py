@@ -167,7 +167,7 @@ class mainWindow(QMainWindow):
             }
 
             QTabBar::close-button:hover{    /* close button hover */
-                background-color: #295c80
+                background-color: #477494
             }
 
             QTabWidget::tab-bar {
