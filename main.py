@@ -154,7 +154,6 @@ class mainWindow(QMainWindow):
             QTabBar::tab:!selected{
                 background-color: transparent;
             }
-            
 
             QTabBar::tab:selected, QTabBar::tab:hover {     /* not selected tabs */
                 background-color: #2c5470;
@@ -168,7 +167,7 @@ class mainWindow(QMainWindow):
             }
 
             QTabBar::close-button:hover{    /* close button hover */
-                background-color: #4b7a9c
+                background-color: #295c80
             }
 
             QTabWidget::tab-bar {
