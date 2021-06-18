@@ -843,7 +843,7 @@ def main():
     QApplication.setApplicationName("Simple Web Browser")
 
     # Set the window icon
-    QApplication.setWindowIcon(QIcon(os.path.join("Images", "browser.png")))
+    QApplication.setWindowIcon(QIcon(os.path.join("Icons", "browser.png")))
 
     # App styles
     app.setStyleSheet("""
@@ -1075,7 +1075,7 @@ def main():
         sys.exit(app.exec_())
 
     except SystemExit:
-        print("Closing browser...")        
+        print("Closing browser...")
 
 
 if __name__ == "__main__":
