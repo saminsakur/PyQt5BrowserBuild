@@ -103,22 +103,25 @@ class PrintHandler(QObject):
             nonlocal result
             result = success
             loop.quit()
+
+        # progressbar to show loading
         progressbar = QProgressDialog(self.m_page.view())
         progressbar.findChild(QProgressBar).setTextVisible(False)
-        progressbar.setLabelText("Wait please...")
+        progressbar.setLabelText("Please wait...")
         progressbar.setRange(0, 0)
         progressbar.show()
         progressbar.canceled.connect(loop.quit)
         self.m_page.print(printer, printPreview)
         loop.exec_()
         progressbar.close()
+
         if not result:
             painter = QPainter()
             if painter.begin(printer):
                 font = painter.font()
                 font.setPixelSize(20)
                 painter.setFont(font)
-                painter.drawText(QPointF(10, 25), "Could not generate print preview.")
+                painter.drawText(QPointF(10, 25), "We could not generate print preview.")
                 painter.end()
 
 
@@ -471,16 +474,17 @@ class mainWindow(QMainWindow):
         context_menu.addSeparator()
 
 
-
         # Close browser
         CloseBrowser = QAction("Close browser", self)
         CloseBrowser.triggered.connect(lambda: sys.exit())
         context_menu.addAction(CloseBrowser)
 
+        """ 
+        Set menu for the button
+        ContextMenuButton.add
+        Add the context menu to the navbar
+        """
 
-        # Set menu for the button
-        # ContextMenuButton.add
-        # Add the context menu to the navbar
         self.navbar.addWidget(ContextMenuButton)
         
         # Stuffs to see at starup
@@ -498,7 +502,6 @@ class mainWindow(QMainWindow):
         # Set minimum size
         self.setMinimumWidth(400)
     
-
 
 
     """Instead of managing 2 slots associated with the progress and completion of loading,
@@ -603,13 +606,13 @@ class mainWindow(QMainWindow):
             parent=self,
             caption="Save Page As", 
             directory="", 
-            filter="Hypertext Markup Language (*.htm *.html);;Webpage, complete (*.htm *.html);;All files (*.*)"
+            filter="Webpage, complete (*.htm *.html);;Hypertext Markup Language (*.htm *.html);;All files (*.*)",
         )
         try:
             if filter == "Hypertext Markup Language (*.htm *.html)":
                 self.tabs.currentWidget().page().save(filepath, format=QWebEngineDownloadItem.MimeHtmlSaveFormat)
                 
-            elif filter == "Webpage, Complete (*.htm *.html)":
+            elif filter == "Webpage, complete (*.htm *.html)":
                 self.tabs.currentWidget().page().save(filepath, format=QWebEngineDownloadItem.CompleteHtmlSaveFormat)
 
         except:
@@ -617,15 +620,21 @@ class mainWindow(QMainWindow):
 
     # Print handler
     def print_this_page(self):
-        handler_print = PrintHandler()
-        handler_print.setPage(self.tabs.currentWidget().page())
+        try:
+            handler_print = PrintHandler()
+            handler_print.setPage(self.tabs.currentWidget().page())
+            handler_print.print()
+        
+        except:
+            self.showErrorDlg()
 
     
 
     # Print page with preview
     def PrintWithPreview(self):
-        pass
-
+        handler = PrintHandler()
+        handler.setPage(self.tabs.currentWidget().page())
+        handler.printPreview()
 
     # Save as pdf
     def save_as_pdf(self):
@@ -791,7 +800,6 @@ class mainWindow(QMainWindow):
         # else browser will go to anything the user has been written
         else:
             url = in_url
-
         
         self.tabs.currentWidget().load(QUrl.fromUserInput(url))
 
