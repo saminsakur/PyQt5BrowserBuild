@@ -2,10 +2,11 @@
 Simple Web Browser
 
 Chromium based tabbed browser built with PyQt5 QWebEnjineView
-Forward, Backward, Reload, Stop loading, Print page with and without preview, Save page, Save page as pdf,
-Add new tab, close tab, Open page etc
-by Samin Sakur
 
+Forward, Backward, Reload, Stop loading, Print page with and without preview,
+Save page, Save page as pdf, Address bar, Add new tab, close tab, Open page etc
+
+by Samin Sakur
 Learn more - https://github.com/saminsakur/PyQt5BrowserBuild/
 """
 
