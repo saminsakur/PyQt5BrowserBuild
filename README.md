@@ -25,12 +25,13 @@ Some features :
   <ul>
     <li>Work with multiple tabs. Doubleclick on tab bar to open a new</li>
     <li>Search Google right from the address bar</li>
-    <li>Print webpage</li>
-    <li>Print webpage with preview</li>
-    <li>Open a local file into this browser</li>
-    <li>Save webpage complete webpage or HTML</li>
+    <li>Print webpage with and without preview</li>
+    <li>Open a local filesÎ</li>
+    <li>Save webpage as complete webpage or HTML</li>
+    <li>Save as pdf</li>
     <li>Copy site url to clipboard feature</li>
     <li>Paste and go, which will navigate to that website that is saved in your clipboard</li>
+    <li>With site shortcuts like Bing and DuckDuckGo in the three dot menu</li>
   </ul>
 <br>
 

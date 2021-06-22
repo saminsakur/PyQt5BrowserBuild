@@ -4,6 +4,7 @@
 workspace.xml
 __pycache__
 env
+Installer
 venv
 *.swp
 *.un~
@@ -11,3 +12,6 @@ main.py~
 browser-screenshot.png
 build
 dist
+Installer.exe
+*.exe
+Installer.zip
