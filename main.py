@@ -13,6 +13,9 @@ Learn more - https://github.com/saminsakur/PyQt5BrowserBuild/
 import os
 import pyperclip as pc
 import sys
+import sqlite3
+import datetime
+import re
 from PyQt5 import QtGui
 from PyQt5 import QtCore
 from PyQt5.QtGui import *
@@ -23,31 +26,11 @@ from PyQt5.QtPrintSupport import *
 
 
 
-domains = (
-    "com",
-    "co",
-    "net", 
-    "org", 
-    "io", 
-    "in", 
-    "me", 
-    "app", 
-    "gg", 
-    "cc", 
-    "bd", 
-    "com.bd", 
-    "google", 
-    "in", 
-    "us", 
-    "uk", 
-    "gov", 
-    "int", 
-    "edu", 
-    "edu.bd", 
-    "apple",
-    "localhost"
-)
-
+pattern = re.compile(r"(http|https)?:?(\/\/)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)")
+file_pattern = re.compile(r"^file://")
+connection = sqlite3.connect("webBrowserDB.db")
+cursor = connection.cursor()
+textFont = QFont("Century Gothic", 16)
 
 class fileErrorDialog(QMessageBox):
     def __init__(self, *args, **kwargs):
@@ -137,9 +120,59 @@ class PrintHandler(QObject):
                 painter.end()
 
 
+class HistoryWindow(QWidget):
+    def __init__(self, webBrowser):
+        super().__init__()
+
+        titleFont = QFont("Century Gothic", 32)
+        titleLbl = QLabel("History")
+        titleLbl.setFont(titleFont)
+
+        clearBtn = QPushButton("Clear")
+        clearBtn.setFont(textFont)
+        clearBtn.clicked.connect(self.clearHistory)
+
+        self.historyList = QListWidget()
+
+        self.fillHistoryList()
+
+        self.historyList.itemClicked.connect(self.goClickedLink)
+
+
+        layout = QVBoxLayout()
+        layout.addWidget(self.historyList)
+        layout.addWidget(clearBtn)
+        layout.setContentsMargins(0, 0, 0, 0)
+        self.setLayout(layout)
+
+        self.webBrowser = webBrowser
+
+    def fillHistoryList(self):
+        data = cursor.execute("SELECT * FROM history")
+        siteInfoList = data.fetchall()
+        for i in range(len(siteInfoList)-1,-1,-1):
+            siteInfo = siteInfoList[i][1] + " - " + siteInfoList[i][3]
+            self.historyList.addItem(siteInfo)
+
+    def goClickedLink(self, item):
+        siteInfo = item.text()
+        visitDate = siteInfo[len(siteInfo)-19:] # veritabanında seçilen sitenin linkini bulmak için ziyaret edilme tarihini arıyoruz
+        siteInfoFromDB = cursor.execute("SELECT * FROM history WHERE date = ?", [visitDate])
+        url = siteInfoFromDB.fetchall()[0][2]
+        mainWindow().tabs.currentWidget().page().load(QUrl(url)) # open selected url
+        self.webBrowser.forwardBtn.setEnabled(0) # disable forward button
+        self.close()
+
+    def clearHistory(self):
+        self.historyList.clear()
+        cursor.execute("DELETE FROM history")
+        connection.commit()
+
+
 class AddressBar(QLineEdit):
     def __init__(self):
         super().__init__()
+        self.setFocus()
 
 
     def mousePressEvent(self, e):
@@ -173,17 +206,41 @@ class AddressBar(QLineEdit):
         """)
 
 
+class SSLIcon(QLabel):
+    def __init__(self):
+        super().__init__()
+
+    def InitSSLIcon(self):
+        self.setObjectName("SSLIcon")
+        self.setPixmap(QPixmap(os.path.join('Images', 'lock-icon.png')))
+
+
+class Tabs(QTabWidget):
+    def __init__(self):
+        super().__init__()
+
+
 class mainWindow(QMainWindow):
     def __init__(self, *args, **kwargs):
         super(mainWindow, self).__init__()
 
         # create tabs
-        self.tabs = QTabWidget()
+        self.tabs = Tabs()
         self.tabs.setDocumentMode(True)
+        self.connection = sqlite3.connect("webBrowserDB.db")
+        self.cursor = self.connection.cursor()
+
+        # create history table
+        cursor.execute("""CREATE TABLE IF NOT EXISTS "history" (
+                   "id"	INTEGER,
+                   "title"	TEXT,
+                   "url"	TEXT,
+                   "date"	TEXT,
+               	PRIMARY KEY("id")
+               	)""")
 
         # Add some styles to the tabs
         self.tabs.setStyleSheet("""
-            
              QTabBar{
                 background-color:#417294;
             }
@@ -322,9 +379,8 @@ class mainWindow(QMainWindow):
         self.navbar.addSeparator()
 
         # Shows ssl security icon
-        self.httpsicon = QLabel()
-        self.httpsicon.setObjectName("SSLIcon")
-        self.httpsicon.setPixmap(QPixmap(os.path.join('Images', 'lock-icon.png')))
+        self.httpsicon = SSLIcon()
+        self.httpsicon.InitSSLIcon()
 
         # Add http icon to the navbar bar
         self.navbar.addWidget(self.httpsicon)
@@ -404,6 +460,12 @@ class mainWindow(QMainWindow):
 
         # A separator
         context_menu.addSeparator()
+
+        #View history
+        ViewHistory = QAction("H", self)
+        ViewHistory.triggered.connect(self.openHistory)
+        ViewHistory.setShortcut("Ctrl+h")
+        context_menu.addAction(ViewHistory)
 
         # Open page
         OpenPgAction = QAction("Open", self)
@@ -508,7 +570,7 @@ class mainWindow(QMainWindow):
         self.add_new_tab(QUrl("https://www.google.com/"), "Homepage")
 
         # Set the addressbar focus
-        self.navbar.setFocus()
+        self.url_bar.setFocus()
 
         # what to display on the window
         self.setCentralWidget(self.tabs)
@@ -800,25 +862,46 @@ class mainWindow(QMainWindow):
             # If QTabWidget's currentwidet is none, the ignore
             return
 
-        if QUrl(in_url).scheme() == "file":
+        if file_pattern.search(in_url):
             file_path = os.path.abspath(os.path.join(os.path.dirname(__file__), in_url))
             local_url = QUrl.fromLocalFile(file_path)
             self.tabs.currentWidget().load(local_url)
             
 
-        elif any([in_url.endswith(domains), in_url.endswith("/")]) and not any(i in in_url  for i in ("http://","https://","file:///")):
+        elif pattern.search(in_url):
             url = "http://"+in_url
 
         # this will search google
-        elif not any(i in in_url for i in domains) or not any(i in in_url  for i in("http:", "https:", "/")):
-            url = self.searchGoogle(in_url)
-                
-        # else browser will go to anything the user has been written
         else:
-            url = in_url
+            url = self.searchGoogle(in_url)
         
         self.tabs.currentWidget().load(QUrl.fromUserInput(url))
 
+
+    def updateHistory(self):
+        title = self.tabs.currentWidget().page().title()
+        url = str(self.tabs.currentWidget().page().url())
+        url = url[19:len(url) - 2]
+        hour = datetime.datetime.now().strftime("%X")
+        day = datetime.datetime.now().strftime("%x")
+        date = hour + " - " + day
+
+        #eğer url geçmişte varsa öncekini silip yenisini en sona ekliyoruz
+        data = self.cursor.execute("SELECT * FROM history")
+        siteInfoList = data.fetchall()
+
+        for i in range(len(siteInfoList)):
+            if url == siteInfoList[i][2]:
+                self.cursor.execute("DELETE FROM history WHERE url = ?", [url])
+
+        self.cursor.execute("INSERT INTO history (title,url,date) VALUES (?,?,?)", (title,url,date))
+        self.connection.commit()
+
+    def openHistory(self):
+        self.historyWindow = HistoryWindow(self)
+        self.historyWindow.setWindowFlags(Qt.Window | Qt.CustomizeWindowHint | Qt.FramelessWindowHint | Qt.WindowCloseButtonHint)
+        self.historyWindow.setGeometry(self.tabs.currentWidget().frameGeometry().width()-500-10, 87, 500, 500)
+        self.historyWindow.show()
 
 
 
