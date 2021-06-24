@@ -137,6 +137,41 @@ class PrintHandler(QObject):
                 painter.end()
 
 
+class AddressBar(QLineEdit):
+    def __init__(self):
+        super().__init__()
+
+
+    def mousePressEvent(self, e):
+        self.selectAll()
+
+    def initAddressBar(self):
+        # Set the placeholder text
+        self.setPlaceholderText("Search or enter web address")
+        self.setFocus()
+        self.setStyleSheet("""
+            QLineEdit{
+                font-family: Segoe UI;
+                padding-top:4px;
+                padding-left:8px;
+                padding-bottom:4px;
+                border:2px solid transparent;
+                border-radius:6px;
+                font-size:10pt;
+                background-color: #ffffff;
+                selection-background-color: #66c2ff;
+            }
+
+            QLineEdit:focus{
+                border-color:#3696ff;
+            }
+
+            QLineEdit:hover{
+                border-color:#d6d6d6
+            }
+            
+        """)
+
 
 class mainWindow(QMainWindow):
     def __init__(self, *args, **kwargs):
@@ -214,7 +249,6 @@ class mainWindow(QMainWindow):
         ExitBrowserShortcutKey = QShortcut("Ctrl+Shift+W", self)
         ExitBrowserShortcutKey.activated.connect(sys.exit)
 
-
         # nav bar
         self.navbar = QToolBar()
         self.navbar.setMovable(False)
@@ -270,7 +304,8 @@ class mainWindow(QMainWindow):
 
         
         # Add Address bar
-        self.url_bar = QLineEdit()
+        self.url_bar = AddressBar()
+        self.url_bar.initAddressBar()
         self.url_bar.setFrame(False)
         self.url_bar.returnPressed.connect(self.navigate_to_url)
         self.url_bar.setShortcutEnabled(True)
@@ -279,34 +314,6 @@ class mainWindow(QMainWindow):
         # Set focus on the Addressbar by pressing Ctrl+E
         FocusOnAddressBar = QShortcut("Ctrl+E", self)
         FocusOnAddressBar.activated.connect(self.url_bar.setFocus)
-
-
-        # Set the placeholder text
-        self.url_bar.setPlaceholderText("Search or enter web address")
-
-        self.url_bar.setFocus()
-        self.url_bar.setStyleSheet("""
-            QLineEdit{
-                font-family: Segoe UI;
-                padding-top:4px;
-                padding-left:8px;
-                padding-bottom:4px;
-                border:2px solid transparent;
-                border-radius:6px;
-                font-size:10pt;
-                background-color: #ffffff;
-                selection-background-color: #66c2ff;
-            }
-
-            QLineEdit:focus{
-                border-color:#3696ff;
-            }
-
-            QLineEdit:hover{
-                border-color:#d6d6d6
-            }
-            
-        """)
 
         # Set stop action to be invisible
         self.stop_action.setVisible(False)
@@ -527,7 +534,6 @@ class mainWindow(QMainWindow):
 
         self.stop_action.setVisible(loading)
         self.reload_action.setVisible(not loading)
-
 
 
     # funcion to navigate to home when home icon is pressed   
