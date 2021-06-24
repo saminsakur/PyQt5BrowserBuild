@@ -2,12 +2,8 @@
 Simple Web Browser
 
 Chromium based tabbed browser built with PyQt5 QWebEnjineView
-
-Forward, Backward, Reload, Stop loading, Print page with and without preview,
-Save page, Save page as pdf, Address bar, Add new tab, close tab, Open page etc
-
-by Samin Sakur
-Learn more - https://github.com/saminsakur/PyQt5BrowserBuild/
+Made by     - Samin Sakur
+Learn more  - https://github.com/saminsakur/PyQt5BrowserBuild/
 """
 
 import os
@@ -29,6 +25,7 @@ from PyQt5.QtPrintSupport import *
 pattern = re.compile(r"(http|https)?:?(\/\/)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)")
 file_pattern = re.compile(r"^file://")
 connection = sqlite3.connect("webBrowserDB.db")
+
 cursor = connection.cursor()
 textFont = QFont("Century Gothic", 16)
 
@@ -121,7 +118,7 @@ class PrintHandler(QObject):
 
 
 class HistoryWindow(QWidget):
-    def __init__(self, webBrowser):
+    def __init__(self):
         super().__init__()
 
         titleFont = QFont("Century Gothic", 32)
@@ -137,6 +134,11 @@ class HistoryWindow(QWidget):
         self.fillHistoryList()
 
         self.historyList.itemClicked.connect(self.goClickedLink)
+        self.setStyleSheet(
+            """
+            border: 1px solid transparent;
+            border-raidus:5px;
+            """)
 
 
         layout = QVBoxLayout()
@@ -145,7 +147,6 @@ class HistoryWindow(QWidget):
         layout.setContentsMargins(0, 0, 0, 0)
         self.setLayout(layout)
 
-        self.webBrowser = webBrowser
 
     def fillHistoryList(self):
         data = cursor.execute("SELECT * FROM history")
@@ -159,8 +160,7 @@ class HistoryWindow(QWidget):
         visitDate = siteInfo[len(siteInfo)-19:] # veritabanında seçilen sitenin linkini bulmak için ziyaret edilme tarihini arıyoruz
         siteInfoFromDB = cursor.execute("SELECT * FROM history WHERE date = ?", [visitDate])
         url = siteInfoFromDB.fetchall()[0][2]
-        mainWindow().tabs.currentWidget().page().load(QUrl(url)) # open selected url
-        self.webBrowser.forwardBtn.setEnabled(0) # disable forward button
+        mainWindow().openSiteHistoryClicked(QtCore.QUrl(url), str(siteInfo)) # open selected url
         self.close()
 
     def clearHistory(self):
@@ -181,6 +181,8 @@ class AddressBar(QLineEdit):
     def initAddressBar(self):
         # Set the placeholder text
         self.setPlaceholderText("Search or enter web address")
+
+        # Set focus to the address bar
         self.setFocus()
         self.setStyleSheet("""
             QLineEdit{
@@ -799,6 +801,9 @@ class mainWindow(QMainWindow):
         browser.loadFinished.connect(lambda _, i=i, browser=browser:
                                      self.tabs.setTabText(i, browser.page().title()))
 
+        # update history when loading finished
+        browser.page().loadFinished.connect(self.updateHistory)
+
 
     def showErrorDlg(self):
         dlg = errorMsg()
@@ -898,10 +903,24 @@ class mainWindow(QMainWindow):
         self.connection.commit()
 
     def openHistory(self):
-        self.historyWindow = HistoryWindow(self)
-        self.historyWindow.setWindowFlags(Qt.Window | Qt.CustomizeWindowHint | Qt.FramelessWindowHint | Qt.WindowCloseButtonHint)
+        self.historyWindow = HistoryWindow()
+        self.historyWindow.setWindowFlags(Qt.FramelessWindowHint|Qt.Popup)
         self.historyWindow.setGeometry(self.tabs.currentWidget().frameGeometry().width()-500-10, 87, 500, 500)
+        radius = 40.0
+        path = QtGui.QPainterPath()
+        self.historyWindow.resize(440,220)
+        path.addRoundedRect(QtCore.QRectF(self.historyWindow.rect()), radius, radius)
+        mask = QtGui.QRegion(path.toFillPolygon().toPolygon())
+        self.historyWindow.setMask(mask)
+
+        self.historyWindow.setStyleSheet(
+        """
+        background-color:grey;
+        """)
         self.historyWindow.show()
+
+    def openSiteHistoryClicked(self, url, title):
+        self.add_new_tab(url, title)
 
 
 
