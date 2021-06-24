@@ -121,12 +121,20 @@ class HistoryWindow(QWidget):
     def __init__(self):
         super().__init__()
 
-        titleFont = QFont("Century Gothic", 32)
+        titleFont = QFont("sans-serif", 16)
         titleLbl = QLabel("History")
+        titleLbl.setStyleSheet("""
+        margin:5px 5px 5px 5px;
+        """)
         titleLbl.setFont(titleFont)
 
         clearBtn = QPushButton("Clear")
         clearBtn.setFont(textFont)
+        clearBtn.setStyleSheet(
+            """
+            border:1px solid transparent;
+            """
+        )
         clearBtn.clicked.connect(self.clearHistory)
 
         self.historyList = QListWidget()
@@ -134,16 +142,29 @@ class HistoryWindow(QWidget):
         self.fillHistoryList()
 
         self.historyList.itemClicked.connect(self.goClickedLink)
-        self.setStyleSheet(
-            """
-            border: 1px solid transparent;
-            border-raidus:5px;
-            """)
+        self.historyList.setStyleSheet(
+        """
+        QListWidget::item{
+            padding-top:30px;
+            padding-left:200px;
+        }
+
+        QListWidget::item:selected{
+            background-color:#000;
+        }
+
+        QListWidget::item:hover{
+            background-color:#ccc;
+        }
+        
+        """)
 
 
-        layout = QVBoxLayout()
-        layout.addWidget(self.historyList)
-        layout.addWidget(clearBtn)
+        layout = QGridLayout()
+
+        layout.addWidget(titleLbl, 0, 0)
+        layout.addWidget(clearBtn, 0, 1)
+        layout.addWidget(self.historyList, 1, 0, 1, 2)
         layout.setContentsMargins(0, 0, 0, 0)
         self.setLayout(layout)
 
@@ -159,8 +180,12 @@ class HistoryWindow(QWidget):
         siteInfo = item.text()
         visitDate = siteInfo[len(siteInfo)-19:] # veritabanında seçilen sitenin linkini bulmak için ziyaret edilme tarihini arıyoruz
         siteInfoFromDB = cursor.execute("SELECT * FROM history WHERE date = ?", [visitDate])
-        url = siteInfoFromDB.fetchall()[0][2]
-        mainWindow().openSiteHistoryClicked(QtCore.QUrl(url), str(siteInfo)) # open selected url
+        try:
+            url = siteInfoFromDB.fetchall()[0][2]
+            mainWindow().openSiteHistoryClicked(QtCore.QUrl(url), str(siteInfo)) # open selected url
+        except:
+            pass
+
         self.close()
 
     def clearHistory(self):
@@ -905,22 +930,24 @@ class mainWindow(QMainWindow):
     def openHistory(self):
         self.historyWindow = HistoryWindow()
         self.historyWindow.setWindowFlags(Qt.FramelessWindowHint|Qt.Popup)
-        self.historyWindow.setGeometry(self.tabs.currentWidget().frameGeometry().width()-500-10, 87, 500, 500)
-        radius = 40.0
+        self.historyWindow.setGeometry(self.tabs.currentWidget().frameGeometry().width()/2+300, 87, 500, 500)
+        radiusx = 10.0
+        radiusy = 5.0
         path = QtGui.QPainterPath()
-        self.historyWindow.resize(440,220)
-        path.addRoundedRect(QtCore.QRectF(self.historyWindow.rect()), radius, radius)
+        self.historyWindow.resize(370, 490)
+        path.addRoundedRect(QtCore.QRectF(self.historyWindow.rect()), radiusx, radiusy)
         mask = QtGui.QRegion(path.toFillPolygon().toPolygon())
         self.historyWindow.setMask(mask)
 
         self.historyWindow.setStyleSheet(
         """
-        background-color:grey;
+        background-color:#e6e7e8;
         """)
         self.historyWindow.show()
 
-    def openSiteHistoryClicked(self, url, title):
-        self.add_new_tab(url, title)
+    def openSiteHistoryClicked(self, url,*args):
+        # self.add_new_tab(url, title)
+        self.tabs.currentWidget().load(url)
 
 
 

@@ -15,3 +15,4 @@ dist
 Installer.exe
 *.exe
 Installer.zip
+webBrowserDB.db
