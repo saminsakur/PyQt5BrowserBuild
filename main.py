@@ -1010,6 +1010,7 @@ class AboutDialog(QDialog):
 
 def main():
     app = QApplication(sys.argv)
+    app.styleHints().setShowShortcutsInContextMenus(False)
 
     # Set the window name
     QApplication.setApplicationName("Simple Web Browser")

@@ -1,5 +1,7 @@
 *.spec
 .vscode
+*.db
+webBrowserDB.db
 .idea
 workspace.xml
 __pycache__
