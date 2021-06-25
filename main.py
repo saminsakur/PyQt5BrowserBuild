@@ -24,7 +24,7 @@ file_pattern = re.compile(r"^file://")
 connection = sqlite3.connect("webBrowserDB.db")
 
 cursor = connection.cursor()
-textFont = QFont("Century Gothic", 16)
+textFont = QFont("sans-serif", 14)
 
 class fileErrorDialog(QMessageBox):
     def __init__(self, *args, **kwargs):
@@ -126,16 +126,35 @@ class HistoryWindow(QWidget):
         titleLbl.setFont(titleFont)
 
         clearBtn = QPushButton("Clear")
+        clearBtn.setObjectName("ClearButnHistory")
         clearBtn.setFont(textFont)
         clearBtn.setStyleSheet(
             """
-            border:1px solid transparent;
-            border-radius: 7px;
+            QPushButton#ClearButnHistory{
+                border:1px solid transparent;
+                border-radius: 7px;
+                background-color: #C9D2F1;
+                padding: 2px 5px 5px 2px;
+                margin-top:5px;
+                margin-left:80px;
+                margin-right:10px;
+                margin-bottom:5px;
+                font-size:12pt;
+                font-family:sans-serif;
+            }
+            QPushButton#ClearButnHistory:hover{
+                background-color:#ced3e2;
+            }
+            QPushButton#ClearButnHistory:pressed{
+                background-color:#ccc;
+            }
+                       
             """
         )
         clearBtn.clicked.connect(self.clearHistory)
 
         self.historyList = QListWidget()
+        self.historyList.verticalScrollBar().setEnabled(False)
 
         self.fillHistoryList()
 
@@ -143,12 +162,8 @@ class HistoryWindow(QWidget):
         self.historyList.setStyleSheet(
         """
         QListWidget::item{
-            padding-top:30px;
-            padding-left:200px;
-        }
-
-        QListWidget::item:selected{
-            background-color:#000;
+            padding-top: 5px;
+            padding-bottom: 5px;
         }
 
         QListWidget::item:hover{
@@ -247,29 +262,15 @@ class SSLIcon(QLabel):
 class Tabs(QTabWidget):
     def __init__(self):
         super().__init__()
+        self.setDocumentMode(True)
 
+        # Set the tabs closable
+        self.setTabsClosable(True)
 
-class mainWindow(QMainWindow):
-    def __init__(self, *args, **kwargs):
-        super(mainWindow, self).__init__()
-
-        # create tabs
-        self.tabs = Tabs()
-        self.tabs.setDocumentMode(True)
-        self.connection = sqlite3.connect("webBrowserDB.db")
-        self.cursor = self.connection.cursor()
-
-        # create history table
-        cursor.execute("""CREATE TABLE IF NOT EXISTS "history" (
-                   "id"	INTEGER,
-                   "title"	TEXT,
-                   "url"	TEXT,
-                   "date"	TEXT,
-               	PRIMARY KEY("id")
-               	)""")
-
+        # St the tabs movable
+        self.setMovable(True)
         # Add some styles to the tabs
-        self.tabs.setStyleSheet("""
+        self.setStyleSheet("""
              QTabBar{
                 background-color:#417294;
             }
@@ -311,14 +312,34 @@ class mainWindow(QMainWindow):
             }
         """)
 
+
+
+class mainWindow(QMainWindow):
+    def __init__(self, *args, **kwargs):
+        super(mainWindow, self).__init__()
+
+        # Define layout
+        self.layout = QVBoxLayout()
+        # create tabs
+        self.tabs = Tabs()
+        self.connection = sqlite3.connect("webBrowserDB.db")
+        self.cursor = self.connection.cursor()
+
+        # create history table
+        cursor.execute("""CREATE TABLE IF NOT EXISTS "history" (
+                   "id"	INTEGER,
+                   "title"	TEXT,
+                   "url"	TEXT,
+                   "date"	TEXT,
+               	PRIMARY KEY("id")
+               	)""")
+
+
         # Add new tab when tab tab is doubleclicked
         self.tabs.tabBarDoubleClicked.connect(self.tab_open_doubleclick)
 
         # To connect to a function when currrent tab has been changed
         self.tabs.currentChanged.connect(self.tab_changed)
-
-        # Set the tabs closable
-        self.tabs.setTabsClosable(True)
 
         # Function to handle tab closing
         self.tabs.tabCloseRequested.connect(self.close_current_tab)
@@ -491,7 +512,8 @@ class mainWindow(QMainWindow):
         context_menu.addSeparator()
 
         #View history
-        ViewHistory = QAction("H", self)
+        ViewHistory = QAction("History", self)
+        ViewHistory.setIcon(QIcon(os.path.join("Images", "history.png")))
         ViewHistory.triggered.connect(self.openHistory)
         ViewHistory.setShortcut("Ctrl+h")
         context_menu.addAction(ViewHistory)
@@ -693,7 +715,7 @@ class mainWindow(QMainWindow):
             directory="",
             filter="Hypertext Markup Language (*.htm *.html *.mhtml);;All files (*.*)"
             )
-        if len(filename) > 0:
+        if filename:
             try:
                 with open(filename, "r", encoding="utf8") as f:
                     opened_file = f.read()
@@ -946,7 +968,7 @@ class mainWindow(QMainWindow):
 
         self.historyWindow.setStyleSheet(
         """
-        background-color:#e6e7e8;
+        background-color:#fff;
         """)
         self.historyWindow.show()
 
@@ -994,6 +1016,7 @@ def main():
 
     # Set the window icon
     QApplication.setWindowIcon(QIcon(os.path.join("Icons", "browser.png")))
+    app.styleHints().showShortcutsInContextMenus()
 
     # App styles
     app.setStyleSheet("""
@@ -1042,7 +1065,7 @@ def main():
     QMenu#ContextMenu {
         background-color: #fdfdfd;
         border: 1px solid transparent;        
-        font-family: Times, sans-serif;
+        font-family: sans-serif;
         border-radius: 6px;
     }
 
@@ -1050,7 +1073,7 @@ def main():
         background-color: transparent;
         font-size: 10pt;
         padding-left: 40px;
-        /*padding-right: 100px;*/
+        padding-right: 100px;
         padding-top:8px;
         padding-bottom: 8px;
         width: 130px;
@@ -1062,7 +1085,7 @@ def main():
 
     QMenu#ContextMenu::separator {
         height: 1px;
-        background: #111;
+        background-color: gray;
         margin-left: 0%;
         margin-right: 0%;
     }
