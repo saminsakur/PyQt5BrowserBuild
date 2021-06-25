@@ -6,12 +6,8 @@ Made by     - Samin Sakur
 Learn more  - https://github.com/saminsakur/PyQt5BrowserBuild/
 """
 
-import os
+import re, os, sys, datetime, sqlite3
 import pyperclip as pc
-import sys
-import sqlite3
-import datetime
-import re
 from PyQt5 import QtGui
 from PyQt5 import QtCore
 from PyQt5.QtGui import *
@@ -22,7 +18,8 @@ from PyQt5.QtPrintSupport import *
 
 
 
-pattern = re.compile(r"(http|https)?:?(\/\/)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)")
+pattern = re.compile(r"^(http|https)?:?(\/\/)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)")
+without_http_pattern = re.compile(r"[\-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)")
 file_pattern = re.compile(r"^file://")
 connection = sqlite3.connect("webBrowserDB.db")
 
@@ -133,6 +130,7 @@ class HistoryWindow(QWidget):
         clearBtn.setStyleSheet(
             """
             border:1px solid transparent;
+            border-radius: 7px;
             """
         )
         clearBtn.clicked.connect(self.clearHistory)
@@ -157,6 +155,10 @@ class HistoryWindow(QWidget):
             background-color:#ccc;
         }
         
+        QListWidget{
+            border: 1px solid transparent;
+            border-top: 1px solid gray;
+        }
         """)
 
 
@@ -177,14 +179,14 @@ class HistoryWindow(QWidget):
             self.historyList.addItem(siteInfo)
 
     def goClickedLink(self, item):
-        siteInfo = item.text()
-        visitDate = siteInfo[len(siteInfo)-19:] # veritabanında seçilen sitenin linkini bulmak için ziyaret edilme tarihini arıyoruz
+        siteName = item.text()
+        visitDate = siteName[len(siteName)-19:]
         siteInfoFromDB = cursor.execute("SELECT * FROM history WHERE date = ?", [visitDate])
         try:
             url = siteInfoFromDB.fetchall()[0][2]
-            mainWindow().openSiteHistoryClicked(QtCore.QUrl(url), str(siteInfo)) # open selected url
+            mainWindow().openSiteHistoryClicked(QtCore.QUrl(url), str(siteName)) # open selected url
         except:
-            pass
+            self.close()
 
         self.close()
 
@@ -897,12 +899,15 @@ class mainWindow(QMainWindow):
             local_url = QUrl.fromLocalFile(file_path)
             self.tabs.currentWidget().load(local_url)
             
+        elif without_http_pattern.search(in_url) and any([i in in_url for i in ["http://", "https://"]]):
+            url = in_url
 
-        elif pattern.search(in_url):
+        elif pattern.search(in_url) and not any(i in in_url  for i in ("http://","https://","file:///")):
             url = "http://"+in_url
 
+
         # this will search google
-        else:
+        elif not "/" in in_url:
             url = self.searchGoogle(in_url)
         
         self.tabs.currentWidget().load(QUrl.fromUserInput(url))
@@ -1075,7 +1080,6 @@ def main():
         font-size: 10pt;
         opacity:200;
         color: #f1f1f1;
-        border-radius:10px;
         padding:5px;
         border-width:2px;
         border-style:solid;
