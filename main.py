@@ -8,13 +8,14 @@ Learn more  - https://github.com/saminsakur/PyQt5BrowserBuild/
 
 import re, os, sys, datetime, sqlite3
 import pyperclip as pc
-from PyQt5 import QtGui
-from PyQt5 import QtCore
-from PyQt5.QtGui import *
-from PyQt5.QtCore import *
-from PyQt5.QtWidgets import *
+from PyQt5 import QtGui, QtCore
+from PyQt5.QtGui import QIcon, QFont, QPainter, QPixmap
+from PyQt5.QtCore import QUrl, QObject, pyqtSlot, QEventLoop, QPointF, Qt, QSize
+from PyQt5.QtWidgets import (QTabWidget, QLineEdit, QLabel, QToolBar, QMessageBox, QDialogButtonBox,
+    QDialog, QProgressDialog, QProgressBar, QWidget, QPushButton, QListWidget, QGridLayout,
+    QMainWindow, QVBoxLayout, QShortcut, QMenu, QAction, QFileDialog, QApplication)
 from PyQt5.QtWebEngineWidgets import *
-from PyQt5.QtPrintSupport import *
+from PyQt5.QtPrintSupport import QPrinter, QPrintDialog, QPrintPreviewDialog
 
 
 
@@ -118,43 +119,69 @@ class HistoryWindow(QWidget):
     def __init__(self):
         super().__init__()
 
-        titleFont = QFont("sans-serif", 16)
+        titleFont = QFont("PT Sans", 16)
+        btnFont = QFont("Roboto", 0)
+
         titleLbl = QLabel("History")
         titleLbl.setStyleSheet("""
-        margin:5px 5px 5px 5px;
+            margin-top:7px;
         """)
         titleLbl.setFont(titleFont)
 
         clearBtn = QPushButton("Clear")
         clearBtn.setObjectName("ClearButnHistory")
-        clearBtn.setFont(textFont)
+        clearBtn.setFont(btnFont)
         clearBtn.setStyleSheet(
             """
             QPushButton#ClearButnHistory{
                 border:1px solid transparent;
                 border-radius: 7px;
-                background-color: #C9D2F1;
-                padding: 2px 5px 5px 2px;
-                margin-top:5px;
+                border-color:#ccc;
+                margin-top:6px;
                 margin-left:80px;
                 margin-right:10px;
-                margin-bottom:5px;
+                padding: 5px 5px 5px 5px;
                 font-size:12pt;
-                font-family:sans-serif;
+                color:#000;
+                background-color:transparent;
             }
+
             QPushButton#ClearButnHistory:hover{
-                background-color:#ced3e2;
+                background-color:#2681f2;
+                border-color:#dae0e5;
+                color: #fff;
             }
+
             QPushButton#ClearButnHistory:pressed{
-                background-color:#ccc;
-            }
-                       
+                background-color:#0c63ce;
+            }          
             """
         )
         clearBtn.clicked.connect(self.clearHistory)
 
         self.historyList = QListWidget()
-        self.historyList.verticalScrollBar().setEnabled(False)
+        self.historyList.horizontalScrollBar().setEnabled(False)
+        self.historyList.verticalScrollBar().setStyleSheet(
+            """
+            QScrollBar:vertical {
+                background: transparent;
+                width:8px;
+            }
+
+            QScrollBar::handle:vertical {
+                background: gray;
+                min-width: 5px;
+                border: 1px solid gray;
+                border-radius: 4px;
+            }
+            QScrollBar::add-line:vertical{
+                background:none;
+            }
+            QScrollBar::sub-line:vertical{
+                background:none;
+            }
+        """
+        )
 
         self.fillHistoryList()
 
@@ -162,17 +189,21 @@ class HistoryWindow(QWidget):
         self.historyList.setStyleSheet(
         """
         QListWidget::item{
-            padding-top: 5px;
-            padding-bottom: 5px;
+            padding-top: 8px;
+            padding-bottom: 8px;
+            margin-top: 2px;
+            margin-bottom: 2px;
         }
 
         QListWidget::item:hover{
-            background-color:#ccc;
+            background-color:#E5E5E5;
         }
         
         QListWidget{
             border: 1px solid transparent;
             border-top: 1px solid gray;
+            padding-left:5px;
+            padding-right:5px;
         }
         """)
 
@@ -253,6 +284,7 @@ class AddressBar(QLineEdit):
 class SSLIcon(QLabel):
     def __init__(self):
         super().__init__()
+        self.InitSSLIcon()
 
     def InitSSLIcon(self):
         self.setObjectName("SSLIcon")
@@ -430,7 +462,6 @@ class mainWindow(QMainWindow):
 
         # Shows ssl security icon
         self.httpsicon = SSLIcon()
-        self.httpsicon.InitSSLIcon()
 
         # Add http icon to the navbar bar
         self.navbar.addWidget(self.httpsicon)
@@ -469,6 +500,11 @@ class mainWindow(QMainWindow):
         newTabAction.triggered.connect(lambda: self.add_new_tab(QUrl("https://www.google.com/"), "Homepage"))
         newTabAction.setToolTip("Add a new tab")
         context_menu.addAction(newTabAction)
+
+        # New window action
+        newWindowAction = QAction("New window", self)
+        newWindowAction.triggered.connect(self.CreateNewWindow)
+        context_menu.addAction(newWindowAction)
 
         # Close tab action
         CloseTabAction = QAction("Close tab", self)
@@ -664,6 +700,10 @@ class mainWindow(QMainWindow):
         self.add_new_tab(QtCore.QUrl("https://www.duckduckgo.com/"), "DuckDuckGo")
 
 
+    # Define open a new window
+    def CreateNewWindow(self):
+        window = mainWindow()
+        window.show()
 
     # Copy url of currently viewed page to clipboard
     def CopySiteLink(self):
@@ -956,8 +996,8 @@ class mainWindow(QMainWindow):
 
     def openHistory(self):
         self.historyWindow = HistoryWindow()
-        self.historyWindow.setWindowFlags(Qt.FramelessWindowHint|Qt.Popup)
-        self.historyWindow.setGeometry(self.tabs.currentWidget().frameGeometry().width()/2+300, 87, 500, 500)
+        self.historyWindow.setWindowFlags(Qt.FramelessWindowHint | Qt.Popup)
+        self.historyWindow.setGeometry(int(self.tabs.currentWidget().frameGeometry().width()/2+300), 87, 500, 500)
         radiusx = 10.0
         radiusy = 5.0
         path = QtGui.QPainterPath()
@@ -968,12 +1008,12 @@ class mainWindow(QMainWindow):
 
         self.historyWindow.setStyleSheet(
         """
-        background-color:#fff;
-        """)
+        background-color:#fdfdfd;
+        """
+        )
         self.historyWindow.show()
 
     def openSiteHistoryClicked(self, url,*args):
-        # self.add_new_tab(url, title)
         self.tabs.currentWidget().load(url)
 
 
@@ -1010,6 +1050,8 @@ class AboutDialog(QDialog):
 
 def main():
     app = QApplication(sys.argv)
+
+    # Disable shortcut in context menu
     app.styleHints().setShowShortcutsInContextMenus(False)
 
     # Set the window name
@@ -1017,7 +1059,6 @@ def main():
 
     # Set the window icon
     QApplication.setWindowIcon(QIcon(os.path.join("Icons", "browser.png")))
-    app.styleHints().showShortcutsInContextMenus()
 
     # App styles
     app.setStyleSheet("""
@@ -1239,11 +1280,9 @@ def main():
 
     """)
 
-
-
-    #e6e6e6 background color
     window = mainWindow()
     window.show()
+
     try:
         sys.exit(app.exec_())
 
