@@ -18,3 +18,4 @@ Installer.exe
 *.exe
 Installer.zip
 webBrowserDB.db
+launch.json
