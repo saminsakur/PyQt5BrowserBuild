@@ -11,6 +11,7 @@ import os
 import sys
 import datetime
 import sqlite3
+import json
 import pyperclip as pc
 
 from PyQt5 import QtGui, QtCore
@@ -71,44 +72,24 @@ without_http_pattern = re.compile(
     r"[\-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)")
 file_pattern = re.compile(r"^file://")
 
-# defualts
-defualtSearchEngine = "Google"
-startup_PG = "https://start.duckduckgo.com"
-home_PG = "https://start.duckduckgo.com"
-new_tab_PG = "https://start.duckduckgo.com"
-
 # DB to open
 connection = sqlite3.connect("BrowserLocalDB.db")
 # connection = sqlite3.connect(":memory:")
 
 cursor = connection.cursor()
-# Create table for settings
-cursor.execute("""CREATE TABLE IF NOT EXISTS "settings" (
-                "defualt_search_engine" TEXT,
-                "startup_page" TEXT,
-                "home_button_page" TEXT,
-                "new_tab_page" TEXT
-            )""")
-
-connection.commit()
-
-# INSERT defualt values
-cursor.execute("""INSERT INTO "settings" VALUES (
-            :defualt_search_engine, 
-            :startup_page, 
-            :home_button_page, 
-            :new_tab_page)""",
-               {
-                   "defualt_search_engine": defualtSearchEngine,
-                   "startup_page": startup_PG,
-                   "home_button_page": home_PG,
-                   "new_tab_page": new_tab_PG
-               })
-
-connection.commit()
 
 # Font
 textFont = QFont("sans-serif", 14)
+
+
+with open("settings.json") as f:
+    data = json.load(f)
+
+# defualts
+defualtSearchEngine = data["defualtSearchEngine"]
+startup_PG = data["startupPage"]
+new_tab_PG = data["newTabPage"]
+home_PG = data["homeButtonPage"]
 
 
 class fileErrorDialog(QMessageBox):
@@ -123,10 +104,10 @@ class fileErrorDialog(QMessageBox):
 
 
 class errorMsg(QMessageBox):
-    def __init__(self):
+    def __init__(self, text: str = "An internal error occured!"):
         super(errorMsg, self).__init__()
 
-        self.setText("An internal error occured!")
+        self.setText(text)
         self.setIcon(QMessageBox.Critical)
 
         self.setWindowTitle("Error!")
@@ -769,9 +750,7 @@ class mainWindow(QMainWindow):
 
     # function to search google from the search box
     def searchWeb(self, text):
-
-        Engine = data[0][0]
-
+        Engine = settings.something()
         if text:
             if Engine == "Google":
                 return "https://www.google.com/search?q="+"+".join(text.split())
@@ -867,7 +846,7 @@ class mainWindow(QMainWindow):
         radiusx = 10.0
         radiusy = 5.0
         path = QtGui.QPainterPath()
-        self.userSettingswindow.resize(370, 490)
+        self.userSettingswindow.resize(820, 500)
         path.addRoundedRect(QtCore.QRectF(
             self.userSettingswindow.rect()), radiusx, radiusy)
         mask = QtGui.QRegion(path.toFillPolygon().toPolygon())
@@ -886,12 +865,6 @@ class mainWindow(QMainWindow):
 class UserSettings(QWidget):
     def __init__(self):
         super().__init__()
-        defualt_search_enginels = cursor.execute(
-            "SELECT defualt_search_engine FROM settings").fetchall()
-        self.defualt_search_engine = defualt_search_enginels[len(
-            defualt_search_enginels) - 1]
-        print(self.defualt_search_engine)
-
         # Close button
         closeButn = QPushButton()
         closeButn.setObjectName("closeButn")
@@ -903,29 +876,14 @@ class UserSettings(QWidget):
                     height: 10px; width: 10px;
                     border-radius:100%;
                     background:transparent
+                    height: 30px;
+                    width: 20px;
                 }
                 QPushButton#closeButn:hover{background-color:#ccc}""")
         closeButn.clicked.connect(self.closeWindow)
 
         lbl1 = QLabel("Defualt search engine")
-
-        # Drop down menu to select defualt search engine
-        self.searchEngineSelector = DropDownSelector()
-        self.searchEngineSelector.currentTextChanged.connect(
-            self.addDropDownItemToDB)
-
-        if self.defualt_search_engine == "Google":
-            self.searchEngineSelector.setCurrentIndex(
-                self.searchEngineSelector.GoogleIndex)
-        elif self.defualt_search_engine == "Yahoo":
-            self.searchEngineSelector.setCurrentIndex(
-                self.searchEngineSelector.YahooIndex)
-        elif self.defualt_search_engine == "Bing":
-            self.searchEngineSelector.setCurrentIndex(
-                self.searchEngineSelector.BingIndex)
-        elif self.defualt_search_engine == "DuckDuckGo":
-            self.searchEngineSelector.setCurrentIndex(
-                self.searchEngineSelector.DuckIndex)
+        self.addDefualtSearchEngineSelector()
 
         lbl2 = QLabel("On startup")
 
@@ -946,46 +904,64 @@ class UserSettings(QWidget):
         addPageButn3 = QPushButton("Add page")
 
         # Define layout #1
-        layout = QVBoxLayout()
+        self.layout = QVBoxLayout()
 
         # Add close button
-        layout.addWidget(closeButn)
+        self.layout.addWidget(closeButn)
 
         # Add label
-        layout.addWidget(lbl1)
+        self.layout.addWidget(lbl1)
 
         # Add defualt search engine selector
-        layout.addWidget(self.searchEngineSelector)
+        self.layout.addWidget(self.searchEngineSelector)
 
         # Add label
-        layout.addWidget(lbl2)
+        self.layout.addWidget(lbl2)
 
         # Add startup page
-        layout.addWidget(self.startupPage)
-        layout.addWidget(addPageButn1)
+        self.layout.addWidget(self.startupPage)
+        self.layout.addWidget(addPageButn1)
 
         # Add label
-        layout.addWidget(lbl3)
+        self.layout.addWidget(lbl3)
 
         # Add home button page
-        layout.addWidget(self.homeButnPage)
-        layout.addWidget(addPageButn2)
+        self.layout.addWidget(self.homeButnPage)
+        self.layout.addWidget(addPageButn2)
 
         # Add label
-        layout.addWidget(lbl4)
+        self.layout.addWidget(lbl4)
 
         # Add new tab page settings
-        layout.addWidget(self.newtabpage)
-        layout.addWidget(addPageButn3)
+        self.layout.addWidget(self.newtabpage)
+        self.layout.addWidget(addPageButn3)
 
-        self.setLayout(layout)
+        self.setLayout(self.layout)
 
-    def addDropDownItemToDB(self):
-        cursor.execute("""UPDATE settings SET defualt_search_engine = :defualtSearchEngine WHERE defualt_search_engine""", {
-            "defualtSearchEngine": self.searchEngineSelector.currentText()
-        })
+    def addDropDownItemToJson(self):
+        pass
 
-        connection.commit()
+    def addDefualtSearchEngineSelector(self):
+        # Drop down menu to select defualt search engine
+        self.searchEngineSelector = DropDownSelector()
+        self.searchEngineSelector.currentTextChanged.connect(
+            self.addDropDownItemToJson)
+
+        self.defualt_search_engine = self.searchEngineSelector.currentText()
+        print(self.defualt_search_engine)
+
+        if self.defualt_search_engine == "Google":
+            self.searchEngineSelector.setCurrentIndex(
+                self.searchEngineSelector.GoogleIndex)
+        elif self.defualt_search_engine == "Yahoo":
+            self.searchEngineSelector.setCurrentIndex(
+                self.searchEngineSelector.YahooIndex)
+        elif self.defualt_search_engine == "Bing":
+            self.searchEngineSelector.setCurrentIndex(
+                self.searchEngineSelector.BingIndex)
+        elif self.defualt_search_engine == "DuckDuckGo":
+            self.searchEngineSelector.setCurrentIndex(
+                self.searchEngineSelector.DuckIndex)
 
     def closeWindow(self):
         self.close()

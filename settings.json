@@ -1,0 +1,6 @@
+{
+    "defualtSearchEngine": "Google",
+    "startupPage": "https://start.duckduckgo.com",
+    "newTabPage": "https://start.duckduckgo.com",
+    "homeButtonPage": "https://start.duckduckgo.com"
+}
