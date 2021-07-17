@@ -1,7 +1,7 @@
 """
 Simple Web Browser
 
-Chromium based tabbed browser built with PyQt5 QWebEnjineView
+Chromium based tabbed browser built with PyQt5 QWebEngineView
 Made by     - Samin Sakur
 Learn more  - https://github.com/saminsakur/PyQt5BrowserBuild/
 """
@@ -81,15 +81,8 @@ cursor = connection.cursor()
 # Font
 textFont = QFont("sans-serif", 14)
 
-
 with open(os.path.join("config", "settings.json")) as f:
     settings_data = json.load(f)
-
-# defaults
-defaultSearchEngine = settings_data["defaultSearchEngine"]
-startup_PG = settings_data["startupPage"]
-new_tab_PG = settings_data["newTabPage"]
-home_PG = settings_data["homeButtonPage"]
 
 
 class fileErrorDialog(QMessageBox):
@@ -104,7 +97,7 @@ class fileErrorDialog(QMessageBox):
 
 
 class errorMsg(QMessageBox):
-    def __init__(self, text: str = "An internal error occured!"):
+    def __init__(self, text: str = "An internal error occurred!"):
         super(errorMsg, self).__init__()
 
         self.setText(text)
@@ -154,7 +147,7 @@ class mainWindow(QMainWindow):
         # Add new tab when tab tab is doubleclicked
         self.tabs.tabBarDoubleClicked.connect(self.tab_open_doubleclick)
 
-        # To connect to a function when currrent tab has been changed
+        # To connect to a function when current tab has been changed
         self.tabs.currentChanged.connect(self.tab_changed)
 
         # Function to handle tab closing
@@ -163,7 +156,7 @@ class mainWindow(QMainWindow):
         # open new tab when Ctrl+T pressed
         AddNewTabKeyShortcut = QShortcut("Ctrl+T", self)
         AddNewTabKeyShortcut.activated.connect(lambda: self.add_new_tab(
-            QtCore.QUrl(new_tab_PG, "New tab")))
+            QtCore.QUrl(settings_data["newTabPage"], "New tab")))
 
         # Close current tab on Ctrl+W
         CloseCurrentTabKeyShortcut = QShortcut("Ctrl+W", self)
@@ -258,7 +251,7 @@ class mainWindow(QMainWindow):
         # Add Address Bar to the navbar
         self.navbar.addWidget(self.url_bar)
 
-        # The conetext menu
+        # The context menu
         context_menu = QMenu(self)
 
         # Set the object's name
@@ -271,7 +264,7 @@ class mainWindow(QMainWindow):
         # Enable three dot menu by pressing Alt+F
         ContextMenuButton.setShortcut("Alt+F")
 
-        # Give the three dot image to the Qpush button
+        # Give the three dot image to the Qpushbutton
         ContextMenuButton.setIcon(
             QIcon(os.path.join("resources", "more.png")))    # Add icon
         ContextMenuButton.setObjectName("ContextMenuTriggerButn")
@@ -287,7 +280,7 @@ class mainWindow(QMainWindow):
         newTabAction.setIcon(QtGui.QIcon(
             os.path.join("resources", "newtab.png")))
         newTabAction.triggered.connect(lambda: self.add_new_tab(
-            QUrl(new_tab_PG), "Homepage"))
+            QUrl(settings_data["newTabPage"]), "Homepage"))
         newTabAction.setToolTip("Add a new tab")
         context_menu.addAction(newTabAction)
 
@@ -462,7 +455,7 @@ class mainWindow(QMainWindow):
         self.navbar.addWidget(ContextMenuButton)
 
         # Stuffs to see at startup
-        self.add_new_tab(QUrl(startup_PG), "Homepage")
+        self.add_new_tab(QUrl(settings_data["startupPage"]), "Homepage")
 
         # Set the address focus
         self.url_bar.setFocus()
@@ -495,7 +488,7 @@ class mainWindow(QMainWindow):
     # funcion to navigate to home when home icon is pressed
 
     def goToHome(self):
-        self.tabs.currentWidget().setUrl(QUrl(home_PG))
+        self.tabs.currentWidget().setUrl(QUrl(settings_data["homeButtonPage"]))
 
     # Function to navigate to bing by pressing go to bing on the three dot menu
 
@@ -628,7 +621,8 @@ class mainWindow(QMainWindow):
 
     def tab_open_doubleclick(self, i):
         if i == -1:  # No tab under the click
-            self.add_new_tab(QUrl(new_tab_PG), label="New tab")
+            self.add_new_tab(
+                QUrl(settings_data["newTabPage"]), label="New tab")
 
     # to update the tab
 
@@ -668,7 +662,7 @@ class mainWindow(QMainWindow):
 
     def add_new_tab(self, qurl=None, label="Blank"):
         if qurl is None:
-            qurl = QUrl(new_tab_PG)
+            qurl = QUrl(settings_data["newTabPage"])
 
         browser = QWebEngineView()  # Define the main webview to browser the internet
 
@@ -766,7 +760,7 @@ class mainWindow(QMainWindow):
 
             elif Engine == "Bing":
                 return "https://www.bing.com/search?q="+"+".join(text.split())
-            
+
             elif Engine == "DuckDuckGo":
                 return "https://duckduckgo.com/?q="+"+".join(text.split())
 
@@ -900,10 +894,10 @@ class UserSettings(QWidget):
 
         lbl3 = QLabel("Home button custom page")
         self.addHomeButtonCustomPage()
-        
+
         lbl4 = QLabel("New tab page")
         self.addPageOnEachTab()
-        
+
         # Define layout #1
         self.layout = QVBoxLayout()
 
@@ -957,34 +951,36 @@ class UserSettings(QWidget):
         elif self.default_search_engine == "DuckDuckGo":
             self.searchEngineSelector.setCurrentIndex(
                 self.searchEngineSelector.DuckIndex)
-    
+
     def addStartupPage(self):
         # Page to display on startup
         self.startupPage = QLineEdit()
-        self.startupPage.setText(startup_PG)
+        self.startupPage.setText(settings_data["startupPage"])
         self.addPageButn1 = QPushButton("Add page")
         self.addPageButn1.clicked.connect(self.addStartupPageToJson)
 
     def addHomeButtonCustomPage(self):
         # Page to navigate when home button will pressed
         self.homeButnPage = QLineEdit()
+        self.homeButnPage.setText(settings_data["homeButtonPage"])
         self.addPageButn2 = QPushButton("Add page")
         self.addPageButn2.clicked.connect(self.addHomeButtonCustomPageToJson)
 
     def addPageOnEachTab(self):
         # Page to display on every new tab
         self.newtabpage = QLineEdit()
+        self.newtabpage.setText(settings_data["newTabPage"])
         self.addPageButn3 = QPushButton("Add page")
         self.addPageButn3.clicked.connect(self.addPageOnEachTabToJson)
 
-
     # Write to json
+
     def addStartupPageToJson(self):
         if self.startupPage.text():
             settings_data["startupPage"] = self.startupPage.text()
             with open(os.path.join("config", "settings.json"), "w") as f:
                 json.dump(settings_data, f, indent=2)
-    
+
     def addDropDownItemToJson(self):
         settings_data["defaultSearchEngine"] = self.searchEngineSelector.currentText()
         with open(os.path.join("config", "settings.json"), "w") as f:

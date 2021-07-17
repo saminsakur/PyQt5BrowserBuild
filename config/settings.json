@@ -1,6 +1,6 @@
 {
-  "defaultSearchEngine": "DuckDuckGo",
-  "startupPage": "https://www.bing.com",
-  "newTabPage": "https://start.duckduckgo.com",
-  "homeButtonPage": "https://saminsakur.github.io"
+  "defaultSearchEngine": "Google",
+  "startupPage": "https://www.google.com/",
+  "homeButtonPage": "https://www.google.com/",
+  "newTabPage": "https://www.google.com/"
 }
