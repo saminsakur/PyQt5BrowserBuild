@@ -24,14 +24,15 @@ from PyQt5.QtGui import (
     QPixmap
 )
 
-from PyQt5.QtCore import (QUrl,
-                          Qt,
-                          QSize,
-                          QObject,
-                          pyqtSlot,
-                          QEventLoop,
-                          QPointF
-                          )
+from PyQt5.QtCore import (
+    QUrl,
+    Qt,
+    QSize,
+    QObject,
+    pyqtSlot,
+    QEventLoop,
+    QPointF
+    )
 
 from PyQt5.QtWidgets import (
     QComboBox,
