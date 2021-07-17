@@ -1,0 +1,6 @@
+{
+  "defaultSearchEngine": "DuckDuckGo",
+  "startupPage": "https://www.bing.com",
+  "newTabPage": "https://start.duckduckgo.com",
+  "homeButtonPage": "https://saminsakur.github.io"
+}

@@ -82,14 +82,14 @@ cursor = connection.cursor()
 textFont = QFont("sans-serif", 14)
 
 
-with open("settings.json") as f:
-    data = json.load(f)
+with open(os.path.join("config", "settings.json")) as f:
+    settings_data = json.load(f)
 
-# defualts
-defualtSearchEngine = data["defualtSearchEngine"]
-startup_PG = data["startupPage"]
-new_tab_PG = data["newTabPage"]
-home_PG = data["homeButtonPage"]
+# defaults
+defaultSearchEngine = settings_data["defaultSearchEngine"]
+startup_PG = settings_data["startupPage"]
+new_tab_PG = settings_data["newTabPage"]
+home_PG = settings_data["homeButtonPage"]
 
 
 class fileErrorDialog(QMessageBox):
@@ -126,12 +126,18 @@ class DropDownSelector(QComboBox):
         self.addItem("Yahoo")
         self.addItem("Bing")
         self.addItem("DuckDuckGo")
+        self.setStyleSheet("""
+            height: 60px;
+            width: 20px;
+            border: 1px solid transparent;
+            border-radius: 2%;
+        """)
 
 
 class mainWindow(QMainWindow):
 
     def __init__(self, *args, **kwargs):
-        super(mainWindow, self).__init__()
+        super(mainWindow, self).__init__(*args, **kwargs)
 
         # create tabs
         self.tabs = Tabs()
@@ -455,10 +461,10 @@ class mainWindow(QMainWindow):
 
         self.navbar.addWidget(ContextMenuButton)
 
-        # Stuffs to see at starup
-        self.add_new_tab(QUrl(home_PG), "Homepage")
+        # Stuffs to see at startup
+        self.add_new_tab(QUrl(startup_PG), "Homepage")
 
-        # Set the addressbar focus
+        # Set the address focus
         self.url_bar.setFocus()
 
         # what to display on the window
@@ -750,7 +756,7 @@ class mainWindow(QMainWindow):
 
     # function to search google from the search box
     def searchWeb(self, text):
-        Engine = settings.something()
+        Engine = settings_data["defaultSearchEngine"]
         if text:
             if Engine == "Google":
                 return "https://www.google.com/search?q="+"+".join(text.split())
@@ -760,6 +766,9 @@ class mainWindow(QMainWindow):
 
             elif Engine == "Bing":
                 return "https://www.bing.com/search?q="+"+".join(text.split())
+            
+            elif Engine == "DuckDuckGo":
+                return "https://duckduckgo.com/?q="+"+".join(text.split())
 
     """
     function to navigate to url, if the url ends with the domains from the domains tuple,
@@ -855,7 +864,7 @@ class mainWindow(QMainWindow):
 
 
 """Settings for user:
-    #1 Change defualt search engine
+    #1 Change default search engine
     #2 Change startup page
     #3 Change page to display on new tab
     #4 Change page to navigate when home button is pressed
@@ -866,6 +875,7 @@ class UserSettings(QWidget):
     def __init__(self):
         super().__init__()
         # Close button
+        self.default_search_engine = settings_data["defaultSearchEngine"]
         closeButn = QPushButton()
         closeButn.setObjectName("closeButn")
         closeButn.setIcon(
@@ -882,27 +892,18 @@ class UserSettings(QWidget):
                 QPushButton#closeButn:hover{background-color:#ccc}""")
         closeButn.clicked.connect(self.closeWindow)
 
-        lbl1 = QLabel("Defualt search engine")
-        self.addDefualtSearchEngineSelector()
+        lbl1 = QLabel("Default search engine")
+        self.addDefaultSearchEngineSelector()
 
         lbl2 = QLabel("On startup")
-
-        # Page to display on startup
-        self.startupPage = QLineEdit()
-        addPageButn1 = QPushButton("Add page")
+        self.addStartupPage()
 
         lbl3 = QLabel("Home button custom page")
-
-        # Page to navigate when home button will pressed
-        self.homeButnPage = QLineEdit()
-        addPageButn2 = QPushButton("Add page")
-
+        self.addHomeButtonCustomPage()
+        
         lbl4 = QLabel("New tab page")
-
-        # Page to display on every new tab
-        self.newtabpage = QLineEdit()
-        addPageButn3 = QPushButton("Add page")
-
+        self.addPageOnEachTab()
+        
         # Define layout #1
         self.layout = QVBoxLayout()
 
@@ -912,7 +913,7 @@ class UserSettings(QWidget):
         # Add label
         self.layout.addWidget(lbl1)
 
-        # Add defualt search engine selector
+        # Add default search engine selector
         self.layout.addWidget(self.searchEngineSelector)
 
         # Add label
@@ -920,48 +921,86 @@ class UserSettings(QWidget):
 
         # Add startup page
         self.layout.addWidget(self.startupPage)
-        self.layout.addWidget(addPageButn1)
+        self.layout.addWidget(self.addPageButn1)
 
         # Add label
         self.layout.addWidget(lbl3)
 
         # Add home button page
         self.layout.addWidget(self.homeButnPage)
-        self.layout.addWidget(addPageButn2)
+        self.layout.addWidget(self.addPageButn2)
 
         # Add label
         self.layout.addWidget(lbl4)
 
         # Add new tab page settings
         self.layout.addWidget(self.newtabpage)
-        self.layout.addWidget(addPageButn3)
+        self.layout.addWidget(self.addPageButn3)
 
         self.setLayout(self.layout)
 
-    def addDropDownItemToJson(self):
-        pass
-
-    def addDefualtSearchEngineSelector(self):
-        # Drop down menu to select defualt search engine
+    def addDefaultSearchEngineSelector(self):
+        # Drop down menu to select default search engine
         self.searchEngineSelector = DropDownSelector()
         self.searchEngineSelector.currentTextChanged.connect(
             self.addDropDownItemToJson)
 
-        self.defualt_search_engine = self.searchEngineSelector.currentText()
-        print(self.defualt_search_engine)
-
-        if self.defualt_search_engine == "Google":
+        if self.default_search_engine == "Google":
             self.searchEngineSelector.setCurrentIndex(
                 self.searchEngineSelector.GoogleIndex)
-        elif self.defualt_search_engine == "Yahoo":
+        elif self.default_search_engine == "Yahoo":
             self.searchEngineSelector.setCurrentIndex(
                 self.searchEngineSelector.YahooIndex)
-        elif self.defualt_search_engine == "Bing":
+        elif self.default_search_engine == "Bing":
             self.searchEngineSelector.setCurrentIndex(
                 self.searchEngineSelector.BingIndex)
-        elif self.defualt_search_engine == "DuckDuckGo":
+        elif self.default_search_engine == "DuckDuckGo":
             self.searchEngineSelector.setCurrentIndex(
                 self.searchEngineSelector.DuckIndex)
+    
+    def addStartupPage(self):
+        # Page to display on startup
+        self.startupPage = QLineEdit()
+        self.startupPage.setText(startup_PG)
+        self.addPageButn1 = QPushButton("Add page")
+        self.addPageButn1.clicked.connect(self.addStartupPageToJson)
+
+    def addHomeButtonCustomPage(self):
+        # Page to navigate when home button will pressed
+        self.homeButnPage = QLineEdit()
+        self.addPageButn2 = QPushButton("Add page")
+        self.addPageButn2.clicked.connect(self.addHomeButtonCustomPageToJson)
+
+    def addPageOnEachTab(self):
+        # Page to display on every new tab
+        self.newtabpage = QLineEdit()
+        self.addPageButn3 = QPushButton("Add page")
+        self.addPageButn3.clicked.connect(self.addPageOnEachTabToJson)
+
+
+    # Write to json
+    def addStartupPageToJson(self):
+        if self.startupPage.text():
+            settings_data["startupPage"] = self.startupPage.text()
+            with open(os.path.join("config", "settings.json"), "w") as f:
+                json.dump(settings_data, f, indent=2)
+    
+    def addDropDownItemToJson(self):
+        settings_data["defaultSearchEngine"] = self.searchEngineSelector.currentText()
+        with open(os.path.join("config", "settings.json"), "w") as f:
+            json.dump(settings_data, f, indent=2)
+
+    def addHomeButtonCustomPageToJson(self):
+        if self.homeButnPage.text():
+            settings_data["homeButtonPage"] = self.homeButnPage.text()
+            with open(os.path.join("config", "settings.json"), "w") as f:
+                json.dump(settings_data, f, indent=2)
+
+    def addPageOnEachTabToJson(self):
+        if self.newtabpage.text():
+            settings_data["newTabPage"] = self.newtabpage.text()
+            with open(os.path.join("config", "settings.json"), "w") as f:
+                json.dump(settings_data, f, indent=2)
 
     def closeWindow(self):
         self.close()
