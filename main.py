@@ -842,6 +842,7 @@ class mainWindow(QMainWindow):
         radiusy = 5.0
         path = QtGui.QPainterPath()
         self.userSettingswindow.resize(820, 500)
+        self.userSettingswindow.setContentsMargins(0, 0, 0, 0)
         path.addRoundedRect(QtCore.QRectF(
             self.userSettingswindow.rect()), radiusx, radiusy)
         mask = QtGui.QRegion(path.toFillPolygon().toPolygon())
@@ -882,14 +883,15 @@ class UserSettings(QWidget):
         closeButn = QPushButton()
         closeButn.setObjectName("closeButn")
         closeButn.setIcon(
-            QIcon(os.path.join("resources", "closetabbutton.png")))
+            QIcon(os.path.join("resources", "cross.png")))
         closeButn.setStyleSheet(
             """QPushButton#closeButn{
-                    margin-left:750px;
+                    margin-left:757px;
+                    margin-top: 0px;
                     border: 1px solid transparent;
-                    border-radius: 7px;
-                    height: 18px;
-                    padding: 4px 2px 4px 2px;
+                    border-radius: 3px;
+                    height: 30px;
+                    padding: 1px 1px 1px  1px;
                 }
                 QPushButton#closeButn:hover{background-color:#ccc}""")
         closeButn.clicked.connect(self.closeWindow)
@@ -938,6 +940,16 @@ class UserSettings(QWidget):
         # Add new tab page settings
         self.layout.addWidget(self.newtabpage)
         self.layout.addWidget(self.addPageButn3)
+        self.setStyleSheet("""
+        QLabel{
+            font-size:16px;
+        }
+        QLineEdit{
+            font-size: 12px;
+            padding: 2px 2px;
+        }
+        """
+        )
 
         self.setLayout(self.layout)
 
