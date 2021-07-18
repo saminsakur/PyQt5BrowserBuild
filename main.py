@@ -86,7 +86,7 @@ try:                                # If settings file exists, then open it
         settings_data = json.load(f)
 except:                             # If settings not exists, then create a new file with default settings
     json_data = json.loads("""{
-        "defualtSearchEngine": "Google",
+        "defaultSearchEngine": "Google",
         "startupPage": "https://www.google.com/",
         "newTabPage": "https://www.google.com/",
         "homeButtonPage": "https://www.google.com/"
@@ -117,26 +117,6 @@ class errorMsg(QMessageBox):
 
         self.setWindowTitle("Error!")
         self.show()
-
-
-class DropDownSelector(QComboBox):
-    def __init__(self):
-        super().__init__()
-        self.GoogleIndex = 0
-        self.YahooIndex = 1
-        self.BingIndex = 2
-        self.DuckIndex = 3
-
-        self.addItem("Google")
-        self.addItem("Yahoo")
-        self.addItem("Bing")
-        self.addItem("DuckDuckGo")
-        self.setStyleSheet("""
-            height: 60px;
-            width: 20px;
-            border: 1px solid transparent;
-            border-radius: 2%;
-        """)
 
 
 class mainWindow(QMainWindow):
@@ -869,14 +849,31 @@ class mainWindow(QMainWindow):
         self.userSettingswindow.show()
 
 
+class DropDownSelector(QComboBox):
+    def __init__(self):
+        super().__init__()
+        self.GoogleIndex = 0
+        self.YahooIndex = 1
+        self.BingIndex = 2
+        self.DuckIndex = 3
+
+        self.addItem("Google")
+        self.addItem("Yahoo")
+        self.addItem("Bing")
+        self.addItem("DuckDuckGo")
+        self.setStyleSheet("""
+            height: 20px;
+            border: 1px solid gray;
+            border-radius: 2%;
+        """)
+
+
 """Settings for user:
     #1 Change default search engine
     #2 Change startup page
     #3 Change page to display on new tab
     #4 Change page to navigate when home button is pressed
 """
-
-
 class UserSettings(QWidget):
     def __init__(self):
         super().__init__()
@@ -888,12 +885,11 @@ class UserSettings(QWidget):
             QIcon(os.path.join("resources", "closetabbutton.png")))
         closeButn.setStyleSheet(
             """QPushButton#closeButn{
+                    margin-left:750px;
                     border: 1px solid transparent;
-                    height: 10px; width: 10px;
-                    border-radius:100%;
-                    background:transparent
-                    height: 30px;
-                    width: 20px;
+                    border-radius: 7px;
+                    height: 18px;
+                    padding: 4px 2px 4px 2px;
                 }
                 QPushButton#closeButn:hover{background-color:#ccc}""")
         closeButn.clicked.connect(self.closeWindow)
