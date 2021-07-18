@@ -81,10 +81,21 @@ cursor = connection.cursor()
 
 # Font
 textFont = QFont("sans-serif", 14)
-
-with open(os.path.join("config", "settings.json")) as f:
-    settings_data = json.load(f)
-
+try:                                # If settings file exists, then open it
+    with open("settings.json", "r") as f:
+        settings_data = json.load(f)
+except:                             # If settings not exists, then create a new file with default settings
+    json_data = json.loads("""{
+        "defualtSearchEngine": "Google",
+        "startupPage": "https://www.google.com/",
+        "newTabPage": "https://www.google.com/",
+        "homeButtonPage": "https://www.google.com/"
+    }
+    """)
+    with open("settings.json", "w") as f:
+        json.dump(json_data, f, indent=2)
+    with open("settings.json", "r") as f:
+        settings_data = json.load(f)
 
 class fileErrorDialog(QMessageBox):
     def __init__(self, *args, **kwargs):
@@ -979,24 +990,24 @@ class UserSettings(QWidget):
     def addStartupPageToJson(self):
         if self.startupPage.text():
             settings_data["startupPage"] = self.startupPage.text()
-            with open(os.path.join("config", "settings.json"), "w") as f:
+            with open("settings.json", "w") as f:
                 json.dump(settings_data, f, indent=2)
 
     def addDropDownItemToJson(self):
         settings_data["defaultSearchEngine"] = self.searchEngineSelector.currentText()
-        with open(os.path.join("config", "settings.json"), "w") as f:
+        with open("settings.json", "w") as f:
             json.dump(settings_data, f, indent=2)
 
     def addHomeButtonCustomPageToJson(self):
         if self.homeButnPage.text():
             settings_data["homeButtonPage"] = self.homeButnPage.text()
-            with open(os.path.join("config", "settings.json"), "w") as f:
+            with open("settings.json", "w") as f:
                 json.dump(settings_data, f, indent=2)
 
     def addPageOnEachTabToJson(self):
         if self.newtabpage.text():
             settings_data["newTabPage"] = self.newtabpage.text()
-            with open(os.path.join("config", "settings.json"), "w") as f:
+            with open("settings.json", "w") as f:
                 json.dump(settings_data, f, indent=2)
 
     def closeWindow(self):
