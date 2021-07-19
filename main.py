@@ -296,20 +296,6 @@ class mainWindow(QMainWindow):
         # A separator
         context_menu.addSeparator()
 
-        # Feature to navigate to bing
-        GoToBingAction = QAction("Bing", self)
-        GoToBingAction.setIcon(QIcon(os.path.join("resources", "globe.png")))
-        GoToBingAction.triggered.connect(self.GoToBing)
-        GoToBingAction.setToolTip("https://www.bing.com/")
-        context_menu.addAction(GoToBingAction)
-
-        # Feature to navigate to DuckDuckGo
-        GoToDuckDuckGo = QAction(
-            QIcon(os.path.join("resources", "globe.png")), "DuckDuckgo", self)
-        GoToDuckDuckGo.triggered.connect(self.NavigateDuckDuckGo)
-        GoToDuckDuckGo.setToolTip("https://start.duckduckgo.com/")
-        context_menu.addAction(GoToDuckDuckGo)
-
         # Another separator
         context_menu.addSeparator()
 
@@ -483,16 +469,6 @@ class mainWindow(QMainWindow):
     def goToHome(self):
         self.tabs.currentWidget().setUrl(QUrl(settings_data["homeButtonPage"]))
 
-    # Function to navigate to bing by pressing go to bing on the three dot menu
-
-    def GoToBing(self):
-        self.add_new_tab(QUrl("https://www.bing.com/"), "Bing")
-
-    # Function to navigate DuckDuckGo
-
-    def NavigateDuckDuckGo(self):
-        self.add_new_tab(QtCore.QUrl(
-            "https://www.duckduckgo.com/"), "DuckDuckGo")
 
     # Define open a new window
 
@@ -865,7 +841,6 @@ class DropDownSelector(QComboBox):
         self.setStyleSheet("""
         QComboBox{
             border: 1px solid #ccc;
-            padding: 30px 3px;
         }
         QComboBox::down-arrow{
             image: url(./resources/arrow-down-12.png);
@@ -874,6 +849,9 @@ class DropDownSelector(QComboBox):
         QComboBox::drop-down{
             border: none;
         }
+        /*QComboBox::item{
+            padding: 100px;
+        }*/
         """)
 
 
@@ -893,6 +871,9 @@ class UserSettings(QWidget):
     
     def init_ui(self):
         self.resize(706, 485)
+        self.addDefaultSearchEngineSelector()
+
+        # Add settings title
         self.label_2 = QtWidgets.QLabel(self)
         self.label_2.setGeometry(QtCore.QRect(10, 10, 71, 21))
         font = QtGui.QFont()
@@ -905,11 +886,14 @@ class UserSettings(QWidget):
         self.label_2.setStyleSheet("font: 11pt \"Segoe UI\";\n"
 "font: 12pt \"MS Shell Dlg 2\";")
         self.label_2.setObjectName("label_2")
+
+        # Close button
         self.closeButn = QtWidgets.QPushButton(self)
         self.closeButn.setGeometry(QtCore.QRect(660, 10, 31, 31))
         self.closeButn.setIcon(QtGui.QIcon(os.path.join("resources", "cross.png")))
         self.closeButn.setObjectName("closeButn")
-        self.closeButn.setStyleSheet("""
+        self.closeButn.setStyleSheet(
+        """
         QPushButton#closeButn{
             border: 1px solid transparent;
             border-radius: 3px;
@@ -918,11 +902,12 @@ class UserSettings(QWidget):
             background-color:#ccc
         }
         """)
-        self.closeButn.setText("")
         self.closeButn.clicked.connect(self.closeWindow)
+
         self.startup_page = QtWidgets.QLineEdit(self)
-        self.startup_page.setGeometry(QtCore.QRect(480, 150, 211, 20))
+        self.startup_page.setGeometry(QtCore.QRect(480, 150, 211, 30))
         self.startup_page.setObjectName("startup_page")
+        
         self.label_3 = QtWidgets.QLabel(self)
         self.label_3.setGeometry(QtCore.QRect(10, 130, 91, 21))
         font = QtGui.QFont()
@@ -932,9 +917,6 @@ class UserSettings(QWidget):
         font.setWeight(75)
         self.label_3.setFont(font)
         self.label_3.setObjectName("label_3")
-        self.save_settings = QtWidgets.QPushButton(self)
-        self.save_settings.setGeometry(QtCore.QRect(590, 440, 101, 21))
-        self.save_settings.setObjectName("save_settings")
         self.label = QtWidgets.QLabel(self)
         self.label.setGeometry(QtCore.QRect(10, 60, 171, 21))
         font = QtGui.QFont()
@@ -944,21 +926,7 @@ class UserSettings(QWidget):
         font.setWeight(75)
         self.label.setFont(font)
         self.label.setObjectName("label")
-        self.dropdownselector = DropDownSelector()
-        self.dropdownselector.setEnabled(True)
-        self.dropdownselector.setGeometry(QtCore.QRect(480, 80, 211, 20))
-        self.dropdownselector.setStyleSheet("""
-        """)
-        self.dropdownselector.setObjectName("dropdownselector")
-        self.label_4 = QtWidgets.QLabel(self)
-        self.label_4.setGeometry(QtCore.QRect(10, 160, 201, 16))
-        self.label_4.setObjectName("label_4")
-        self.label_5 = QtWidgets.QLabel(self)
-        self.label_5.setGeometry(QtCore.QRect(10, 90, 231, 16))
-        self.label_5.setObjectName("label_5")
-        self.label_6 = QtWidgets.QLabel(self)
-        self.label_6.setGeometry(QtCore.QRect(10, 260, 291, 16))
-        self.label_6.setObjectName("label_6")
+
         self.label_7 = QtWidgets.QLabel(self)
         self.label_7.setGeometry(QtCore.QRect(10, 230, 101, 21))
         font = QtGui.QFont()
@@ -969,11 +937,9 @@ class UserSettings(QWidget):
         self.label_7.setFont(font)
         self.label_7.setObjectName("label_7")
         self.home_button_page = QtWidgets.QLineEdit(self)
-        self.home_button_page.setGeometry(QtCore.QRect(480, 250, 211, 20))
+        self.home_button_page.setGeometry(QtCore.QRect(480, 250, 211, 30))
         self.home_button_page.setObjectName("home_button_page")
-        self.label_8 = QtWidgets.QLabel(self)
-        self.label_8.setGeometry(QtCore.QRect(10, 360, 261, 16))
-        self.label_8.setObjectName("label_8")
+
         self.label_9 = QtWidgets.QLabel(self)
         self.label_9.setGeometry(QtCore.QRect(10, 330, 101, 21))
         font = QtGui.QFont()
@@ -983,14 +949,68 @@ class UserSettings(QWidget):
         font.setWeight(75)
         self.label_9.setFont(font)
         self.label_9.setObjectName("label_9")
+
+        # these are all descriptions
+        self.label_4 = QtWidgets.QLabel(self)
+        self.label_4.setGeometry(QtCore.QRect(10, 160, 235, 20))
+        self.label_4.setObjectName("label_4")
+        font = QtGui.QFont()
+        font.setFamily("Segoe UI")
+        font.setPointSize(10)
+        self.label_4.setFont(font)
+
+        self.label_5 = QtWidgets.QLabel(self)
+        self.label_5.setGeometry(QtCore.QRect(10, 90, 270, 20))
+        self.label_5.setObjectName("label_5")
+        font = QtGui.QFont()
+        font.setFamily("Segoe UI")
+        font.setPointSize(10)
+        self.label_5.setFont(font)
+
+        self.label_6 = QtWidgets.QLabel(self)
+        self.label_6.setGeometry(QtCore.QRect(10, 260, 360, 20))
+        self.label_6.setObjectName("label_6")
+        font = QtGui.QFont()
+        font.setFamily("Segoe UI")
+        font.setPointSize(10)
+        self.label_6.setFont(font)
+
+        self.label_8 = QtWidgets.QLabel(self)
+        self.label_8.setGeometry(QtCore.QRect(10, 360, 320, 20))
+        self.label_8.setObjectName("label_8")
+        font = QtGui.QFont()
+        font.setFamily("Segoe UI")
+        font.setPointSize(10)
+        self.label_8.setFont(font)
+
+
         self.new_tab_page = QtWidgets.QLineEdit(self)
-        self.new_tab_page.setGeometry(QtCore.QRect(480, 360, 211, 20))
+        self.new_tab_page.setGeometry(QtCore.QRect(480, 360, 211, 30))
         self.new_tab_page.setObjectName("new_tab_page")
+
+        # Save button
+        self.save_settings = QtWidgets.QPushButton(self)
+        self.save_settings.setGeometry(QtCore.QRect(590, 440, 101, 21))
+        self.save_settings.setObjectName("save_settings")
+        self.save_settings.clicked.connect(self.saveChangesToJson)
+
+        # Discard button
         self.discard_changes = QtWidgets.QPushButton(self)
         self.discard_changes.setGeometry(QtCore.QRect(480, 440, 101, 23))
         self.discard_changes.setObjectName("discard_changes")
+        self.discard_changes.clicked.connect(self.closeWindow)
 
         QtCore.QMetaObject.connectSlotsByName(self)
+        self.setStyleSheet(
+        """
+        QLineEdit{
+            border: 2px solid #ccc;
+            border-radius: 5px;
+            padding: 5px 5px;
+            height: 60px;
+            font-size: 12px;
+        }
+        """)
 
 
 
@@ -999,6 +1019,10 @@ class UserSettings(QWidget):
         self.searchEngineSelector = DropDownSelector()
         self.searchEngineSelector.currentTextChanged.connect(
             self.addDropDownItemToJson)
+        
+        self.searchEngineSelector.setEnabled(True)
+        self.searchEngineSelector.setGeometry(QtCore.QRect(480, 80, 211, 20))
+        self.searchEngineSelector.setObjectName("searchEngineSelector")
 
         if self.default_search_engine == "Google":
             self.searchEngineSelector.setCurrentIndex(
@@ -1013,32 +1037,21 @@ class UserSettings(QWidget):
             self.searchEngineSelector.setCurrentIndex(
                 self.searchEngineSelector.DuckIndex)
 
-    def addStartupPage(self):
-        # Page to display on startup
-        self.startupPage = QLineEdit()
-        self.startupPage.setText(settings_data["startupPage"])
-        self.addPageButn1 = QPushButton("Add page")
-        self.addPageButn1.clicked.connect(self.addStartupPageToJson)
-
-    def addHomeButtonCustomPage(self):
-        # Page to navigate when home button will pressed
-        self.homeButnPage = QLineEdit()
-        self.homeButnPage.setText(settings_data["homeButtonPage"])
-        self.addPageButn2 = QPushButton("Add page")
-        self.addPageButn2.clicked.connect(self.addHomeButtonCustomPageToJson)
-
-    def addPageOnEachTab(self):
-        # Page to display on every new tab
-        self.newtabpage = QLineEdit()
-        self.newtabpage.setText(settings_data["newTabPage"])
-        self.addPageButn3 = QPushButton("Add page")
-        self.addPageButn3.clicked.connect(self.addPageOnEachTabToJson)
-
     # Write to json
 
-    def addStartupPageToJson(self):
-        if self.startupPage.text():
-            settings_data["startupPage"] = self.startupPage.text()
+    def saveChangesToJson(self): # startup pg
+        if len(self.startup_page.text()) > 0:
+            settings_data["startupPage"] = self.startup_page.text()
+            with open("settings.json", "w") as f:
+                json.dump(settings_data, f, indent=2)
+        
+        if len(self.home_button_page.text()) > 0:
+            settings_data["homeButtonPage"] = self.home_button_page.text()
+            with open("settings.json", "w") as f:
+                json.dump(settings_data, f, indent=2)
+        
+        if len(self.new_tab_page.text()) > 0:
+            settings_data["newTabPage"] = self.new_tab_page.text()
             with open("settings.json", "w") as f:
                 json.dump(settings_data, f, indent=2)
 
@@ -1047,34 +1060,22 @@ class UserSettings(QWidget):
         with open("settings.json", "w") as f:
             json.dump(settings_data, f, indent=2)
 
-    def addHomeButtonCustomPageToJson(self):
-        if self.homeButnPage.text():
-            settings_data["homeButtonPage"] = self.homeButnPage.text()
-            with open("settings.json", "w") as f:
-                json.dump(settings_data, f, indent=2)
-
-    def addPageOnEachTabToJson(self):
-        if self.newtabpage.text():
-            settings_data["newTabPage"] = self.newtabpage.text()
-            with open("settings.json", "w") as f:
-                json.dump(settings_data, f, indent=2)
-
     def closeWindow(self):
         self.close()
     
     def retranslateUi(self):
         _translate = QtCore.QCoreApplication.translate
-        self.label_2.setText(_translate("Settings"))
-        self.label_3.setText(_translate("On startup"))
-        self.save_settings.setText(_translate("Save settimgs"))
-        self.label.setText(_translate("Default Search Engine"))
-        self.label_4.setText(_translate("Choose what page to display on startup"))
-        self.label_5.setText(_translate("Default search engine used in the address bar"))
-        self.label_6.setText(_translate("Choose what page to navigate when home button is pressed"))
-        self.label_7.setText(_translate("Home button"))
-        self.label_8.setText(_translate("Choose what page to show when a new tab is opened"))
-        self.label_9.setText(_translate("New tab"))
-        self.discard_changes.setText(_translate("Form", "Discand changes"))
+        self.label_2.setText(_translate("Form", "Settings"))
+        self.label_3.setText(_translate("Form", "On startup"))
+        self.save_settings.setText(_translate("Form", "Save settimgs"))
+        self.label.setText(_translate("Form", "Default Search Engine"))
+        self.label_4.setText(_translate("Form", "Choose what page to display on startup"))
+        self.label_5.setText(_translate("Form", "Default search engine used in the address bar"))
+        self.label_6.setText(_translate("Form", "Choose what page to navigate when home button is pressed"))
+        self.label_7.setText(_translate("Form", "Home button"))
+        self.label_8.setText(_translate("Form", "Choose what page to show when a new tab is opened"))
+        self.label_9.setText(_translate("Form", "New tab"))
+        self.discard_changes.setText(_translate("Form", "Discard changes"))
 
 class PrintHandler(QObject):
     def __init__(self, parent=None):
