@@ -12,6 +12,7 @@ import sys
 import datetime
 import sqlite3
 import json
+from PyQt5 import QtWidgets
 import pyperclip as pc
 
 from PyQt5 import QtGui, QtCore
@@ -826,7 +827,7 @@ class mainWindow(QMainWindow):
         self.historyWindow.setMask(mask)
 
         self.historyWindow.setStyleSheet(
-            """
+        """
         background-color:#edf4f7;
         """
         )
@@ -841,7 +842,6 @@ class mainWindow(QMainWindow):
         radiusx = 10.0
         radiusy = 5.0
         path = QtGui.QPainterPath()
-        self.userSettingswindow.resize(820, 500)
         self.userSettingswindow.setContentsMargins(0, 0, 0, 0)
         path.addRoundedRect(QtCore.QRectF(
             self.userSettingswindow.rect()), radiusx, radiusy)
@@ -863,9 +863,17 @@ class DropDownSelector(QComboBox):
         self.addItem("Bing")
         self.addItem("DuckDuckGo")
         self.setStyleSheet("""
-            height: 20px;
-            border: 1px solid gray;
-            border-radius: 2%;
+        QComboBox{
+            border: 1px solid #ccc;
+            padding: 30px 3px;
+        }
+        QComboBox::down-arrow{
+            image: url(./resources/arrow-down-12.png);
+            border : none;
+        }
+        QComboBox::drop-down{
+            border: none;
+        }
         """)
 
 
@@ -878,80 +886,113 @@ class DropDownSelector(QComboBox):
 class UserSettings(QWidget):
     def __init__(self):
         super().__init__()
-        # Close button
         self.default_search_engine = settings_data["defaultSearchEngine"]
-        closeButn = QPushButton()
-        closeButn.setObjectName("closeButn")
-        closeButn.setIcon(
-            QIcon(os.path.join("resources", "cross.png")))
-        closeButn.setStyleSheet(
-            """QPushButton#closeButn{
-                    margin-left:757px;
-                    margin-top: 0px;
-                    border: 1px solid transparent;
-                    border-radius: 3px;
-                    height: 30px;
-                    padding: 1px 1px 1px  1px;
-                }
-                QPushButton#closeButn:hover{background-color:#ccc}""")
-        closeButn.clicked.connect(self.closeWindow)
 
-        lbl1 = QLabel("Default search engine")
-        self.addDefaultSearchEngineSelector()
-
-        lbl2 = QLabel("On startup")
-        self.addStartupPage()
-
-        lbl3 = QLabel("Home button custom page")
-        self.addHomeButtonCustomPage()
-
-        lbl4 = QLabel("New tab page")
-        self.addPageOnEachTab()
-
-        # Define layout #1
-        self.layout = QVBoxLayout()
-
-        # Add close button
-        self.layout.addWidget(closeButn)
-
-        # Add label
-        self.layout.addWidget(lbl1)
-
-        # Add default search engine selector
-        self.layout.addWidget(self.searchEngineSelector)
-
-        # Add label
-        self.layout.addWidget(lbl2)
-
-        # Add startup page
-        self.layout.addWidget(self.startupPage)
-        self.layout.addWidget(self.addPageButn1)
-
-        # Add label
-        self.layout.addWidget(lbl3)
-
-        # Add home button page
-        self.layout.addWidget(self.homeButnPage)
-        self.layout.addWidget(self.addPageButn2)
-
-        # Add label
-        self.layout.addWidget(lbl4)
-
-        # Add new tab page settings
-        self.layout.addWidget(self.newtabpage)
-        self.layout.addWidget(self.addPageButn3)
-        self.setStyleSheet("""
-        QLabel{
-            font-size:16px;
+        self.init_ui()
+        self.retranslateUi()
+    
+    def init_ui(self):
+        self.resize(706, 485)
+        self.label_2 = QtWidgets.QLabel(self)
+        self.label_2.setGeometry(QtCore.QRect(10, 10, 71, 21))
+        font = QtGui.QFont()
+        font.setFamily("MS Shell Dlg 2")
+        font.setPointSize(12)
+        font.setBold(False)
+        font.setItalic(False)
+        font.setWeight(50)
+        self.label_2.setFont(font)
+        self.label_2.setStyleSheet("font: 11pt \"Segoe UI\";\n"
+"font: 12pt \"MS Shell Dlg 2\";")
+        self.label_2.setObjectName("label_2")
+        self.closeButn = QtWidgets.QPushButton(self)
+        self.closeButn.setGeometry(QtCore.QRect(660, 10, 31, 31))
+        self.closeButn.setIcon(QtGui.QIcon(os.path.join("resources", "cross.png")))
+        self.closeButn.setObjectName("closeButn")
+        self.closeButn.setStyleSheet("""
+        QPushButton#closeButn{
+            border: 1px solid transparent;
+            border-radius: 3px;
         }
-        QLineEdit{
-            font-size: 12px;
-            padding: 2px 2px;
+        QPushButton#closeButn:hover{
+            background-color:#ccc
         }
-        """
-        )
+        """)
+        self.closeButn.setText("")
+        self.closeButn.clicked.connect(self.closeWindow)
+        self.startup_page = QtWidgets.QLineEdit(self)
+        self.startup_page.setGeometry(QtCore.QRect(480, 150, 211, 20))
+        self.startup_page.setObjectName("startup_page")
+        self.label_3 = QtWidgets.QLabel(self)
+        self.label_3.setGeometry(QtCore.QRect(10, 130, 91, 21))
+        font = QtGui.QFont()
+        font.setFamily("Segoe UI")
+        font.setPointSize(12)
+        font.setBold(True)
+        font.setWeight(75)
+        self.label_3.setFont(font)
+        self.label_3.setObjectName("label_3")
+        self.save_settings = QtWidgets.QPushButton(self)
+        self.save_settings.setGeometry(QtCore.QRect(590, 440, 101, 21))
+        self.save_settings.setObjectName("save_settings")
+        self.label = QtWidgets.QLabel(self)
+        self.label.setGeometry(QtCore.QRect(10, 60, 171, 21))
+        font = QtGui.QFont()
+        font.setFamily("Segoe UI")
+        font.setPointSize(12)
+        font.setBold(True)
+        font.setWeight(75)
+        self.label.setFont(font)
+        self.label.setObjectName("label")
+        self.dropdownselector = DropDownSelector()
+        self.dropdownselector.setEnabled(True)
+        self.dropdownselector.setGeometry(QtCore.QRect(480, 80, 211, 20))
+        self.dropdownselector.setStyleSheet("""
+        """)
+        self.dropdownselector.setObjectName("dropdownselector")
+        self.label_4 = QtWidgets.QLabel(self)
+        self.label_4.setGeometry(QtCore.QRect(10, 160, 201, 16))
+        self.label_4.setObjectName("label_4")
+        self.label_5 = QtWidgets.QLabel(self)
+        self.label_5.setGeometry(QtCore.QRect(10, 90, 231, 16))
+        self.label_5.setObjectName("label_5")
+        self.label_6 = QtWidgets.QLabel(self)
+        self.label_6.setGeometry(QtCore.QRect(10, 260, 291, 16))
+        self.label_6.setObjectName("label_6")
+        self.label_7 = QtWidgets.QLabel(self)
+        self.label_7.setGeometry(QtCore.QRect(10, 230, 101, 21))
+        font = QtGui.QFont()
+        font.setFamily("Segoe UI")
+        font.setPointSize(12)
+        font.setBold(True)
+        font.setWeight(75)
+        self.label_7.setFont(font)
+        self.label_7.setObjectName("label_7")
+        self.home_button_page = QtWidgets.QLineEdit(self)
+        self.home_button_page.setGeometry(QtCore.QRect(480, 250, 211, 20))
+        self.home_button_page.setObjectName("home_button_page")
+        self.label_8 = QtWidgets.QLabel(self)
+        self.label_8.setGeometry(QtCore.QRect(10, 360, 261, 16))
+        self.label_8.setObjectName("label_8")
+        self.label_9 = QtWidgets.QLabel(self)
+        self.label_9.setGeometry(QtCore.QRect(10, 330, 101, 21))
+        font = QtGui.QFont()
+        font.setFamily("Segoe UI")
+        font.setPointSize(12)
+        font.setBold(True)
+        font.setWeight(75)
+        self.label_9.setFont(font)
+        self.label_9.setObjectName("label_9")
+        self.new_tab_page = QtWidgets.QLineEdit(self)
+        self.new_tab_page.setGeometry(QtCore.QRect(480, 360, 211, 20))
+        self.new_tab_page.setObjectName("new_tab_page")
+        self.discard_changes = QtWidgets.QPushButton(self)
+        self.discard_changes.setGeometry(QtCore.QRect(480, 440, 101, 23))
+        self.discard_changes.setObjectName("discard_changes")
 
-        self.setLayout(self.layout)
+        QtCore.QMetaObject.connectSlotsByName(self)
+
+
 
     def addDefaultSearchEngineSelector(self):
         # Drop down menu to select default search engine
@@ -1020,7 +1061,20 @@ class UserSettings(QWidget):
 
     def closeWindow(self):
         self.close()
-
+    
+    def retranslateUi(self):
+        _translate = QtCore.QCoreApplication.translate
+        self.label_2.setText(_translate("Settings"))
+        self.label_3.setText(_translate("On startup"))
+        self.save_settings.setText(_translate("Save settimgs"))
+        self.label.setText(_translate("Default Search Engine"))
+        self.label_4.setText(_translate("Choose what page to display on startup"))
+        self.label_5.setText(_translate("Default search engine used in the address bar"))
+        self.label_6.setText(_translate("Choose what page to navigate when home button is pressed"))
+        self.label_7.setText(_translate("Home button"))
+        self.label_8.setText(_translate("Choose what page to show when a new tab is opened"))
+        self.label_9.setText(_translate("New tab"))
+        self.discard_changes.setText(_translate("Form", "Discand changes"))
 
 class PrintHandler(QObject):
     def __init__(self, parent=None):
