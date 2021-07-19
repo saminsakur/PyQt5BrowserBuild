@@ -81,10 +81,10 @@ cursor = connection.cursor()
 
 # Font
 textFont = QFont("sans-serif", 14)
-try:                                # If settings file exists, then open it
+if os.path.isfile("settings.json"):         # If settings file exists, then open it
     with open("settings.json", "r") as f:
         settings_data = json.load(f)
-except:                             # If settings not exists, then create a new file with default settings
+else:                                       # If settings not exists, then create a new file with default settings
     json_data = json.loads("""{
         "defaultSearchEngine": "Google",
         "startupPage": "https://www.google.com/",
