@@ -50,6 +50,7 @@ from PyQt5.QtWidgets import (
     QDialog,
     QProgressDialog,
     QProgressBar,
+    QToolTip,
     QWidget,
     QPushButton,
     QListWidget,
@@ -369,7 +370,7 @@ class mainWindow (QMainWindow):
 
         # Settings widget:
         userSettingsAction = QAction(QtGui.QIcon(os.path.join(
-            "resources", "settings_icon.png")), "Settings", self)
+            "resources", "settings.png")), "Settings", self)
         userSettingsAction.triggered.connect(self.openSettings)
         context_menu.addAction(userSettingsAction)
 
