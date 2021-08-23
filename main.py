@@ -10,7 +10,6 @@ import re
 import os
 import sys
 import json
-import logging
 import sqlite3
 import datetime
 import threading
@@ -1782,7 +1781,7 @@ def create_app():
 
 
 def start_server():
-    app.run(port=7700)
+    app.run(port=8888)
 
 
 def main():
