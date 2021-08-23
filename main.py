@@ -87,11 +87,12 @@ if os.path.isfile("settings.json"):     # If settings file exists, then open it
     with open("settings.json", "r") as f:
         settings_data = json.load(f)
 else:                                   # If settings not exists, then create a new file with default settings
-    json_data = json.loads("""{
+    json_data = json.loads("""
+    {
         "defaultSearchEngine": "Google",
-        "startupPage": "https://www.google.com/",
-        "newTabPage": "https://www.google.com/",
-        "homeButtonPage": "https://www.google.com/"
+        "startupPage": "http://127.0.0.1:8888/",
+        "newTabPage": "http://127.0.0.1:8888/",
+        "homeButtonPage": "http://127.0.0.1:8888/"
     }
     """)
     with open("settings.json", "w") as f:
@@ -717,7 +718,6 @@ class mainWindow (QMainWindow):
                 QPixmap(os.path.join("resources", "warning1.png")))
             self.httpsicon.setToolTip(
                 "Connection to this site may not be secured")
-
 
         if q.toString() == settings_data["newTabPage"]:
             self.url_bar.clear()
