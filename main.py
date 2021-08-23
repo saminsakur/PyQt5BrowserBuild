@@ -9,17 +9,17 @@ Learn more  - https://github.com/saminsakur/PyQt5BrowserBuild/
 import re
 import os
 import sys
-import datetime
-import sqlite3
 import json
-from PyQt5 import QtWidgets
+import logging
+import sqlite3
+import datetime
+import threading
 import pyperclip as pc
-
+from app import app
+from PyQt5 import QtWidgets
 from PyQt5 import QtGui, QtCore
 from PyQt5.QtWebEngineWidgets import *
-
 from PyQt5.QtGui import (
-    QColor,
     QIcon,
     QFont,
     QPainter,
@@ -77,17 +77,17 @@ without_http_pattern = re.compile(
 file_pattern = re.compile(r"^file://")
 
 # DB to open
-connection = sqlite3.connect("BrowserLocalDB.db")
+connection = sqlite3.connect("BrowserLocalDB.db", check_same_thread=False)
 # connection = sqlite3.connect(":memory:")
 
 cursor = connection.cursor()
 
 # Font
 textFont = QFont("sans-serif", 14)
-if os.path.isfile("settings.json"):  # If settings file exists, then open it
+if os.path.isfile("settings.json"):     # If settings file exists, then open it
     with open("settings.json", "r") as f:
         settings_data = json.load(f)
-else:  # If settings not exists, then create a new file with default settings
+else:                                   # If settings not exists, then create a new file with default settings
     json_data = json.loads("""{
         "defaultSearchEngine": "Google",
         "startupPage": "https://www.google.com/",
@@ -693,6 +693,8 @@ class mainWindow (QMainWindow):
             # if signal is not from the current tab, then ignore
             return
 
+            self.url_bar.clear()
+
         if q.scheme() == 'https':
             # secure padlock icon
             self.httpsicon.setPixmap(
@@ -717,7 +719,12 @@ class mainWindow (QMainWindow):
             self.httpsicon.setToolTip(
                 "Connection to this site may not be secured")
 
-        self.url_bar.setText(q.toString())
+
+        if q.toString() == settings_data["newTabPage"]:
+            self.url_bar.clear()
+        else:
+            self.url_bar.setText(q.toString())
+
         self.url_bar.setCursorPosition(0)
 
     # function to search google from the search box
@@ -1384,10 +1391,15 @@ class Tabs (QTabWidget):
 
         # Set the tabs movable
         self.setMovable(True)
+
+        # Add font family
+        font = QFont("Segoe UI", 8)
+        self.setFont(font)
+
         # Add some styles to the tabs
         self.setStyleSheet("""
-             QTabBar{
-                background-color:#417294;
+            QTabBar{
+                background-color:#2E385C;
             }
 
             QTabBar::tab {
@@ -1404,27 +1416,27 @@ class Tabs (QTabWidget):
                 background-color: transparent;
             }
 
-            QTabBar::tab:selected, QTabBar::tab:hover {     /* not selected tabs */
-                background-color: #2c5470;
-            }
-
-            QTabBar::close-button {    /* style the tab close button */
+            QTabBar::close-button {                         /* style the tab close button */
                 image: url(./resources/closetabbutton.png);
                 subcontrol-position: right;
                 border: 1px solid transparent;
                 border-radius:3px;
             }
 
-            QTabBar::close-button:hover{    /* close button hover */
-                background-color: #477494
+            QTabBar::close-button:hover{                    /* close button hover */
+                background-color: #3B2E53;
             }
 
             QTabWidget::tab-bar {
-                left: 5px; /* move to the right by 5px */
+                left: 5px;                                  /* move to the right by 5px */
             }
 
-            QTabBar::tab:selected{  /* selected tabs */
-                background-color: #00496e;
+            QTabBar::tab:!selected:hover{
+                background-color:#222348;
+            }
+
+            QTabBar::tab:selected{                          /* selected tabs */
+                background-color: #170733;
             }
         """)
 
@@ -1475,7 +1487,6 @@ class AboutDialog (QDialog):
             QPushButton:pressed{
                 background-color:#0C63CE;
             }          
-            
         """)
 
         layout = QVBoxLayout()
@@ -1528,7 +1539,7 @@ class AboutDialog (QDialog):
         self.setLayout(layout)
 
 
-def main():
+def create_app():
     app = QApplication(sys.argv)
 
     # Disable shortcut in context menu
@@ -1655,6 +1666,8 @@ def main():
         width: 10px;
         height: 10px;
         background-color: none;
+        margin-left:5px;
+        margin-right:5px;
     }
 
     QPushButton#back_btn {
@@ -1765,11 +1778,18 @@ def main():
     window = mainWindow()
     window.show()
 
-    try:
-        sys.exit(app.exec_())
+    sys.exit(app.exec_())
 
-    except SystemExit:
-        print("Closing browser...")
+
+def start_server():
+    app.run(port=7700)
+
+
+def main():
+    t1 = threading.Thread(target=create_app)
+    t2 = threading.Thread(target=start_server)
+    t1.start()
+    t2.start()
 
 
 if __name__ == "__main__":
