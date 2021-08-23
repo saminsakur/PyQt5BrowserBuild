@@ -695,29 +695,34 @@ class mainWindow (QMainWindow):
 
             self.url_bar.clear()
 
-        if q.scheme() == 'https':
-            # secure padlock icon
-            self.httpsicon.setPixmap(
-                QPixmap(os.path.join("resources", "security.png")))
-            self.httpsicon.setToolTip(
-                "Connection to this is is secure\n\nThis site have a valid certificate")
-
-        elif q.scheme() == "file":
-            self.httpsicon.setPixmap(
-                QPixmap(os.path.join("resources", "file-protocol.png")))
-            self.httpsicon.setToolTip("You are viewing a local or shared file")
-
-        elif q.scheme() == "data":
-            self.httpsicon.setPixmap(
-                QPixmap(os.path.join("resources", "file-protocol.png")))
-            self.httpsicon.setToolTip("You are viewing a local or shared file")
-
+        if q.toString() == settings_data["newTabPage"]:
+            self.httpsicon.setPixmap(QPixmap(os.path.join("resources", "file-protocol.png")))
+        
         else:
-            # Set insecure padlock
-            self.httpsicon.setPixmap(
-                QPixmap(os.path.join("resources", "warning1.png")))
-            self.httpsicon.setToolTip(
-                "Connection to this site may not be secured")
+            if q.scheme() == 'https':
+                # secure padlock icon
+                self.httpsicon.setPixmap(
+                    QPixmap(os.path.join("resources", "security.png")))
+                self.httpsicon.setToolTip(
+                    "Connection to this is is secure\n\nThis site have a valid certificate")
+
+            elif q.scheme() == "file":
+                self.httpsicon.setPixmap(
+                    QPixmap(os.path.join("resources", "file-protocol.png")))
+                self.httpsicon.setToolTip("You are viewing a local or shared file")
+
+            elif q.scheme() == "data":
+                self.httpsicon.setPixmap(
+                    QPixmap(os.path.join("resources", "file-protocol.png")))
+                self.httpsicon.setToolTip("You are viewing a local or shared file")
+
+            else:
+                # Set insecure padlock
+                self.httpsicon.setPixmap(
+                    QPixmap(os.path.join("resources", "warning1.png")))
+                self.httpsicon.setToolTip(
+                    "Connection to this site may not be secured")
+
 
         if q.toString() == settings_data["newTabPage"]:
             self.url_bar.clear()
