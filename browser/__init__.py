@@ -9,6 +9,7 @@ from PyQt5.QtWebEngineWidgets import *
 from PyQt5.QtGui import QIcon, QFont
 
 from PyQt5.QtWidgets import QApplication
+from .main_window import mainWindow
 
 # Regular expressions to match urls
 pattern = re.compile(
