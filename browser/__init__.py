@@ -3,12 +3,8 @@ import os
 import sys
 import json
 import sqlite3
-import datetime
 import threading
-import pyperclip as pc
 from app import app
-from PyQt5 import QtWidgets
-from PyQt5 import QtGui, QtCore
 from PyQt5.QtWebEngineWidgets import *
 from PyQt5.QtGui import QIcon, QFont
 

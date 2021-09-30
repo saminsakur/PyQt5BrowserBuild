@@ -1,5 +1,43 @@
+from PyQt5.QtWebEngineWidgets import (
+    QWebEngineDownloadItem,
+    QWebEngineSettings,
+    QWebEngineView,
+)
+from PyQt5.QtWidgets import (
+    QGraphicsDropShadowEffect,
+    QMainWindow,
+    QPushButton,
+    QShortcut,
+    QToolBar,
+    QMenu,
+    QAction,
+    QFileDialog,
+)
+from PyQt5.QtCore import QSize, QUrl
+from PyQt5.QtGui import QIcon, QPixmap
+from PyQt5 import QtCore
+from PyQt5 import QtGui
+from PyQt5 import Qt
+from .widgets import Tabs, AddressBar, SSLIcon, customWebEnginePage
+from .printer import PrintHandler
+from .errors import fileErrorDialog, errorMsg
+from .about import AboutDialog
+from .history import HistoryWindow
+from .settings import UserSettings
+from . import (
+    settings_data,
+    file_pattern,
+    without_http_pattern,
+    pattern,
+    cursor,
+    connection,
+)
+import sys
+import os
+import pyperclip as pc
+import datetime
 
-from PyQt5.QtWidgets import QMainWindow
+
 class mainWindow(QMainWindow):
     def __init__(self, *args, **kwargs):
         super(mainWindow, self).__init__(*args, **kwargs)
@@ -10,12 +48,12 @@ class mainWindow(QMainWindow):
         # create history table
         cursor.execute(
             """CREATE TABLE IF NOT EXISTS "history" (
-                   "id"	INTEGER,
-                   "title"	TEXT,
-                   "url"	TEXT,
-                   "date"	TEXT,
-               	PRIMARY KEY("id")
-               	)"""
+                "id"	INTEGER,
+                "title"	TEXT,
+                "url"	TEXT,
+                "date"	TEXT,
+                PRIMARY KEY("id")
+            )"""
         )
 
         # Add new tab when tab tab is doubleclicked
