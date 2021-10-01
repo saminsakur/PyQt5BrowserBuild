@@ -5,7 +5,6 @@ import json
 import sqlite3
 import threading
 from app import app
-from PyQt5.QtWebEngineWidgets import *
 from PyQt5.QtGui import QIcon, QFont
 
 from PyQt5.QtWidgets import QApplication
@@ -48,24 +47,11 @@ else:  # If settings not exists, then create a new file with default settings
         settings_data = json.load(f)
 
 
-
-
-"""Settings for user:
-    #1 Change default search engine
-    #2 Change startup page
-    #3 Change page to display on new tab
-    #4 Change page to navigate when home button is pressed
-"""
-
-
-
-
-
 def create_app():
-    app = QApplication(sys.argv)
+    gui_app = QApplication(sys.argv)
 
     # Disable shortcut in context menu
-    app.styleHints().setShowShortcutsInContextMenus(False)
+    gui_app.styleHints().setShowShortcutsInContextMenus(False)
 
     # Set the window name
     QApplication.setApplicationName("Simple Web Browser")
@@ -74,7 +60,7 @@ def create_app():
     QApplication.setWindowIcon(QIcon(os.path.join("Icons", "browser.png")))
 
     # App styles
-    app.setStyleSheet(
+    gui_app.setStyleSheet(
         """
     QPushButton#ContextMenuTriggerButn::menu-indicator{ /* Hide context menu button dropdown icon */
         image: none;
@@ -300,7 +286,7 @@ def create_app():
     window = mainWindow()
     window.show()
 
-    sys.exit(app.exec_())
+    sys.exit(gui_app.exec_())
 
 
 def start_server():
@@ -309,8 +295,6 @@ def start_server():
 
 def main():
     t1 = threading.Thread(target=create_app)
-    t2 = threading.Thread(target=app.run, kwargs={"port": 8888})
+    t2 = threading.Thread(target=start_server)
     t1.start()
     t2.start()
-
-

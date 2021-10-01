@@ -1,3 +1,9 @@
+import os
+
+from PyQt5.QtGui import QPixmap
+from PyQt5.QtWidgets import QDialogButtonBox, QDialog, QVBoxLayout, QLabel, QHBoxLayout
+
+from . import textFont
 
 
 class AboutDialog(QDialog):
@@ -90,4 +96,3 @@ class AboutDialog(QDialog):
         )
         self.setWindowTitle("Simple web browser")
         self.setLayout(layout)
-
