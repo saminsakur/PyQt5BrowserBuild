@@ -1,3 +1,11 @@
+import os
+
+from PyQt5.QtWebEngineWidgets import QWebEnginePage
+from PyQt5.QtWidgets import QLabel, QLineEdit, QTabWidget
+from PyQt5.QtGui import QPixmap, QFont
+from PyQt5 import QtCore
+
+
 class AddressBar(QLineEdit):
     def __init__(self):
         super().__init__()
@@ -121,4 +129,3 @@ class customWebEnginePage(QWebEnginePage):
         page = self.sender()
         self.setUrl(url)
         page.deleteLater()
-
