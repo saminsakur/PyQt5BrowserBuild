@@ -1,9 +1,10 @@
 import json
 import os
-from PyQt5 import QtWidgets, QtGui,QtCore
+from PyQt5 import QtWidgets, QtGui, QtCore
 from PyQt5.QtWidgets import QWidget
 
 from . import settings_data
+
 
 class UserSettings(QWidget):
     def __init__(self):
@@ -280,4 +281,3 @@ class UserSettings(QWidget):
         )
         self.label_9.setText(_translate("Form", "New tab"))
         self.discard_changes.setText(_translate("Form", "Discard changes"))
-
