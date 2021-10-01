@@ -1,3 +1,9 @@
+from PyQt5.QtCore import QObject, pyqtSlot, QEventLoop, QPointF
+from PyQt5.QtGui import QPainter
+from PyQt5.QtPrintSupport import QPrinter, QPrintDialog, QPrintPreviewDialog
+from PyQt5.QtWidgets import QDialog, QProgressDialog, QProgressBar
+
+
 class PrintHandler(QObject):
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -61,4 +67,3 @@ class PrintHandler(QObject):
                     QPointF(10, 25), "We could not generate print preview."
                 )
                 painter.end()
-
