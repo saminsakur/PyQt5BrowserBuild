@@ -1,5 +1,6 @@
 from PyQt5.QtWidgets import QMessageBox
 
+
 class fileErrorDialog(QMessageBox):
     def __init__(self, *args, **kwargs):
         super(fileErrorDialog, self).__init__(*args, **kwargs)
@@ -20,4 +21,3 @@ class errorMsg(QMessageBox):
 
         self.setWindowTitle("Error!")
         self.show()
-

@@ -1,3 +1,10 @@
+from PyQt5 import QtCore
+from PyQt5.QtWidgets import QWidget, QLabel, QPushButton, QListWidget, QGridLayout
+
+from . import textFont, cursor, connection
+from .main_window import mainWindow
+
+
 class HistoryWindow(QWidget):
     def __init__(self):
         super().__init__()
@@ -146,4 +153,3 @@ class HistoryWindow(QWidget):
         self.historyList.clear()
         cursor.execute("DELETE FROM history")
         connection.commit()
-
