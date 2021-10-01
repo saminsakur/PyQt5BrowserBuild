@@ -4,7 +4,7 @@ import sys
 import json
 import sqlite3
 import threading
-from app import app
+from .app import app
 from PyQt5.QtGui import QIcon, QFont
 
 from PyQt5.QtWidgets import QApplication
