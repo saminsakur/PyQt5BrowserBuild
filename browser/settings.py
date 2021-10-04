@@ -3,13 +3,15 @@ import os
 from PyQt5 import QtWidgets, QtGui, QtCore
 from PyQt5.QtWidgets import QWidget
 
-from . import settings_data
+import browser
 
 
 class UserSettings(QWidget):
     def __init__(self):
         super().__init__()
-        self.default_search_engine = settings_data["defaultSearchEngine"]
+
+        self.settings_data = browser.settings_data
+        self.default_search_engine = self.settings_data["defaultSearchEngine"]
         self.mainWidget = QWidget(self)
 
         self.init_ui()
@@ -41,7 +43,7 @@ class UserSettings(QWidget):
 
         self.startup_page = QtWidgets.QLineEdit(self.mainWidget)
         self.startup_page.setGeometry(QtCore.QRect(480, 150, 211, 33))
-        self.startup_page.setText(settings_data["startupPage"])
+        self.startup_page.setText(self.settings_data["startupPage"])
         self.startup_page.setObjectName("startup_page")
 
         # On startup section
@@ -79,7 +81,7 @@ class UserSettings(QWidget):
         # Home button page
         self.home_button_page = QtWidgets.QLineEdit(self.mainWidget)
         self.home_button_page.setGeometry(QtCore.QRect(480, 250, 211, 33))
-        self.home_button_page.setText(settings_data["homeButtonPage"])
+        self.home_button_page.setText(self.settings_data["homeButtonPage"])
         self.home_button_page.setObjectName("home_button_page")
 
         # New tab open settings
@@ -95,7 +97,7 @@ class UserSettings(QWidget):
 
         # Page to open on each tab
         self.new_tab_page = QtWidgets.QLineEdit(self.mainWidget)
-        self.new_tab_page.setText(settings_data["newTabPage"])
+        self.new_tab_page.setText(self.settings_data["newTabPage"])
         self.new_tab_page.setGeometry(QtCore.QRect(480, 360, 211, 33))
         self.new_tab_page.setObjectName("new_tab_page")
 
@@ -236,24 +238,24 @@ class UserSettings(QWidget):
 
     def saveChangesToJson(self):  # startup pg
         if len(self.startup_page.text()) > 0:
-            settings_data["startupPage"] = self.startup_page.text()
+            self.settings_data["startupPage"] = self.startup_page.text()
             with open("settings.json", "w") as f:
-                json.dump(settings_data, f, indent=2)
+                json.dump(self.settings_data, f, indent=2)
 
         if len(self.home_button_page.text()) > 0:
-            settings_data["homeButtonPage"] = self.home_button_page.text()
+            self.settings_data["homeButtonPage"] = self.home_button_page.text()
             with open("settings.json", "w") as f:
-                json.dump(settings_data, f, indent=2)
+                json.dump(self.settings_data, f, indent=2)
 
         if len(self.new_tab_page.text()) > 0:
-            settings_data["newTabPage"] = self.new_tab_page.text()
+            self.settings_data["newTabPage"] = self.new_tab_page.text()
             with open("settings.json", "w") as f:
-                json.dump(settings_data, f, indent=2)
+                json.dump(self.settings_data, f, indent=2)
 
     def addDropDownItemToJson(self):
-        settings_data["defaultSearchEngine"] = self.searchEngineSelector.currentText()
+        self.settings_data["defaultSearchEngine"] = self.searchEngineSelector.currentText()
         with open("settings.json", "w") as f:
-            json.dump(settings_data, f, indent=2)
+            json.dump(self.settings_data, f, indent=2)
 
     def closeWindow(self):
         self.close()

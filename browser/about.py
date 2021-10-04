@@ -3,7 +3,8 @@ import os
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import QDialogButtonBox, QDialog, QVBoxLayout, QLabel, QHBoxLayout
 
-from . import textFont
+# from . import textFont
+import browser
 
 
 class AboutDialog(QDialog):
@@ -63,7 +64,7 @@ class AboutDialog(QDialog):
                font-size: 24px;
             """
         )
-        title.setFont(textFont)
+        title.setFont(browser.textFont)
 
         layout2 = QHBoxLayout()
         layout2.addWidget(image)

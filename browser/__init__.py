@@ -1,32 +1,23 @@
-import re
 import os
 import sys
 import json
 import sqlite3
 import threading
-from .app import app
+import browser.app
 from PyQt5.QtGui import QIcon, QFont
 
 from PyQt5.QtWidgets import QApplication
-from .main_window import mainWindow
+import browser.main_window
 
-# Regular expressions to match urls
-pattern = re.compile(
-    r"^(http|https)?:?(\/\/)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)"
-)
-without_http_pattern = re.compile(
-    r"[\-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)"
-)
-file_pattern = re.compile(r"^file://")
 
 # DB to open
 connection = sqlite3.connect("BrowserLocalDB.db", check_same_thread=False)
 # connection = sqlite3.connect(":memory:")
-
 cursor = connection.cursor()
 
 # Font
 textFont = QFont("sans-serif", 14)
+
 if os.path.isfile("settings.json"):  # If settings file exists, then open it
     with open("settings.json", "r") as f:
         settings_data = json.load(f)
@@ -283,14 +274,14 @@ def create_app():
     """
     )
 
-    window = mainWindow()
+    window = browser.main_window.mainWindow()
     window.show()
 
     sys.exit(gui_app.exec_())
 
 
 def start_server():
-    app.run(port=8888)
+    browser.app.app.run(port=8888)
 
 
 def main():

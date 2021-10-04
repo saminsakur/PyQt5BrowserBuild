@@ -18,24 +18,28 @@ from PyQt5.QtGui import QIcon, QPixmap
 from PyQt5 import QtCore
 from PyQt5 import QtGui
 from PyQt5 import Qt
-from .widgets import Tabs, AddressBar, SSLIcon, customWebEnginePage
-from .printer import PrintHandler
-from .errors import fileErrorDialog, errorMsg
-from .about import AboutDialog
-from .history import HistoryWindow
-from .settings import UserSettings
-from . import (
-    settings_data,
-    file_pattern,
-    without_http_pattern,
-    pattern,
-    cursor,
-    connection,
-)
+import browser.widgets
+import browser.printer
+import browser.errors
+import browser.about
+import browser.history
+import browser.settings
+import browser
 import sys
 import os
+import re
 import pyperclip as pc
 import datetime
+
+
+# Regular expressions to match urls
+pattern = re.compile(
+    r"^(http|https)?:?(\/\/)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)"
+)
+without_http_pattern = re.compile(
+    r"[\-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)"
+)
+file_pattern = re.compile(r"^file://")
 
 
 class mainWindow(QMainWindow):
@@ -43,10 +47,10 @@ class mainWindow(QMainWindow):
         super(mainWindow, self).__init__(*args, **kwargs)
 
         # create tabs
-        self.tabs = Tabs()
+        self.tabs = browser.widgets.Tabs()
 
         # create history table
-        cursor.execute(
+        browser.cursor.execute(
             """CREATE TABLE IF NOT EXISTS "history" (
                 "id"	INTEGER,
                 "title"	TEXT,
@@ -69,7 +73,7 @@ class mainWindow(QMainWindow):
         AddNewTabKeyShortcut = QShortcut("Ctrl+T", self)
         AddNewTabKeyShortcut.activated.connect(
             lambda: self.add_new_tab(
-                QtCore.QUrl(settings_data["newTabPage"], "New tab")
+                QtCore.QUrl(browser.settings_data["newTabPage"], "New tab")
             )
         )
 
@@ -137,7 +141,7 @@ class mainWindow(QMainWindow):
         self.navbar.addWidget(self.home_button)
 
         # Add Address bar
-        self.url_bar = AddressBar()
+        self.url_bar = browser.widgets.AddressBar()
         self.url_bar.initAddressBar()
         self.url_bar.setFrame(False)
         self.url_bar.returnPressed.connect(self.navigate_to_url)
@@ -155,7 +159,7 @@ class mainWindow(QMainWindow):
         self.navbar.addSeparator()
 
         # Shows ssl security icon
-        self.httpsicon = SSLIcon()
+        self.httpsicon = browser.widgets.SSLIcon()
 
         # Add http icon to the navbar bar
         self.navbar.addWidget(self.httpsicon)
@@ -192,7 +196,7 @@ class mainWindow(QMainWindow):
         newTabAction = QAction("New tab", self)
         newTabAction.setIcon(QtGui.QIcon(os.path.join("resources", "newtab.png")))
         newTabAction.triggered.connect(
-            lambda: self.add_new_tab(QUrl(settings_data["newTabPage"]), "Homepage")
+            lambda: self.add_new_tab(QUrl(browser.settings_data["newTabPage"]), "Homepage")
         )
         newTabAction.setToolTip("Add a new tab")
         context_menu.addAction(newTabAction)
@@ -364,7 +368,7 @@ class mainWindow(QMainWindow):
         self.navbar.addWidget(ContextMenuButton)
 
         # Stuffs to see at startup
-        self.add_new_tab(QUrl(settings_data["startupPage"]), "Homepage")
+        self.add_new_tab(QUrl(browser.settings_data["startupPage"]), "Homepage")
 
         # Set the address focus
         self.url_bar.setFocus()
@@ -397,7 +401,7 @@ class mainWindow(QMainWindow):
     # funcion to navigate to home when home icon is pressed
 
     def goToHome(self):
-        self.tabs.currentWidget().setUrl(QUrl(settings_data["homeButtonPage"]))
+        self.tabs.currentWidget().setUrl(QUrl(browser.settings_data["homeButtonPage"]))
 
     # Define open a new window
 
@@ -464,7 +468,7 @@ class mainWindow(QMainWindow):
                     self.tabs.currentWidget().setHtml(opened_file)
 
             except:
-                dlg = fileErrorDialog()
+                dlg = browser.errors.fileErrorDialog()
                 dlg.exec_()
 
         self.url_bar.setText(filename)
@@ -495,7 +499,7 @@ class mainWindow(QMainWindow):
     # Print handler
     def print_this_page(self):
         try:
-            handler_print = PrintHandler()
+            handler_print = browser.printer.PrintHandler()
             handler_print.setPage(self.tabs.currentWidget().page())
             handler_print.print()
 
@@ -505,7 +509,7 @@ class mainWindow(QMainWindow):
     # Print page with preview
 
     def PrintWithPreview(self):
-        handler = PrintHandler()
+        handler = browser.printer.PrintHandler()
         handler.setPage(self.tabs.currentWidget().page())
         handler.printPreview()
 
@@ -521,7 +525,7 @@ class mainWindow(QMainWindow):
 
     def tab_open_doubleclick(self, i):
         if i == -1:  # No tab under the click
-            self.add_new_tab(QUrl(settings_data["newTabPage"]), label="New tab")
+            self.add_new_tab(QUrl(browser.settings_data["newTabPage"]), label="New tab")
 
     # to update the tab
 
@@ -561,52 +565,52 @@ class mainWindow(QMainWindow):
 
     def add_new_tab(self, qurl=None, label="Blank"):
         if qurl is None:
-            qurl = QUrl(settings_data["newTabPage"])
+            qurl = QUrl(browser.settings_data["newTabPage"])
 
-        browser = QWebEngineView()  # Define the main webview to browser the internet
+        _browser = QWebEngineView()  # Define the main webview to browser the internet
 
         # Set page
-        browser.setPage(customWebEnginePage(browser))
+        _browser.setPage(browser.widgets.customWebEnginePage(_browser))
 
         # Full screen enable
-        browser.settings().setAttribute(
+        _browser.settings().setAttribute(
             QWebEngineSettings.FullScreenSupportEnabled, True
         )
-        browser.page().fullScreenRequested.connect(lambda request: request.accept())
+        _browser.page().fullScreenRequested.connect(lambda request: request.accept())
 
-        browser.loadProgress.connect(self.loadProgressHandler)
+        _browser.loadProgress.connect(self.loadProgressHandler)
 
-        browser.page().WebAction()
+        _browser.page().WebAction()
 
-        browser.settings().setAttribute(QWebEngineSettings.ScreenCaptureEnabled, True)
+        _browser.settings().setAttribute(QWebEngineSettings.ScreenCaptureEnabled, True)
 
-        i = self.tabs.addTab(browser, label)
+        i = self.tabs.addTab(_browser, label)
         self.tabs.setCurrentIndex(i)
 
-        browser.load(qurl)
+        _browser.load(qurl)
         self.url_bar.setFocus()
 
         # update url when it's from the correct tab
         # update url when it's from the correct tab
-        browser.urlChanged.connect(
-            lambda qurl, browser=browser: self.update_urlbar(qurl, browser)
+        _browser.urlChanged.connect(
+            lambda qurl, browser=_browser: self.update_urlbar(qurl, browser)
         )
 
-        browser.loadFinished.connect(
-            lambda _, i=i, browser=browser: self.tabs.setTabText(
+        _browser.loadFinished.connect(
+            lambda _, i=i, browser=_browser: self.tabs.setTabText(
                 i, browser.page().title()
             )
         )
 
         # update history when loading finished
-        browser.page().loadFinished.connect(self.updateHistory)
+        _browser.page().loadFinished.connect(self.updateHistory)
 
     def showErrorDlg(self):
-        dlg = errorMsg()
+        dlg = browser.errors.errorMsg()
         dlg.exec_()
 
     def about(self):
-        self.AboutDialogue = AboutDialog()
+        self.AboutDialogue = browser.about.AboutDialog()
         self.AboutDialogue.setWindowFlag(Qt.FramelessWindowHint)
         radiusx = 10.0
         radiusy = 10.0
@@ -620,14 +624,14 @@ class mainWindow(QMainWindow):
 
     # Update address bar to show current pages's url
 
-    def update_urlbar(self, q, browser=None):
-        if browser != self.tabs.currentWidget():
+    def update_urlbar(self, q, _browser=None):
+        if _browser != self.tabs.currentWidget():
             # if signal is not from the current tab, then ignore
             return
 
             self.url_bar.clear()
 
-        if q.toString() == settings_data["newTabPage"]:
+        if q.toString() == browser.settings_data["newTabPage"]:
             self.httpsicon.setPixmap(
                 QPixmap(os.path.join("resources", "file-protocol.png"))
             )
@@ -661,7 +665,7 @@ class mainWindow(QMainWindow):
                 )
                 self.httpsicon.setToolTip("Connection to this site may not be secured")
 
-        if q.toString() == settings_data["newTabPage"]:
+        if q.toString() == browser.settings_data["newTabPage"]:
             self.url_bar.clear()
         else:
             self.url_bar.setText(q.toString())
@@ -670,7 +674,7 @@ class mainWindow(QMainWindow):
 
     # function to search google from the search box
     def searchWeb(self, text):
-        Engine = settings_data["defaultSearchEngine"]
+        Engine = browser.settings_data["defaultSearchEngine"]
         if text:
             if Engine == "Google":
                 return "https://www.google.com/search?q=" + "+".join(text.split())
@@ -730,22 +734,22 @@ class mainWindow(QMainWindow):
         day = datetime.datetime.now().strftime("%x")
         date = hour + " - " + day
 
-        data = cursor.execute("SELECT * FROM history")
+        data = browser.cursor.execute("SELECT * FROM history")
         siteInfoList = data.fetchall()
 
         for i in range(len(siteInfoList)):
             if url == siteInfoList[i][2]:
-                cursor.execute("DELETE FROM history WHERE url = ?", [url])
+                browser.cursor.execute("DELETE FROM history WHERE url = ?", [url])
 
-        cursor.execute(
+        browser.cursor.execute(
             "INSERT INTO history (title,url,date) VALUES (:title,:url,:date)",
             {"title": title, "url": url, "date": date},
         )
 
-        connection.commit()
+        browser.connection.commit()
 
     def openHistory(self):
-        self.historyWindow = HistoryWindow()
+        self.historyWindow = browser.history.HistoryWindow()
         self.historyWindow.setWindowFlags(Qt.FramelessWindowHint | Qt.Popup)
         self.historyWindow.setGeometry(
             int(self.tabs.currentWidget().frameGeometry().width() / 2 + 300),
@@ -772,7 +776,7 @@ class mainWindow(QMainWindow):
         self.tabs.currentWidget().load(url)
 
     def openSettings(self):
-        self.userSettingswindow = UserSettings()
+        self.userSettingswindow = browser.settings.UserSettings()
         self.userSettingswindow.setWindowFlag(Qt.FramelessWindowHint)
 
         # Adding shadows
