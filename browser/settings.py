@@ -6,7 +6,7 @@ from PyQt5.QtWidgets import QWidget
 import browser
 
 
-class UserSettings(QWidget):
+class UserSettings(QtWidgets.QWidget):
     def __init__(self):
         super().__init__()
 
@@ -21,12 +21,14 @@ class UserSettings(QWidget):
         self.resize(706, 485)
         self.addDefaultSearchEngineSelector()
 
+        self.title_label_size = 10
+
         # Add settings title
         self.label_2 = QtWidgets.QLabel(self.mainWidget)
         self.label_2.setGeometry(QtCore.QRect(10, 10, 71, 21))
         font = QtGui.QFont()
         font.setFamily("Segoe UI")
-        font.setPointSize(12)
+        font.setPointSize(self.title_label_size)
         font.setBold(False)
         font.setItalic(False)
         font.setWeight(50)
@@ -51,7 +53,7 @@ class UserSettings(QWidget):
         self.label_3.setGeometry(QtCore.QRect(10, 130, 91, 21))
         font = QtGui.QFont()
         font.setFamily("Segoe UI")
-        font.setPointSize(12)
+        font.setPointSize(self.title_label_size)
         font.setBold(True)
         font.setWeight(75)
         self.label_3.setFont(font)
@@ -61,7 +63,7 @@ class UserSettings(QWidget):
         self.label.setGeometry(QtCore.QRect(10, 60, 171, 21))
         font = QtGui.QFont()
         font.setFamily("Segoe UI")
-        font.setPointSize(12)
+        font.setPointSize(self.title_label_size)
         font.setBold(True)
         font.setWeight(75)
         self.label.setFont(font)
@@ -72,7 +74,7 @@ class UserSettings(QWidget):
         self.label_7.setGeometry(QtCore.QRect(10, 230, 101, 21))
         font = QtGui.QFont()
         font.setFamily("Segoe UI")
-        font.setPointSize(12)
+        font.setPointSize(self.title_label_size)
         font.setBold(True)
         font.setWeight(75)
         self.label_7.setFont(font)
@@ -89,7 +91,7 @@ class UserSettings(QWidget):
         self.label_9.setGeometry(QtCore.QRect(10, 330, 101, 21))
         font = QtGui.QFont()
         font.setFamily("Segoe UI")
-        font.setPointSize(12)
+        font.setPointSize(self.title_label_size)
         font.setBold(True)
         font.setWeight(75)
         self.label_9.setFont(font)
@@ -150,7 +152,7 @@ class UserSettings(QWidget):
         self.setStyleSheet(
             """
             QWidget{
-                background-color:#F7F7F7;
+                background-color:#fefefe;
             }
             QPushButton#closeButn{
                 border: 1px solid transparent;
@@ -159,17 +161,19 @@ class UserSettings(QWidget):
             QPushButton#closeButn:hover{
                 background-color:#d1d1d1;
             }
-            QLineEdit{
-                border: 2px solid #ccc;
+            QLineEdit, QComboBox{
+                border: 1px solid #ccc;
                 border-radius: 5px;
                 padding: 5px 5px;
                 height: 60px;
                 font-size: 12px;
+                background-color: #fff;
             }
-            QComboBox{
-                border: 2px solid #ccc;
-                border-radius:5px;
-                padding: 5px 5px;
+            QLineEdit:focus{
+                border-color: #2781F2;
+            }
+            QComboBox:on{
+                border-color: #2781F2;
             }
             QComboBox::down-arrow{
                 image: url(./resources/arrow-down-12.png);
