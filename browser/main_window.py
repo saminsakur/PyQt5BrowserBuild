@@ -793,3 +793,7 @@ class mainWindow(QMainWindow):
         mask = QtGui.QRegion(path.toFillPolygon().toPolygon())
         self.userSettingswindow.setMask(mask)
         self.userSettingswindow.show()
+
+    def closeEvent(self, a0):
+        sys.exit()
+
