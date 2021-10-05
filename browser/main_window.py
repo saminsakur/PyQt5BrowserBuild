@@ -13,11 +13,10 @@ from PyQt5.QtWidgets import (
     QAction,
     QFileDialog,
 )
-from PyQt5.QtCore import QSize, QUrl
+from PyQt5.QtCore import QSize, QUrl, Qt
 from PyQt5.QtGui import QIcon, QPixmap
 from PyQt5 import QtCore
 from PyQt5 import QtGui
-from PyQt5 import Qt
 import browser.widgets
 import browser.printer
 import browser.errors
