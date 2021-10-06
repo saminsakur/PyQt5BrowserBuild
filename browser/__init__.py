@@ -62,7 +62,7 @@ def create_app():
 
 
 def start_server():
-    browser.app.app.run(port=8888)
+    browser.app.app.run(port=8888, debug=False)
 
 
 def main():

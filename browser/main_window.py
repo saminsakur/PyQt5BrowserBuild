@@ -306,35 +306,6 @@ class mainWindow(QMainWindow):
         # The help submenu
         HelpMenu = QMenu("Help", self)
         HelpMenu.setObjectName("HelpMenu")
-        HelpMenu.setStyleSheet(
-            """
-        background-color: #fff;
-        background-color: #fdfdfd;
-        border: 1px solid transparent;        
-        font-family: Times, sans-serif;
-        border-radius: 6px;
-
-        QMenu#HelpMenu::item{
-            background-color: transparent;
-            font-size: 10pt;
-            padding-left: 40px;
-            padding-right: 100px;
-            padding-top:10px;
-            padding-bottom: 10px;
-            width: 130px;
-        }
-
-        QMenu#HelpMenu::item:selected{
-            background-color: #f2f2f2;
-        }
-
-        QMenu#HelpMenu::icon{
-            padding-left:40px;
-        }
-
-        """
-        )
-
         HelpMenu.setIcon(QIcon(os.path.join("resources", "question.png")))
 
         # About action
@@ -610,15 +581,7 @@ class mainWindow(QMainWindow):
 
     def about(self):
         self.AboutDialogue = browser.about.AboutDialog()
-        self.AboutDialogue.setWindowFlag(Qt.FramelessWindowHint)
-        radiusx = 10.0
-        radiusy = 10.0
-        path = QtGui.QPainterPath()
-        self.AboutDialogue.resize(500, 270)
-        path.addRoundedRect(QtCore.QRectF(self.AboutDialogue.rect()), radiusx, radiusy)
-        mask = QtGui.QRegion(path.toFillPolygon().toPolygon())
-        self.AboutDialogue.setMask(mask)
-
+        self.AboutDialogue.setWindowFlag(Qt.Popup)
         self.AboutDialogue.exec_()
 
     # Update address bar to show current pages's url

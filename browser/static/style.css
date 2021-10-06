@@ -9,18 +9,19 @@
 }
 .wrapper{
     position: absolute;
-    top: 50%;
+    top: 30%;
     left: 50%;
     transform: translate(-50%, -50%);
 }
 
-.search-container form{
+.search-container{
     position: relative;
     box-shadow:  0 2px 6px rgba(58, 57, 68, 0.2);
     display: flex;
     border-radius: 12px;
 }
-.search-container form input[type=text]{
+
+.search-container input{
     outline: none;
     border-radius: 5px 0 0 5px;
     border-right: none;
@@ -31,7 +32,7 @@
     font-family: sans-serif;
 }
 
-.search-container form input[type=text]:focus{
+.search-container input:focus{
     border: none;
     outline: none;
 }
