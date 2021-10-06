@@ -43,10 +43,19 @@ class UserSettings(QtWidgets.QWidget):
         self.closeButn.setObjectName("closeButn")
         self.closeButn.clicked.connect(self.closeWindow)
 
+        # self.check_box_enable = QtWidgets.QCheckBox("Use same page used in home button in all", self.mainWidget)
+        # self.check_box_enable.setGeometry(QtCore.QRect(10, 130, 70, 17))
+
         self.startup_page = QtWidgets.QLineEdit(self.mainWidget)
         self.startup_page.setGeometry(QtCore.QRect(480, 150, 211, 33))
         self.startup_page.setText(self.settings_data["startupPage"])
         self.startup_page.setObjectName("startup_page")
+
+        # Home button page
+        self.home_button_page = QtWidgets.QLineEdit(self.mainWidget)
+        self.home_button_page.setGeometry(QtCore.QRect(480, 0, 211, 33))
+        self.home_button_page.setText(self.settings_data["homeButtonPage"])
+        self.home_button_page.setObjectName("home_button_page")
 
         # On startup section
         self.label_3 = QtWidgets.QLabel(self.mainWidget)
@@ -79,12 +88,6 @@ class UserSettings(QtWidgets.QWidget):
         font.setWeight(75)
         self.label_7.setFont(font)
         self.label_7.setObjectName("label_7")
-
-        # Home button page
-        self.home_button_page = QtWidgets.QLineEdit(self.mainWidget)
-        self.home_button_page.setGeometry(QtCore.QRect(480, 250, 211, 33))
-        self.home_button_page.setText(self.settings_data["homeButtonPage"])
-        self.home_button_page.setObjectName("home_button_page")
 
         # New tab open settings
         self.label_9 = QtWidgets.QLabel(self.mainWidget)
