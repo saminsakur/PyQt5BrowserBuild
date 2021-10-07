@@ -618,7 +618,7 @@ class mainWindow(QMainWindow):
 
         if q.toString() == browser.settings_data["newTabPage"]:
             self.httpsicon.setPixmap(
-                QPixmap(os.path.join("resources", "icons", "file-protocol.png"))
+                QPixmap(os.path.join("resources", "icons", "info_24.png"))
             )
             self.httpsicon.setToolTip("This is browser's new tab page")
 
@@ -634,20 +634,20 @@ class mainWindow(QMainWindow):
 
             elif q.scheme() == "file":
                 self.httpsicon.setPixmap(
-                    QPixmap(os.path.join("resources", "icons", "file-protocol.png"))
+                    QPixmap(os.path.join("resources", "icons", "info_24.png"))
                 )
                 self.httpsicon.setToolTip("You are viewing a local or shared file")
 
             elif q.scheme() == "data":
                 self.httpsicon.setPixmap(
-                    QPixmap(os.path.join("resources", "icons", "file-protocol.png"))
+                    QPixmap(os.path.join("resources", "icons", "info_24.png"))
                 )
                 self.httpsicon.setToolTip("You are viewing a local or shared file")
 
             else:
                 # Set insecure padlock
                 self.httpsicon.setPixmap(
-                    QPixmap(os.path.join("resources", "icons", "warning1.png"))
+                    QPixmap(os.path.join("resources", "icons", "warning.png"))
                 )
                 self.httpsicon.setToolTip("Connection to this site may not be secured")
 
