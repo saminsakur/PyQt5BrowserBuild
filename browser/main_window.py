@@ -94,7 +94,9 @@ class mainWindow(QMainWindow):
         # back button
         back_btn = QPushButton(self)
         back_btn.setObjectName("back_btn")
-        back_btn.setIcon(QtGui.QIcon(os.path.join("resources", "icons", "left-arrow.png")))
+        back_btn.setIcon(
+            QtGui.QIcon(os.path.join("resources", "icons", "left-arrow.png"))
+        )
         back_btn.setToolTip("Back to previous page")
         back_btn.setShortcut("Alt+Left")
         back_btn.clicked.connect(self.navigate_back_tab)
@@ -103,7 +105,9 @@ class mainWindow(QMainWindow):
         # forward button
         forward_butn = QPushButton(self)
         forward_butn.setObjectName("forward_butn")
-        forward_butn.setIcon(QtGui.QIcon(os.path.join("resources", "icons", "right-arrow.png")))
+        forward_butn.setIcon(
+            QtGui.QIcon(os.path.join("resources", "icons", "right-arrow.png"))
+        )
         forward_butn.setToolTip("Go forward")
         forward_butn.setShortcut("Alt+Right")
         forward_butn.clicked.connect(self.forward_tab)
@@ -115,7 +119,9 @@ class mainWindow(QMainWindow):
         self.reload_butn.setToolTip("Reload current page")
         self.reload_butn.setShortcut("Ctrl+R")
         self.reload_butn.resize(QSize(50, 50))
-        self.reload_butn.setIcon(QtGui.QIcon(os.path.join("resources", "icons", "refresh.png")))
+        self.reload_butn.setIcon(
+            QtGui.QIcon(os.path.join("resources", "icons", "refresh.png"))
+        )
         self.reload_butn.clicked.connect(self.reload_tab)
 
         self.stop_btn = QPushButton(self)
@@ -135,7 +141,9 @@ class mainWindow(QMainWindow):
         self.home_button = QPushButton(self)
         self.home_button.setObjectName("home_button")
         self.home_button.setToolTip("Back to home")
-        self.home_button.setIcon(QtGui.QIcon(os.path.join("resources", "icons", "home.png")))
+        self.home_button.setIcon(
+            QtGui.QIcon(os.path.join("resources", "icons", "home.png"))
+        )
         self.home_button.clicked.connect(self.goToHome)
         self.navbar.addWidget(self.home_button)
 
@@ -193,7 +201,9 @@ class mainWindow(QMainWindow):
 
         # Add new tab
         newTabAction = QAction("New tab", self)
-        newTabAction.setIcon(QtGui.QIcon(os.path.join("resources", "icons", "newtab.png")))
+        newTabAction.setIcon(
+            QtGui.QIcon(os.path.join("resources", "icons", "newtab.png"))
+        )
         newTabAction.triggered.connect(
             lambda: self.add_new_tab(
                 QUrl(browser.settings_data["newTabPage"]), "Homepage"
@@ -212,7 +222,9 @@ class mainWindow(QMainWindow):
 
         # Close tab action
         CloseTabAction = QAction("Close tab", self)
-        CloseTabAction.setIcon(QIcon(os.path.join("resources", "icons", "closetab.png")))
+        CloseTabAction.setIcon(
+            QIcon(os.path.join("resources", "icons", "closetab.png"))
+        )
         CloseTabAction.triggered.connect(
             lambda: self.close_current_tab(self.tabs.currentIndex())
         )
@@ -227,7 +239,9 @@ class mainWindow(QMainWindow):
 
         # Feature to copy site url
         CopySiteAddress = QAction(
-            QtGui.QIcon(os.path.join("resources", "icons", "url.png")), "Copy site url", self
+            QtGui.QIcon(os.path.join("resources", "icons", "url.png")),
+            "Copy site url",
+            self,
         )
         CopySiteAddress.triggered.connect(self.CopySiteLink)
         CopySiteAddress.setToolTip("Copy current site address")
@@ -235,7 +249,9 @@ class mainWindow(QMainWindow):
 
         # Fetaure to go to copied site url
         PasteAndGo = QAction(
-            QtGui.QIcon(os.path.join("resources", "icons", "paste.png")), "Paste and go", self
+            QtGui.QIcon(os.path.join("resources", "icons", "paste.png")),
+            "Paste and go",
+            self,
         )
         PasteAndGo.triggered.connect(self.PasteUrlAndGo)
         PasteAndGo.setToolTip("Go to the an url copied to your clipboard")
@@ -263,7 +279,9 @@ class mainWindow(QMainWindow):
 
         # Save page as
         SavePageAs = QAction("Save page as", self)
-        SavePageAs.setIcon(QtGui.QIcon(os.path.join("resources", "icons", "save-disk.png")))
+        SavePageAs.setIcon(
+            QtGui.QIcon(os.path.join("resources", "icons", "save-disk.png"))
+        )
         SavePageAs.setToolTip("Save current page to this device")
         SavePageAs.setShortcut("Ctrl+S")
         SavePageAs.triggered.connect(self.save_page)
@@ -291,7 +309,9 @@ class mainWindow(QMainWindow):
 
         # Save page as PDF
         SavePageAsPDF = QAction(
-            QtGui.QIcon(os.path.join("resources", "icons", "adobepdf.png")), "Save as PDF", self
+            QtGui.QIcon(os.path.join("resources", "icons", "adobepdf.png")),
+            "Save as PDF",
+            self,
         )
         SavePageAsPDF.triggered.connect(self.save_as_pdf)
         context_menu.addAction(SavePageAsPDF)
@@ -300,7 +320,9 @@ class mainWindow(QMainWindow):
 
         # Settings widget:
         userSettingsAction = QAction(
-            QtGui.QIcon(os.path.join("resources", "icons", "settings.png")), "Settings", self
+            QtGui.QIcon(os.path.join("resources", "icons", "settings.png")),
+            "Settings",
+            self,
         )
         userSettingsAction.triggered.connect(self.openSettings)
         context_menu.addAction(userSettingsAction)
