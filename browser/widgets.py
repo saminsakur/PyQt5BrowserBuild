@@ -20,30 +20,8 @@ class AddressBar(QLineEdit):
 
         # Set focus to the address bar
         self.setFocus()
-        self.setStyleSheet(
-            """
-            QLineEdit{
-                font-family: \"Segoe UI\";
-                padding-top:4px;
-                padding-left:8px;
-                padding-bottom:4px;
-                border:2px solid transparent;
-                border-radius:6px;
-                font-size:10pt;
-                background-color: #ffffff;
-                selection-background-color: #66c2ff;
-            }
-
-            QLineEdit:focus{
-                border-color:#3696ff;
-            }
-
-            QLineEdit:hover{
-                border-color:#d6d6d6
-            }
-            
-        """
-        )
+        with open(os.path.join("browser", "styles", "addr_bar.css")) as f:
+            self.setStyleSheet(f.read())
 
 
 class SSLIcon(QLabel):
