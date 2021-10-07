@@ -27,7 +27,7 @@ class AboutDialog(QDialog):
             self.button_box.button(QDialogButtonBox.Ok).setStyleSheet(f.read())
 
         logo = QLabel()
-        pixmap = QPixmap(os.path.join("Icons", "browser.png"))
+        pixmap = QPixmap(os.path.join("resources", "logos", "browser.png"))
         pixmap = pixmap.scaled(60, 60)
         logo.setPixmap(pixmap)
         self.layout.addWidget(logo)
