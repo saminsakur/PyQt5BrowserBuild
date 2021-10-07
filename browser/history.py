@@ -2,6 +2,7 @@ from PyQt5 import QtCore
 from PyQt5.QtWidgets import QGridLayout, QListWidget, QPushButton, QWidget, QLabel
 import browser
 import browser.main_window
+import os
 
 class HistoryWindow(QWidget):
     def __init__(self):
@@ -18,102 +19,22 @@ class HistoryWindow(QWidget):
         clearBtn = QPushButton("Clear")
         clearBtn.setObjectName("ClearButnHistory")
         clearBtn.setFont(browser.textFont)
-        clearBtn.setStyleSheet(
-            """
-            QPushButton#ClearButnHistory{
-                border:1px solid transparent;
-                border-radius: 7px;
-                border-color:#ccc;
-                margin-top:6px;
-                margin-left:80px;
-                margin-right:10px;
-                padding: 5px 5px 5px 5px;
-                font-size:12pt;
-                color:#000;
-                background-color:transparent;
-            }
-
-            QPushButton#ClearButnHistory:hover{
-                background-color:#2681f2;
-                border-color:#dae0e5;
-                color: #fff;
-            }
-
-            QPushButton#ClearButnHistory:pressed{
-                background-color:#0c63ce;
-            }          
-            """
-        )
         clearBtn.clicked.connect(self.clearHistory)
 
         self.historyList = QListWidget()
         # self.historyList.horizontalScrollBar().setEnabled(False)
-        self.historyList.horizontalScrollBar().setStyleSheet(
-            """
-                QScrollBar:horizontal {
-                    height:8px;
-                }
-                QScrollBar::handle:horizontal {
-                    background: gray;
-                    min-height: 5px;
-                    border: 1px solid gray;
-                    border-radius: 4px;
-                }
-                QScrollBar::left-arrow:horizontal {
-                    background:none;
-                }
-                QScrollBar::right-arrow:horizontal {
-                    background:none;
-                }
-            """
-        )
-        self.historyList.verticalScrollBar().setStyleSheet(
-            """
-            QScrollBar:vertical {
-                background: transparent;
-                width:8px;
-                margin: 0px 0px 0px 0px;
-            }
-
-            QScrollBar::handle:vertical {
-                background: gray;
-                min-width: 5px;
-                border: 1px solid gray;
-                border-radius: 4px;
-            }
-            QScrollBar::add-line:vertical{
-                background:none;
-            }
-            QScrollBar::sub-line:vertical{
-                background:none;
-            }
-        """
-        )
 
         self.fillHistoryList()
 
         self.historyList.itemClicked.connect(self.goClickedLink)
-        self.historyList.setStyleSheet(
-            """
-        QListWidget::item{
-            padding-top: 8px;
-            padding-bottom: 8px;
-            margin-top: 2px;
-            margin-bottom: 2px;
-        }
 
-        QListWidget::item:hover{
-            background-color:#dce9ef;
-        }
-        
-        QListWidget{
-            border: 1px solid transparent;
-            border-top: 1px solid gray;
-            padding-left:5px;
-            padding-right:5px;
-        }
-        """
-        )
+        with open(os.path.join("browser","styles", "history_style.css")) as f:
+            style = f.read()
+            clearBtn.setStyleSheet(style)
+            self.historyList.setStyleSheet(style)
+            self.historyList.horizontalScrollBar().setStyleSheet(style)
+            self.historyList.verticalScrollBar().setStyleSheet(style)
+
 
         layout = QGridLayout()
 

@@ -51,7 +51,7 @@ class Tabs(QTabWidget):
 
         # Add some styles to the tabs
         with open(
-            os.path.join("browser", "styles", "tab_styles.css")
+            os.path.join("browser", "styles", "tab_style.css")
         ) as f:  # Open tab_styles.css file
             self.setStyleSheet(f.read())
 
