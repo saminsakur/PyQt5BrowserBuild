@@ -195,7 +195,9 @@ class mainWindow(QMainWindow):
         newTabAction = QAction("New tab", self)
         newTabAction.setIcon(QtGui.QIcon(os.path.join("resources", "newtab.png")))
         newTabAction.triggered.connect(
-            lambda: self.add_new_tab(QUrl(browser.settings_data["newTabPage"]), "Homepage")
+            lambda: self.add_new_tab(
+                QUrl(browser.settings_data["newTabPage"]), "Homepage"
+            )
         )
         newTabAction.setToolTip("Add a new tab")
         context_menu.addAction(newTabAction)
@@ -759,4 +761,3 @@ class mainWindow(QMainWindow):
 
     def closeEvent(self, a0):
         sys.exit()
-
