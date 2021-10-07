@@ -51,7 +51,7 @@ class AboutDialog(QDialog):
             '<a href="https://github.com/saminsakur/PyQt5BrowserBuild">Learn More </a>'
         )
 
-        font = QFont("Font Awesome 5 Free Solid6")
+        font = QFont("Font Awesome 5 Free Solid")
         github_pg.setFont(font)
         github_pg.setOpenExternalLinks(True)
         self.layout.addWidget(github_pg)
