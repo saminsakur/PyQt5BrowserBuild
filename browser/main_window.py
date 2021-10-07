@@ -272,7 +272,7 @@ class mainWindow(QMainWindow):
         # Print this page action
         PrintThisPageAction = QAction("Print this page", self)
         PrintThisPageAction.setIcon(
-            QtGui.QIcon(os.path.join("resources", "icons" "printer.png"))
+            QtGui.QIcon(os.path.join("resources", "icons", "printer.png"))
         )
         PrintThisPageAction.triggered.connect(self.print_this_page)
         PrintThisPageAction.setShortcut("Ctrl+P")
