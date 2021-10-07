@@ -18,7 +18,7 @@ connection = sqlite3.connect("BrowserLocalDB.db", check_same_thread=False)
 cursor = connection.cursor()
 
 # Font
-textFont = QFont("sans-serif", 14)
+textFont = QFont("Times", 14)
 
 if os.path.isfile("settings.json"):  # If settings file exists, then open it
     with open("settings.json", "r") as f:
