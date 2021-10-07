@@ -4,6 +4,7 @@ import browser
 import browser.main_window
 import os
 
+
 class HistoryWindow(QWidget):
     def __init__(self):
         super().__init__()
@@ -28,13 +29,12 @@ class HistoryWindow(QWidget):
 
         self.historyList.itemClicked.connect(self.goClickedLink)
 
-        with open(os.path.join("browser","styles", "history_style.css")) as f:
+        with open(os.path.join("browser", "styles", "history_style.css")) as f:
             style = f.read()
             clearBtn.setStyleSheet(style)
             self.historyList.setStyleSheet(style)
             self.historyList.horizontalScrollBar().setStyleSheet(style)
             self.historyList.verticalScrollBar().setStyleSheet(style)
-
 
         layout = QGridLayout()
 
@@ -72,4 +72,3 @@ class HistoryWindow(QWidget):
         self.historyList.clear()
         browser.cursor.execute("DELETE FROM history")
         browser.connection.commit()
-
