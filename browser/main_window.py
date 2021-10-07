@@ -44,9 +44,10 @@ file_pattern = re.compile(r"^file://")
 class mainWindow(QMainWindow):
     def __init__(self, *args, **kwargs):
         super(mainWindow, self).__init__(*args, **kwargs)
+        self.init_ui()
 
-        # create tabs
-        self.tabs = browser.widgets.Tabs()
+    def init_ui(self):
+        self.tabs = browser.widgets.Tabs()  # create tabs
 
         # create history table
         browser.cursor.execute(
