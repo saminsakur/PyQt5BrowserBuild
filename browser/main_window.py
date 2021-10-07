@@ -606,8 +606,7 @@ class mainWindow(QMainWindow):
 
     def about(self):
         self.AboutDialogue = browser.about.AboutDialog()
-        self.AboutDialogue.setWindowFlag(Qt.Window)
-        self.AboutDialogue.exec_()
+        self.AboutDialogue.show()
 
     # Update address bar to show current pages's url
 
