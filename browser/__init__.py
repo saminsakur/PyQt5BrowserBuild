@@ -3,8 +3,10 @@ import sys
 import json
 import sqlite3
 import threading
+
+from PyQt5 import QtGui
 import browser.app
-from PyQt5.QtGui import QIcon, QFont
+from PyQt5.QtGui import QFontDatabase, QIcon, QFont
 
 from PyQt5.QtWidgets import QApplication
 import browser.main_window
@@ -54,6 +56,8 @@ def create_app():
     if os.path.isfile(os.path.join("browser", "styles", "styles.css")):
         with open(os.path.join("browser", "styles", "styles.css")) as f:
             gui_app.setStyleSheet(f.read())
+    
+    QFontDatabase.addApplicationFont(os.path.join("fonts", "fa-solid-900.ttf"))
 
     window = browser.main_window.mainWindow()
     window.show()

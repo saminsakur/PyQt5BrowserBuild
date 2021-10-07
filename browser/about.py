@@ -1,6 +1,6 @@
 import os
 
-from PyQt5.QtGui import QPixmap
+from PyQt5.QtGui import QFont, QPixmap
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import (
     QDialogButtonBox,
@@ -23,7 +23,7 @@ class AboutDialog(QDialog):
         self.button_box = QDialogButtonBox(ok_btn)
         self.button_box.accepted.connect(self.accept)
         self.button_box.rejected.connect(self.reject)
-        with open(os.path.join("browser", "styles", "about_styles.css")) as f:
+        with open(os.path.join("browser", "styles", "about_style.css")) as f:
             self.button_box.button(QDialogButtonBox.Ok).setStyleSheet(f.read())
 
         logo = QLabel()
@@ -48,8 +48,11 @@ class AboutDialog(QDialog):
         self.layout.addWidget(lbl1)
 
         github_pg = QLabel(
-            '<a href="https://github.com/saminsakur/PyQt5BrowserBuild">Learn More </a>'
+            '<a href="https://github.com/saminsakur/PyQt5BrowserBuild">Learn More </a>'
         )
+
+        font = QFont("Font Awesome 5 Free Solid6")
+        github_pg.setFont(font)
         github_pg.setOpenExternalLinks(True)
         self.layout.addWidget(github_pg)
 
