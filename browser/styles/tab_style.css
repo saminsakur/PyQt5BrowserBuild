@@ -17,7 +17,7 @@ QTabBar::tab:!selected{
 }
 
 QTabBar::close-button {                         /* style the tab close button */
-    image: url(./resources/closetabbutton.png);
+    image: url(./resources/icons/closetabbutton.png);
     subcontrol-position: right;
     border: 1px solid transparent;
     border-radius:3px;
