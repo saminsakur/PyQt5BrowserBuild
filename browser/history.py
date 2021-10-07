@@ -10,11 +10,7 @@ class HistoryWindow(QWidget):
         super().__init__()
 
         titleLbl = QLabel("History")
-        titleLbl.setStyleSheet(
-            """
-            margin-top:7px;
-        """
-        )
+        titleLbl.setStyleSheet("margin-top:7px;")
         titleLbl.setFont(browser.textFont)
 
         clearBtn = QPushButton("Clear")
