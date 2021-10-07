@@ -5,7 +5,7 @@ from PyQt5.QtWidgets import (
     QDialogButtonBox,
     QDialog,
     QVBoxLayout,
-    QLabel,
+    QLabel
 )
 
 
