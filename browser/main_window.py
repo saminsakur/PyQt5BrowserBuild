@@ -620,6 +620,7 @@ class mainWindow(QMainWindow):
             self.httpsicon.setPixmap(
                 QPixmap(os.path.join("resources", "icons", "file-protocol.png"))
             )
+            self.httpsicon.setToolTip("This is browser's new tab page")
 
         else:
             if q.scheme() == "https":

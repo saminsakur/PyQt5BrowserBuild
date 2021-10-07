@@ -31,7 +31,8 @@ class SSLIcon(QLabel):
 
     def InitSSLIcon(self):
         self.setObjectName("SSLIcon")
-        self.setPixmap(QPixmap(os.path.join("resources", "lock-icon.png")))
+        icon = QPixmap(os.path.join("resources", "lock-icon.png"))
+        self.setPixmap(icon)
 
 
 class Tabs(QTabWidget):
