@@ -72,50 +72,8 @@ class Tabs(QTabWidget):
         self.setFont(font)
 
         # Add some styles to the tabs
-        self.setStyleSheet(
-            """
-            QTabBar{
-                background-color:#2E385C;
-            }
-
-            QTabBar::tab {
-                background-color: none;
-                color: #fff;
-                padding: 6px;
-                border-top-left-radius: 6px;
-                border-top-right-radius: 6px;
-                padding-right:60px;
-                max-width:80px;
-            }
-
-            QTabBar::tab:!selected{
-                background-color: transparent;
-            }
-
-            QTabBar::close-button {                         /* style the tab close button */
-                image: url(./resources/closetabbutton.png);
-                subcontrol-position: right;
-                border: 1px solid transparent;
-                border-radius:3px;
-            }
-
-            QTabBar::close-button:hover{                    /* close button hover */
-                background-color: #3B2E53;
-            }
-
-            QTabWidget::tab-bar {
-                left: 5px;                                  /* move to the right by 5px */
-            }
-
-            QTabBar::tab:!selected:hover{
-                background-color:#222348;
-            }
-
-            QTabBar::tab:selected{                          /* selected tabs */
-                background-color: #170733;
-            }
-        """
-        )
+        with open(os.path.join("browser", "styles","tab_styles.css")) as f:     # Open tab_styles.css file
+            self.setStyleSheet(f.read())
 
 
 class customWebEnginePage(QWebEnginePage):
