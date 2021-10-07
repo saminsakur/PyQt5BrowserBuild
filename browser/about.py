@@ -61,7 +61,7 @@ class AboutDialog(QDialog):
 
         self.setLayout(self.layout)
 
-        self.setWindowFlags(Qt.MSWindowsFixedSizeDialogHint | Qt.Popup)
+        self.setWindowFlags(Qt.MSWindowsFixedSizeDialogHint)
         self.resize(400, 250)
         self.setMaximumHeight(300)
         self.setMaximumWidth(500)
