@@ -29,7 +29,7 @@ class AboutDialog(QDialog):
 
         logo = QLabel()
         pixmap = QPixmap(os.path.join("resources", "logos", "browser.png"))
-        pixmap = pixmap.scaled(60, 60)
+        pixmap = pixmap.scaled(80, 80)
         logo.setPixmap(pixmap)
         self.layout.addWidget(logo)
 
