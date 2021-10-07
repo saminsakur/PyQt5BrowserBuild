@@ -50,7 +50,9 @@ class Tabs(QTabWidget):
         self.setFont(font)
 
         # Add some styles to the tabs
-        with open(os.path.join("browser", "styles","tab_styles.css")) as f:     # Open tab_styles.css file
+        with open(
+            os.path.join("browser", "styles", "tab_styles.css")
+        ) as f:  # Open tab_styles.css file
             self.setStyleSheet(f.read())
 
 

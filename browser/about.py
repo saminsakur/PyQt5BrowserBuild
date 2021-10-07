@@ -23,24 +23,8 @@ class AboutDialog(QDialog):
         self.button_box = QDialogButtonBox(ok_btn)
         self.button_box.accepted.connect(self.accept)
         self.button_box.rejected.connect(self.reject)
-
-        self.button_box.button(QDialogButtonBox.Ok).setStyleSheet("""
-        QPushButton {
-            background-color: #2B5DD1;
-            color: #FFFFFF;
-            border-style: outset;
-            padding: 2px;
-            font: bold 20px;
-            border-width: 6px;
-            border-radius: 10px;
-            border-color: #2752B8;
-        }
-        QPushButton:hover {
-            background-color: lightgreen;
-        }
-
-        """)
-
+        with open(os.path.join("browser", "styles", "about_styles.css")) as f:
+            self.button_box.button(QDialogButtonBox.Ok).setStyleSheet(f.read())
 
         logo = QLabel()
         pixmap = QPixmap(os.path.join("Icons", "browser.png"))
@@ -57,17 +41,21 @@ class AboutDialog(QDialog):
 
         self.layout.addWidget(QLabel("Version 2.3"))
 
-        lbl1 = QLabel("Copyright ©2021 <a href=\"https://github.com/saminsakur\">Samin Sakur</a>.")
+        lbl1 = QLabel(
+            'Copyright ©2021 <a href="https://github.com/saminsakur">Samin Sakur</a>.'
+        )
         lbl1.setOpenExternalLinks(True)
         self.layout.addWidget(lbl1)
-        
-        github_pg = QLabel("<a href=\"https://github.com/saminsakur/PyQt5BrowserBuild\">Learn More </a>")
+
+        github_pg = QLabel(
+            '<a href="https://github.com/saminsakur/PyQt5BrowserBuild">Learn More </a>'
+        )
         github_pg.setOpenExternalLinks(True)
         self.layout.addWidget(github_pg)
 
         for i in range(0, self.layout.count()):
             self.layout.itemAt(i).setAlignment(Qt.AlignHCenter)
-        
+
         self.layout.addWidget(self.button_box)
 
         self.setLayout(self.layout)
