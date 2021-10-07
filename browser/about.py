@@ -1,15 +1,11 @@
 import os
-
 from PyQt5.QtGui import QFont, QPixmap
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import (
     QDialogButtonBox,
     QDialog,
-    QMessageBox,
     QVBoxLayout,
     QLabel,
-    QHBoxLayout,
-    QWidget,
 )
 
 
@@ -21,8 +17,13 @@ class AboutDialog(QDialog):
 
         ok_btn = QDialogButtonBox.Ok
         self.button_box = QDialogButtonBox(ok_btn)
+
+        self.init_ui()
+
+    def init_ui(self):
         self.button_box.accepted.connect(self.accept)
         self.button_box.rejected.connect(self.reject)
+
         with open(os.path.join("browser", "styles", "about_style.css")) as f:
             self.button_box.button(QDialogButtonBox.Ok).setStyleSheet(f.read())
 
@@ -33,17 +34,14 @@ class AboutDialog(QDialog):
         self.layout.addWidget(logo)
 
         title = QLabel("Simple Web Browser")
-        font = title.font()
-        font.setPointSize(20)
-        title.setFont(font)
+        title.setFont(QFont("Times", 20))
 
         self.layout.addWidget(title)
 
-        self.layout.addWidget(QLabel("Version 2.3"))
-
         lbl1 = QLabel(
-            'Copyright ©2021 <a href="https://github.com/saminsakur">Samin Sakur</a>.'
+            '<center>Version 2.3<br>Copyright ©2021 Made by <a href="https://github.com/saminsakur">Samin Sakur</a>.</center>'
         )
+        lbl1.setFont(QFont("Times", 10))
         lbl1.setOpenExternalLinks(True)
         self.layout.addWidget(lbl1)
 
@@ -51,7 +49,7 @@ class AboutDialog(QDialog):
             '<a href="https://github.com/saminsakur/PyQt5BrowserBuild">Learn More </a>'
         )
 
-        font = QFont("Font Awesome 5 Free Solid")
+        font = QFont("Font Awesome 5 Free Solid", 10)
         github_pg.setFont(font)
         github_pg.setOpenExternalLinks(True)
         self.layout.addWidget(github_pg)
@@ -62,3 +60,9 @@ class AboutDialog(QDialog):
         self.layout.addWidget(self.button_box)
 
         self.setLayout(self.layout)
+
+        self.setWindowFlags(Qt.MSWindowsFixedSizeDialogHint | Qt.Popup)
+        self.resize(400, 250)
+        self.setMaximumHeight(300)
+        self.setMaximumWidth(500)
+        self.setWindowTitle("About")
