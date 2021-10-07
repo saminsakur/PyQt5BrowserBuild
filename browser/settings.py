@@ -153,7 +153,9 @@ class UserSettings(QtWidgets.QWidget):
 
         QtCore.QMetaObject.connectSlotsByName(self.mainWidget)
 
-        with open(os.path.join("browser", "styles", "settings_style.css")) as f:    # Read styles from settings_style.css
+        with open(
+            os.path.join("browser", "styles", "settings_style.css")
+        ) as f:  # Read styles from settings_style.css
             self.setStyleSheet(f.read())
 
     # Add drop-down menu to select default search engine
@@ -197,7 +199,9 @@ class UserSettings(QtWidgets.QWidget):
                 json.dump(self.settings_data, f, indent=2)
 
     def addDropDownItemToJson(self):
-        self.settings_data["defaultSearchEngine"] = self.searchEngineSelector.currentText()
+        self.settings_data[
+            "defaultSearchEngine"
+        ] = self.searchEngineSelector.currentText()
         with open("settings.json", "w") as f:
             json.dump(self.settings_data, f, indent=2)
 
