@@ -4,7 +4,6 @@ from PyQt5.QtWebEngineWidgets import (
     QWebEngineView,
 )
 from PyQt5.QtWidgets import (
-    QGraphicsDropShadowEffect,
     QMainWindow,
     QPushButton,
     QShortcut,
@@ -763,22 +762,6 @@ class mainWindow(QMainWindow):
 
     def openSettings(self):
         self.userSettingswindow = browser.settings.UserSettings()
-        self.userSettingswindow.setWindowFlag(Qt.FramelessWindowHint)
-
-        # Adding shadows
-        effect = QGraphicsDropShadowEffect()
-        self.userSettingswindow.setAttribute(Qt.WA_TranslucentBackground)
-        effect.setBlurRadius(70)
-        self.userSettingswindow.setGraphicsEffect(effect)
-        radius_x = 10.0
-        radius_y = 5.0
-        path = QtGui.QPainterPath()
-        self.userSettingswindow.setContentsMargins(0, 0, 0, 0)
-        path.addRoundedRect(
-            QtCore.QRectF(self.userSettingswindow.rect()), radius_x, radius_y
-        )
-        mask = QtGui.QRegion(path.toFillPolygon().toPolygon())
-        self.userSettingswindow.setMask(mask)
         self.userSettingswindow.show()
 
     def closeEvent(self, a0):
