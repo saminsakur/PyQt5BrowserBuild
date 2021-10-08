@@ -21,7 +21,7 @@ python -m pip install -r requirements.txt
 python main.py
 ```
 
-###Some features:
+### Some features:
 
 - Work with multiple tabs. Double click on tab bar to open a new
 - Search Google right from the address bar

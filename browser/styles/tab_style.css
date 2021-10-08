@@ -5,11 +5,13 @@ QTabBar{
 QTabBar::tab {
     background-color: none;
     color: #fff;
-    padding: 6px;
+    padding: 5px 0px;
+    padding-left: 4px;
     border-top-left-radius: 6px;
     border-top-right-radius: 6px;
-    padding-right:60px;
+    padding-right:80px;
     max-width:80px;
+    text-align: left;
 }
 
 QTabBar::tab:!selected{
@@ -25,10 +27,6 @@ QTabBar::close-button {                         /* style the tab close button */
 
 QTabBar::close-button:hover{                    /* close button hover */
     background-color: #3B2E53;
-}
-
-QTabWidget::tab-bar {
-    left: 5px;                                  /* move to the right by 5px */
 }
 
 QTabBar::tab:!selected:hover{
