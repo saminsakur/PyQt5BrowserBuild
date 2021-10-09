@@ -2,7 +2,7 @@
 
 **Chromium based tabbed browser built with Python PyQt5 module**
 
-![Screenshot](./browser_screenshot.jpg)
+![Screenshot](./browser_screenshot1.jpg)
 
 Tested on:  
 Python version: Python 3.9 (64 bit)  
