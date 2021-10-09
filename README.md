@@ -1,8 +1,8 @@
 # PyQt5 Simple Web Browser
 
-**Chromium based tabbed browser built with Python PyQt5 module**
-
 ![Screenshot](./browser_screenshot.jpg)
+
+A tabbed browser.
 
 Tested on:  
 Python version: Python 3.9 (64 bit)  
