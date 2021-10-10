@@ -763,6 +763,7 @@ class mainWindow(QMainWindow):
 
     def openSettings(self):
         self.userSettingswindow = browser.settings.UserSettings()
+        self.userSettingswindow.setWindowFlag(Qt.MSWindowsFixedSizeDialogHint)
         self.userSettingswindow.show()
 
     def closeEvent(self, a0):
