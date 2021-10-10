@@ -53,8 +53,8 @@ def create_app():
     QApplication.setWindowIcon(QIcon(os.path.join("resources", "logos", "browser.png")))
 
     # App styles
-    if os.path.isfile(os.path.join("browser", "styles", "styles.css")):
-        with open(os.path.join("browser", "styles", "styles.css")) as f:
+    if os.path.isfile(os.path.join("styles", "styles.css")):
+        with open(os.path.join("styles", "styles.css")) as f:
             gui_app.setStyleSheet(f.read())
     
     QFontDatabase.addApplicationFont(os.path.join("fonts", "fa-solid-900.ttf"))

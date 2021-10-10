@@ -147,7 +147,7 @@ class UserSettings(QtWidgets.QWidget):
         QtCore.QMetaObject.connectSlotsByName(self.mainWidget)
 
         with open(
-            os.path.join("browser", "styles", "settings_style.css")
+            os.path.join("styles", "settings_style.css")
         ) as f:  # Read styles from settings_style.css
             self.setStyleSheet(f.read())
 

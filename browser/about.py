@@ -24,7 +24,7 @@ class AboutDialog(QDialog):
         self.button_box.accepted.connect(self.accept)
         self.button_box.rejected.connect(self.reject)
 
-        with open(os.path.join("browser", "styles", "about_style.css")) as f:
+        with open(os.path.join("styles", "about_style.css")) as f:
             self.button_box.button(QDialogButtonBox.Ok).setStyleSheet(f.read())
 
         logo = QLabel()

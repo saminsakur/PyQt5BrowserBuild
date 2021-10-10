@@ -25,7 +25,7 @@ class HistoryWindow(QWidget):
 
         self.historyList.itemClicked.connect(self.goClickedLink)
 
-        with open(os.path.join("browser", "styles", "history_style.css")) as f:
+        with open(os.path.join("styles", "history_style.css")) as f:
             style = f.read()
             clearBtn.setStyleSheet(style)
             self.historyList.setStyleSheet(style)

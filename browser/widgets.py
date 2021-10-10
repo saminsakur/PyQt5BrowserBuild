@@ -20,7 +20,7 @@ class AddressBar(QLineEdit):
 
         # Set focus to the address bar
         self.setFocus()
-        with open(os.path.join("browser", "styles", "addr_bar.css")) as f:
+        with open(os.path.join("styles", "addr_bar.css")) as f:
             self.setStyleSheet(f.read())
 
 
@@ -52,7 +52,7 @@ class Tabs(QTabWidget):
 
         # Add some styles to the tabs
         with open(
-            os.path.join("browser", "styles", "tab_style.css")
+            os.path.join("styles", "tab_style.css")
         ) as f:  # Open tab_styles.css file
             self.setStyleSheet(f.read())
 
