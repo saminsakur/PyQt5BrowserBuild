@@ -532,7 +532,7 @@ class mainWindow(QMainWindow):
 
     def close_current_tab(self, i):
         if self.tabs.count() < 2:
-            return
+            self.close()
 
         self.tabs.removeTab(i)
 
@@ -549,11 +549,6 @@ class mainWindow(QMainWindow):
 
         else:
             self.setWindowTitle("Simple Web Browser")
-
-    # To close current tab
-
-    def close_tab(self, i):
-        self.tabs.removeTab(i)
 
     # function to add new tab
 
@@ -749,7 +744,7 @@ class mainWindow(QMainWindow):
         self.historyWindow.resize(370, 490)
         path.addRoundedRect(QtCore.QRectF(self.historyWindow.rect()), radiusx, radiusy)
         mask = QtGui.QRegion(path.toFillPolygon().toPolygon())
-        self.historyWindow.setMask(mask)
+        # self.historyWindow.setMask(mask)
 
         self.historyWindow.setStyleSheet(
             """
