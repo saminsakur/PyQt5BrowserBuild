@@ -501,7 +501,6 @@ class mainWindow(QMainWindow):
             self.showErrorDlg()
 
     # Print page with preview
-
     def PrintWithPreview(self):
         handler = browser.printer.PrintHandler()
         handler.setPage(self.tabs.currentWidget().page())
@@ -516,20 +515,17 @@ class mainWindow(QMainWindow):
         self.tabs.currentWidget().page().printToPdf(filename)
 
     # doubleclick on empty space for new tab
-
     def tab_open_doubleclick(self, i):
         if i == -1:  # No tab under the click
             self.add_new_tab(QUrl(browser.settings_data["newTabPage"]), label="New tab")
 
     # to update the tab
-
     def tab_changed(self, i):
         qurl = self.tabs.currentWidget().url()
         self.update_urlbar(qurl, self.tabs.currentWidget())
         self.update_title(self.tabs.currentWidget())
 
     # to close current tab
-
     def close_current_tab(self, i):
         if self.tabs.count() < 2:
             self.close()
@@ -537,7 +533,6 @@ class mainWindow(QMainWindow):
         self.tabs.removeTab(i)
 
     # Update window title
-
     def update_title(self, browser):
         if browser != self.tabs.currentWidget():
             return
@@ -551,7 +546,6 @@ class mainWindow(QMainWindow):
             self.setWindowTitle("Simple Web Browser")
 
     # function to add new tab
-
     def add_new_tab(self, qurl=None, label="Blank"):
         if qurl is None:
             qurl = QUrl(browser.settings_data["newTabPage"])
@@ -580,7 +574,6 @@ class mainWindow(QMainWindow):
         self.url_bar.setFocus()
 
         # update url when it's from the correct tab
-        # update url when it's from the correct tab
         _browser.urlChanged.connect(
             lambda qurl, browser=_browser: self.update_urlbar(qurl, browser)
         )
@@ -603,7 +596,6 @@ class mainWindow(QMainWindow):
         self.AboutDialogue.show()
 
     # Update address bar to show current pages's url
-
     def update_urlbar(self, q, _browser=None):
         if _browser != self.tabs.currentWidget():
             # if signal is not from the current tab, then ignore
