@@ -2,7 +2,7 @@
 
 ![Screenshot](./browser_screenshot.jpg)
 
-A tabbed browser.
+A tabbed browser created by me with Python, PyQt5 module with a bunch of features.
 
 Tested on:  
 Python version: Python 3.9 (64 bit)  
