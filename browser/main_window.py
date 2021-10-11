@@ -673,9 +673,11 @@ class mainWindow(QMainWindow):
         """ if the text in the search box endswith one of the domain in the domains tuple, then "http://" will be added
          if the text is pre "http://" or "https://" added, then not"""
         # [0-9A-Za-z]+\.+[A-Za-z0-9]{2}
+        if len(str(in_url)) < 1:
+            return
 
         if self.tabs.currentWidget is None:  # To avoid exception
-            # If QTabWidget's currentwidet is none, the ignore
+            # If QTabWidget's currentwidget is none, the ignore
             return
 
         if file_pattern.search(in_url):
