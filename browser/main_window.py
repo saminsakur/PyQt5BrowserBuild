@@ -748,5 +748,3 @@ class mainWindow(QMainWindow):
         self.userSettingswindow.setWindowFlag(Qt.MSWindowsFixedSizeDialogHint)
         self.userSettingswindow.show()
 
-    def closeEvent(self, a0):
-        sys.exit()
