@@ -3,9 +3,8 @@ import sys
 import json
 import sqlite3
 
-from PyQt5 import QtGui
+import threading
 import browser.app
-import browser._thread
 from PyQt5.QtGui import QFontDatabase, QIcon, QFont
 
 from PyQt5.QtWidgets import QApplication
@@ -69,8 +68,7 @@ def start_server():
 
 
 def main():
-    t1 = browser._thread.StoppableThread(target=create_app)
-    global t2
-    t2 = browser._thread.StoppableThread(target=start_server)
+    t2 = threading.Thread(target=start_server)
+    t1 = threading.Thread(target=create_app)
     t1.start()
     t2.start()

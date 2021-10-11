@@ -749,5 +749,4 @@ class mainWindow(QMainWindow):
         self.userSettingswindow.show()
 
     def closeEvent(self, a0):
-        browser.t2.stop()
-        browser.t2.join()
+        sys.exit()
