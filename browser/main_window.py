@@ -727,19 +727,12 @@ class mainWindow(QMainWindow):
         self.historyWindow = browser.history.HistoryWindow()
         self.historyWindow.setWindowFlags(Qt.Popup)
         self.historyWindow.setGeometry(
-            int(self.tabs.currentWidget().frameGeometry().width() / 2 + 300),
-            87,
-            500,
+            int(self.tabs.currentWidget().frameGeometry().width() / 2 + 400),
+            70,
+            300,
             500,
         )
-        radiusx = 10.0
-        radiusy = 5.0
-        path = QtGui.QPainterPath()
-        self.historyWindow.resize(370, 490)
-        path.addRoundedRect(QtCore.QRectF(self.historyWindow.rect()), radiusx, radiusy)
-        mask = QtGui.QRegion(path.toFillPolygon().toPolygon())
-        # self.historyWindow.setMask(mask)
-
+        self.historyWindow.setContentsMargins(0, 0, 0, 0)
         self.historyWindow.setStyleSheet(
             """
             background-color:#edf4f7;
@@ -756,4 +749,5 @@ class mainWindow(QMainWindow):
         self.userSettingswindow.show()
 
     def closeEvent(self, a0):
-        sys.exit()
+        browser.t2.stop()
+        browser.t2.join()

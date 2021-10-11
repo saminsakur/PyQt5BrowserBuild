@@ -2,10 +2,10 @@ import os
 import sys
 import json
 import sqlite3
-import threading
 
 from PyQt5 import QtGui
 import browser.app
+import browser._thread
 from PyQt5.QtGui import QFontDatabase, QIcon, QFont
 
 from PyQt5.QtWidgets import QApplication
@@ -60,17 +60,17 @@ def create_app():
     QFontDatabase.addApplicationFont(os.path.join("fonts", "fa-solid-900.ttf"))
 
     window = browser.main_window.mainWindow()
-    window.show()
 
     sys.exit(gui_app.exec_())
 
 
 def start_server():
-    browser.app.app.run(port=8888, debug=False)
+    browser.app.app.run(port=8888)
 
 
 def main():
-    t1 = threading.Thread(target=create_app)
-    t2 = threading.Thread(target=start_server)
+    t1 = browser._thread.StoppableThread(target=create_app)
+    global t2
+    t2 = browser._thread.StoppableThread(target=start_server)
     t1.start()
     t2.start()
