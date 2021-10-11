@@ -3,8 +3,6 @@ import sys
 import json
 import sqlite3
 
-import threading
-import browser.app
 from PyQt5.QtGui import QFontDatabase, QIcon, QFont
 
 from PyQt5.QtWidgets import QApplication
@@ -24,7 +22,7 @@ if os.path.isfile("settings.json"):  # If settings file exists, then open it
         settings_data = json.load(f)
 else:  # If settings not exists, then create a new file with default settings
     json_data = json.loads(
-        """
+    """
     {
         "defaultSearchEngine": "Google",
         "startupPage": "https://python-web-browser-default-page.netlify.app/",
@@ -39,7 +37,7 @@ else:  # If settings not exists, then create a new file with default settings
         settings_data = json.load(f)
 
 
-def create_app():
+def main():
     gui_app = QApplication(sys.argv)
 
     # Disable shortcut in context menu
@@ -55,20 +53,9 @@ def create_app():
     if os.path.isfile(os.path.join("styles", "styles.css")):
         with open(os.path.join("styles", "styles.css")) as f:
             gui_app.setStyleSheet(f.read())
-    
+
     QFontDatabase.addApplicationFont(os.path.join("fonts", "fa-solid-900.ttf"))
 
     window = browser.main_window.mainWindow()
 
     sys.exit(gui_app.exec_())
-
-
-def start_server():
-    browser.app.app.run(port=8888)
-
-
-def main():
-    t2 = threading.Thread(target=start_server)
-    t1 = threading.Thread(target=create_app)
-    t1.start()
-    t2.start()
