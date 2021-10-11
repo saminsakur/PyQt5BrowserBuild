@@ -27,9 +27,9 @@ else:  # If settings not exists, then create a new file with default settings
         """
     {
         "defaultSearchEngine": "Google",
-        "startupPage": "http://127.0.0.1:8888/",
-        "newTabPage": "http://127.0.0.1:8888/",
-        "homeButtonPage": "http://127.0.0.1:8888/"
+        "startupPage": "http://google.com/",
+        "newTabPage": "http://google.com/",
+        "homeButtonPage": "http://google.com/"
     }
     """
     )
