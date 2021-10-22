@@ -601,13 +601,12 @@ class mainWindow(QMainWindow):
             # if signal is not from the current tab, then ignore
             return
 
-            self.url_bar.clear()
-
         if q.toString() == browser.settings_data["newTabPage"]:
             self.httpsicon.setPixmap(
                 QPixmap(os.path.join("resources", "icons", "info_24.png"))
             )
             self.httpsicon.setToolTip("This is browser's new tab page")
+            self.url_bar.clear()
 
         else:
             if q.scheme() == "https":
@@ -638,10 +637,8 @@ class mainWindow(QMainWindow):
                 )
                 self.httpsicon.setToolTip("Connection to this site may not be secured")
 
-        if q.toString() == browser.settings_data["newTabPage"]:
-            self.url_bar.clear()
-        else:
-            self.url_bar.setText(q.toString())
+        # if q.toString() == browser.settings_data["newTabPage"]:
+        #     self.url_bar.clear()
 
         self.url_bar.setCursorPosition(0)
 
