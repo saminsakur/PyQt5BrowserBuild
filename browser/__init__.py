@@ -25,9 +25,9 @@ else:  # If settings not exists, then create a new file with default settings
     """
     {
         "defaultSearchEngine": "Google",
-        "startupPage": "http://browser-new-tab.netlify.app",
-        "newTabPage": "http://browser-new-tab.netlify.app",
-        "homeButtonPage": "http://browser-new-tab.netlify.app"
+        "startupPage": "https://browser-new-tab.netlify.app",
+        "newTabPage": "https://browser-new-tab.netlify.app",
+        "homeButtonPage": "https://browser-new-tab.netlify.app"
     }
     """
     )
